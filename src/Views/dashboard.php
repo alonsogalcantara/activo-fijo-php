@@ -1,5 +1,30 @@
 <?php ob_start(); ?>
 
+<?php
+// Security Warning: Check if install directory is still accessible
+$installDirAccessible = is_dir(__DIR__ . '/../../public/install') && 
+                        !file_exists(__DIR__ . '/../../public/install/install.lock');
+?>
+
+<?php if ($installDirAccessible): ?>
+<div class="bg-red-50 border-l-4 border-red-500 text-red-800 p-4 mb-6 rounded-r shadow-sm">
+    <div class="flex items-start">
+        <i class="fas fa-exclamation-triangle text-red-500 text-xl mr-3 mt-1"></i>
+        <div>
+            <h3 class="font-bold text-lg mb-1">⚠️ Advertencia de Seguridad</h3>
+            <p class="text-sm mb-2">
+                El directorio de instalación <code class="bg-red-100 px-2 py-1 rounded">/public/install/</code> 
+                aún es accesible. Esto representa un riesgo de seguridad.
+            </p>
+            <p class="text-sm font-semibold">
+                <strong>Acción requerida:</strong> Elimine o restrinja el acceso al directorio 
+                <code class="bg-red-100 px-2 py-1 rounded">public/install/</code> después de completar la instalación.
+            </p>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="mb-8 flex justify-between items-center">

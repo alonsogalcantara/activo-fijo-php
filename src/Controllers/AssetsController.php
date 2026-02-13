@@ -47,7 +47,7 @@ class AssetsController {
             $user = $userModel->getUserById($asset['assigned_to']);
             $asset['assigned_to_name'] = $user['name'] ?? 'Usuario Desconocido';
             $asset['user_dept'] = $user['department'] ?? '';
-            $asset['assigned_at'] = null; // We don't have this in schema yet
+            // $asset['assigned_at'] is already fetched from DB if it exists in schema
         } else {
             $asset['assigned_to_name'] = null;
         }

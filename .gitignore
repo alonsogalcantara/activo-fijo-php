@@ -1,3 +1,4 @@
 .env
 .agent/
 .vscode/
+node_modules/

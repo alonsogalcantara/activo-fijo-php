@@ -1,0 +1,17 @@
+{
+    "name": "activo-fijo",
+    "version": "1.0.0",
+    "description": "Asset Management System",
+    "scripts": {
+        "build:css": "tailwindcss -i ./src/input.css -o ./public/css/tailwind.css --minify",
+        "watch:css": "tailwindcss -i ./src/input.css -o ./public/css/tailwind.css --watch"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "tailwindcss": "^3.4.19"
+    },
+    "main": "tailwind.config.js",
+    "type": "commonjs"
+}

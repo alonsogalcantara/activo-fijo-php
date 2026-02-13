@@ -24,6 +24,19 @@ $uri = explode('/', $requestUri);
 // Remove empty elements and reindex
 $uri = array_values(array_filter($uri));
 
+// Check if installed
+$installLock = __DIR__ . '/../config/installed.lock';
+$envFile = __DIR__ . '/../.env';
+
+if (!file_exists($installLock) && !file_exists($envFile)) {
+    // Redirect to installer
+    $basePath = dirname($_SERVER['SCRIPT_NAME']);
+    // Ensure no double slashes if basePath is /
+    $basePath = rtrim($basePath, '/');
+    header('Location: ' . $basePath . '/install/');
+    exit();
+}
+
 // Basic Routing Logic (to be expanded)
 // Default to Home/Login
 if (empty($uri)) {
