@@ -1,0 +1,203 @@
+<?php ob_start(); ?>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="mb-8 flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-gray-800">Panel de Control</h1>
+    <div class="flex gap-2">
+        <a href="/assets/create" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold shadow text-sm flex items-center">
+            <i class="fas fa-plus mr-2"></i> Activo
+        </a>
+        <a href="/accounts/create" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold shadow text-sm flex items-center">
+            <i class="fas fa-plus mr-2"></i> Servicio
+        </a>
+    </div>
+</div>
+
+<!-- TOP CARDS -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Total Activos -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+        <div>
+            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider">Total Activos</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1"><?= $data['total_assets'] ?? 0 ?></p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 text-xl">
+            <i class="fas fa-laptop"></i>
+        </div>
+    </div>
+
+    <!-- Usuarios Activos -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+        <div>
+            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider">Usuarios Activos</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1"><?= $data['total_users'] ?? 0 ?></p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 text-xl">
+            <i class="fas fa-users"></i>
+        </div>
+    </div>
+
+    <!-- Servicios -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+        <div>
+            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider">Servicios / SaaS</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1"><?= $data['total_accounts'] ?? 0 ?></p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 text-xl">
+            <i class="fas fa-cloud"></i>
+        </div>
+    </div>
+
+    <!-- Gasto Mensual -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between relative overflow-hidden">
+        <div class="relative z-10">
+            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider">Gasto Mensual Est.</p>
+            
+            <p class="text-2xl font-bold text-green-700 mt-1" id="monthlySpendMXN">
+                $<?= number_format($data['monthly_spend_mxn'] ?? 0, 2) ?> <span class="text-xs text-gray-400">MXN</span>
+            </p>
+            
+            <?php if (($data['monthly_spend_usd'] ?? 0) > 0): ?>
+            <p class="text-sm font-bold text-green-600" id="monthlySpendUSD">
+                $<?= number_format($data['monthly_spend_usd'], 2) ?> <span class="text-xs text-gray-400">USD</span>
+            </p>
+            <?php endif; ?>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-green-600 text-xl relative z-10">
+            <i class="fas fa-money-bill-wave"></i>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- CHART SECTION -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 lg:col-span-1">
+        <h3 class="text-lg font-bold text-gray-800 mb-6">Estado del Inventario</h3>
+        <div class="relative h-64 w-full flex justify-center">
+            <canvas id="assetsChart"></canvas>
+        </div>
+        <div class="mt-6 space-y-3">
+            <?php $stats = $data['asset_stats'] ?? []; ?>
+            <div class="flex justify-between text-sm">
+                <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-emerald-500 mr-2"></span> Disponible</span>
+                <span class="font-bold text-gray-700"><?= $stats['Disponible'] ?? 0 ?></span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span> Asignado</span>
+                <span class="font-bold text-gray-700"><?= $stats['Asignado'] ?? 0 ?></span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-amber-500 mr-2"></span> Mantenimiento</span>
+                <span class="font-bold text-gray-700"><?= $stats['En Mantenimiento'] ?? 0 ?></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- RENEWALS & ACTIVITY -->
+    <div class="lg:col-span-2 space-y-8">
+        
+        <!-- Próximos Pagos -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-bell text-amber-500 mr-2"></i> Próximos Vencimientos
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-gray-50 text-gray-500 uppercase font-bold text-xs">
+                        <tr>
+                            <th class="p-3 rounded-l-lg">Servicio</th>
+                            <th class="p-3">Responsable</th>
+                            <th class="p-3">Fecha</th>
+                            <th class="p-3 rounded-r-lg text-right">Estatus</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        <?php if (!empty($data['renewals'])): ?>
+                        <?php foreach ($data['renewals'] as $r): ?>
+                        <?php 
+                            $days_left = $r['days_left'];
+                            $color = ($days_left < 0) ? 'text-red-600 bg-red-50' : (($days_left < 7) ? 'text-amber-600 bg-amber-50' : 'text-blue-600 bg-blue-50');
+                            $status_text = ($days_left < 0) ? "Venció hace " . abs($days_left) . " días" : "Vence en " . $days_left . " días";
+                        ?>
+                        <tr>
+                            <td class="p-3 font-bold text-gray-700"><?= htmlspecialchars($r['service_name']) ?></td>
+                            <td class="p-3 text-gray-500"><?= htmlspecialchars($r['username'] ?: 'N/A') ?></td>
+                            <td class="p-3 text-gray-500"><?= htmlspecialchars($r['renewal_date']) ?></td>
+                            <td class="p-3 text-right">
+                                <span class="px-2 py-1 rounded text-xs font-bold <?= $color ?>"><?= $status_text ?></span>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php else: ?>
+                        <tr><td colspan="4" class="p-4 text-center text-gray-400 italic">No hay vencimientos en los próximos 30 días.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Actividad Reciente -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-stream text-gray-400 mr-2"></i> Actividad Reciente
+            </h3>
+            <div class="space-y-4">
+                <?php if (!empty($data['recent_activity'])): ?>
+                <?php foreach ($data['recent_activity'] as $log): ?>
+                <div class="flex items-start pb-4 border-b border-gray-50 last:border-0 last:pb-0">
+                    <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 mr-3 shrink-0 text-xs">
+                        <i class="fas fa-info"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-800">
+                            <span class="font-bold"><?= htmlspecialchars($log['action']) ?></span>: <?= htmlspecialchars($log['details']) ?>
+                        </p>
+                        <p class="text-xs text-gray-400 mt-0.5">
+                            <?= htmlspecialchars($log['created_at']) ?>
+                        </p>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+                <?php else: ?>
+                <p class="text-gray-400 italic text-center">No hay actividad reciente.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('assetsChart').getContext('2d');
+        // Valores seguros usando default
+        const d_disp = <?= $data['asset_stats']['Disponible'] ?? 0 ?>;
+        const d_asig = <?= $data['asset_stats']['Asignado'] ?? 0 ?>;
+        const d_mant = <?= $data['asset_stats']['En Mantenimiento'] ?? 0 ?>;
+        const d_baja = <?= $data['asset_stats']['De Baja'] ?? 0 ?>;
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Disponible', 'Asignado', 'Mantenimiento', 'Baja'],
+                datasets: [{
+                    data: [d_disp, d_asig, d_mant, d_baja],
+                    backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                cutout: '75%'
+            }
+        });
+    });
+</script>
+
+<?php $content = ob_get_clean(); ?>
+<?php include __DIR__ . '/layouts/main.php'; ?>

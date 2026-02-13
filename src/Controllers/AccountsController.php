@@ -1,0 +1,131 @@
+<?php
+namespace Controllers;
+
+require_once __DIR__ . '/../Models/Account.php';
+require_once __DIR__ . '/../Models/User.php';
+
+use Models\Account;
+use Models\User;
+
+class AccountsController {
+    
+    public function index() {
+        $accountModel = new Account();
+        $accounts = $accountModel->getAll();
+        
+        require_once __DIR__ . '/../Views/accounts/index.php';
+    }
+
+    public function show($id) {
+        $accountModel = new Account();
+        $account = $accountModel->getById($id);
+        
+        if (!$account) {
+            header('Location: /accounts');
+            exit();
+        }
+        
+        require_once __DIR__ . '/../Views/accounts/detail.php';
+    }
+
+    public function create() {
+        $userModel = new User();
+        $users = $userModel->getAll();
+
+        require_once __DIR__ . '/../Views/accounts/create.php';
+    }
+
+    public function store() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+             $data = [
+                'service_name' => $_POST['service_name'],
+                'username' => $_POST['username'] ?? '',
+                'password' => $_POST['password'] ?? '',
+                'provider' => $_POST['provider'] ?? '',
+                'contract_ref' => $_POST['contract_ref'] ?? '',
+                'renewal_date' => $_POST['renewal_date'] ?? null,
+                'cost' => $_POST['cost'] ?? 0.00,
+                'currency' => $_POST['currency'] ?? 'MXN',
+                'frequency' => $_POST['frequency'] ?? 'Mensual',
+                'account_type' => $_POST['account_type'] ?? 'Individual',
+                'assigned_to' => !empty($_POST['assigned_to']) ? $_POST['assigned_to'] : null,
+                'max_licenses' => $_POST['max_licenses'] ?? 1,
+                'observations' => $_POST['observations'] ?? ''
+             ];
+             
+             // Handle date empty string
+             if (empty($data['renewal_date'])) {
+                 $data['renewal_date'] = null;
+             }
+
+             $accountModel = new Account();
+             $newId = $accountModel->create($data);
+             if ($newId) {
+                 header('Location: /accounts/detail/' . $newId);
+             } else {
+                 $error = "Failed to create account";
+                 // Fetch users again for view
+                 $userModel = new User();
+                 $users = $userModel->getAll();
+                 require_once __DIR__ . '/../Views/accounts/create.php';
+             }
+        }
+    }
+
+    public function edit($id) {
+        $accountModel = new Account();
+        $account = $accountModel->getById($id);
+        
+        if (!$account) {
+            header('Location: /accounts');
+            exit();
+        }
+
+        $userModel = new User();
+        $users = $userModel->getAll();
+        
+        require_once __DIR__ . '/../Views/accounts/edit.php';
+    }
+
+    public function update($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+             $data = [
+                'service_name' => $_POST['service_name'],
+                'username' => $_POST['username'],
+                'password' => $_POST['password'],
+                'provider' => $_POST['provider'],
+                'contract_ref' => $_POST['contract_ref'],
+                'renewal_date' => $_POST['renewal_date'],
+                'cost' => $_POST['cost'],
+                'currency' => $_POST['currency'],
+                'frequency' => $_POST['frequency'],
+                'account_type' => $_POST['account_type'],
+                'assigned_to' => !empty($_POST['assigned_to']) ? $_POST['assigned_to'] : null,
+                'max_licenses' => $_POST['max_licenses'],
+                'observations' => $_POST['observations']
+             ];
+
+              // Handle date empty string
+             if (empty($data['renewal_date'])) {
+                 $data['renewal_date'] = null;
+             }
+
+             $accountModel = new Account();
+             if ($accountModel->update($id, $data)) {
+                 header('Location: /accounts');
+             } else {
+                 $error = "Failed to update account";
+                 $account = $accountModel->getById($id);
+                 $userModel = new User();
+                 $users = $userModel->getAll();
+                 require_once __DIR__ . '/../Views/accounts/edit.php';
+             }
+        }
+    }
+
+    public function delete($id) {
+        $accountModel = new Account();
+        $accountModel->delete($id);
+        header('Location: /accounts');
+    }
+}
