@@ -29,125 +29,146 @@
 </div>
 
 <!-- MAIN CARD -->
-<div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-8">
-    <div class="md:flex">
-        <!-- ICON SECTION -->
-        <div class="md:w-1/3 relative bg-gradient-to-br from-yellow-50 to-amber-50 border-r border-gray-100 min-h-[300px] flex items-center justify-center overflow-hidden">
-            <div class="text-8xl text-yellow-400 opacity-20 absolute">
-                <i class="fas fa-cloud"></i>
+<div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-8 p-8">
+    
+    <!-- HEADER -->
+    <div class="mb-8 pb-6 border-b border-gray-200">
+        <div class="flex items-center gap-3 mb-3">
+            <span class="text-xs font-bold uppercase tracking-wide bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-lg border border-yellow-300"><i class="fas fa-cloud mr-2"></i><?= htmlspecialchars($account['account_type']) ?></span>
+            <span class="text-xs text-gray-400">ID: <?= $account['id'] ?></span>
+        </div>
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-2"><?= htmlspecialchars($account['service_name']) ?></h1>
+        <?php if (!empty($account['provider'])): ?>
+        <p class="text-gray-500 text-lg flex items-center gap-2">
+            <i class="fas fa-building text-gray-400"></i> <?= htmlspecialchars($account['provider']) ?>
+        </p>
+        <?php endif; ?>
+    </div>
+
+    <!-- SECTION 1: INFORMACIÓN GENERAL -->
+    <div class="mb-8">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
+            <i class="fas fa-info-circle mr-2 text-blue-500"></i> Información General
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
+                <span class="block text-xs text-emerald-600 mb-1 uppercase font-bold"><i class="fas fa-dollar-sign mr-1"></i>Costo</span>
+                <span class="font-bold text-emerald-900 text-lg">$<?= number_format($account['cost'], 2) ?> <?= htmlspecialchars($account['currency']) ?></span>
+                <span class="block text-xs text-emerald-600 uppercase mt-1"><?= htmlspecialchars($account['frequency']) ?></span>
             </div>
-            <div class="relative z-10 text-center">
-                <div class="w-24 h-24 rounded-full bg-white shadow-lg flex items-center justify-center text-yellow-500 text-5xl mx-auto mb-4">
-                    <i class="fas fa-cloud"></i>
-                </div>
-                <span class="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-md text-gray-600 bg-gray-100">
-                    <?= htmlspecialchars($account['account_type']) ?>
+            <?php 
+                $renewal_bg_color = 'gray';
+                $renewal_border_color = 'gray';
+                $renewal_text_color = 'gray';
+                $days = 0;
+                $dateDisplay = 'N/A';
+
+                if (!empty($account['renewal_date'])) {
+                    $renewal = new DateTime($account['renewal_date']);
+                    $now = new DateTime();
+                    $diff = $now->diff($renewal);
+                    $days = $diff->invert ? -$diff->days : $diff->days;
+                    $dateDisplay = date('d/m/Y', strtotime($account['renewal_date']));
+
+                    if ($days < 30) {
+                        $renewal_bg_color = 'red';
+                        $renewal_border_color = 'red';
+                        $renewal_text_color = 'red';
+                    } else {
+                        $renewal_bg_color = 'blue';
+                        $renewal_border_color = 'blue';
+                        $renewal_text_color = 'blue';
+                    }
+                }
+            ?>
+            <div class="bg-<?= $renewal_bg_color ?>-50 p-4 rounded-lg border border-<?= $renewal_border_color ?>-200">
+                <span class="block text-xs text-<?= $renewal_text_color ?>-600 mb-1 uppercase font-bold">Próxima Renovación</span>
+                <span class="font-bold text-gray-900"><?= $dateDisplay ?></span>
+                <span class="text-xs text-gray-500 block mt-1"><?= $days ?> días</span>
+            </div>
+            <?php if (!empty($account['birth_date'])): ?>
+            <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <span class="block text-xs text-purple-600 mb-1 uppercase font-bold">Fecha de Nacimiento</span>
+                <span class="font-bold text-gray-900"><?= date('d/m/Y', strtotime($account['birth_date'])) ?></span>
+                <span class="text-xs text-purple-600 block mt-1">
+                    <?php 
+                        $birth = new DateTime($account['birth_date']);
+                        $age = $birth->diff(new DateTime())->y;
+                        echo "$age años";
+                    ?>
                 </span>
             </div>
-        </div>
-
-        <!-- DETAILS -->
-        <div class="md:w-2/3 p-8">
-            <div class="mb-6">
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="text-xs font-bold uppercase tracking-wide bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded">Servicio</span>
-                    <span class="text-xs font-mono text-gray-400">ID: <?= $account['id'] ?></span>
-                </div>
-                <h1 class="text-4xl font-extrabold text-gray-900 mb-2"><?= htmlspecialchars($account['service_name']) ?></h1>
-                <?php if (!empty($account['provider'])): ?>
-                <p class="text-gray-500 text-sm bg-gray-50 inline-block px-3 py-1 rounded border border-gray-200">
-                    <i class="fas fa-building mr-2 text-gray-400"></i> <?= htmlspecialchars($account['provider']) ?>
-                </p>
-                <?php endif; ?>
-            </div>
-
-            <!-- KEY INFO GRID -->
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-6 text-sm mb-6 pb-6 border-b border-gray-100">
-                <div>
-                    <span class="block text-gray-400 text-xs font-bold uppercase mb-1">Costo</span>
-                    <span class="font-bold text-emerald-600 text-lg">$<?= number_format($account['cost'], 2) ?> <?= htmlspecialchars($account['currency']) ?></span>
-                    <span class="block text-xs text-gray-400 uppercase"><?= htmlspecialchars($account['frequency']) ?></span>
-                </div>
-                <div>
-                    <span class="block text-gray-400 text-xs font-bold uppercase mb-1">Próxima Renovación</span>
-                    <?php 
-                        if (!empty($account['renewal_date'])) {
-                            $renewal = new DateTime($account['renewal_date']);
-                            $now = new DateTime();
-                            $diff = $now->diff($renewal);
-                            $days = $diff->invert ? -$diff->days : $diff->days;
-                            $color = $days < 30 ? 'text-red-600' : 'text-gray-800';
-                            $dateDisplay = htmlspecialchars($account['renewal_date']);
-                        } else {
-                            $days = 0;
-                            $color = 'text-gray-400';
-                            $dateDisplay = 'N/A';
-                        }
-                    ?>
-                    <span class="font-bold <?= $color ?>"><?= $dateDisplay ?></span>
-                    <span class="text-xs text-gray-500 block"><?= $days ?> días restantes</span>
-                </div>
-                <?php if ($account['account_type'] != 'Individual' && !empty($account['max_licenses'])): ?>
-                <div>
-                    <span class="block text-gray-400 text-xs font-bold uppercase mb-1">Licencias</span>
-                    <span class="font-bold text-purple-600 text-lg">
-                        <i class="fas fa-users mr-1"></i><?= $account['max_licenses'] ?>
-                    </span>
-                    <span class="block text-xs text-gray-400">Máximo</span>
-                </div>
-                <?php endif; ?>
-            </div>
-
-            <!-- CREDENTIALS SECTION -->
-            <div class="mb-6">
-                <h4 class="text-xs font-bold text-gray-400 uppercase mb-3 flex items-center">
-                    <i class="fas fa-key mr-2"></i> Credenciales de Acceso
-                </h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
-                    <div>
-                        <span class="block text-xs text-gray-500 mb-1">Usuario / Email</span>
-                        <div class="flex items-center gap-2">
-                            <code class="bg-white px-3 py-2 rounded text-gray-700 font-mono text-sm border border-gray-200 flex-1 select-all"><?= htmlspecialchars($account['username']) ?></code>
-                            <button class="text-gray-400 hover:text-blue-500 transition" onclick="navigator.clipboard.writeText('<?= htmlspecialchars($account['username']) ?>'); showCopyNotification();" title="Copiar">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div>
-                        <span class="block text-xs text-gray-500 mb-1">Contraseña</span>
-                        <div class="flex items-center gap-2">
-                            <code class="bg-white px-3 py-2 rounded text-gray-700 font-mono text-sm border border-gray-200 flex-1 blur-sm hover:blur-none transition cursor-pointer select-all" title="Hover para ver"><?= htmlspecialchars($account['password']) ?></code>
-                            <button class="text-gray-400 hover:text-blue-500 transition" onclick="navigator.clipboard.writeText('<?= htmlspecialchars($account['password']) ?>'); showCopyNotification();" title="Copiar">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CONTRACT REF -->
-            <?php if (!empty($account['contract_ref'])): ?>
-            <div class="mb-4">
-                <span class="text-xs text-gray-400 uppercase font-bold block mb-1">Referencia de Contrato</span>
-                <p class="font-mono text-gray-700 bg-gray-50 inline-block px-3 py-1 rounded border border-gray-200">
-                    <i class="fas fa-file-contract mr-2 text-gray-400"></i><?= htmlspecialchars($account['contract_ref']) ?>
-                </p>
-            </div>
             <?php endif; ?>
-
-            <!-- OBSERVATIONS -->
-            <?php if (!empty($account['observations'])): ?>
-            <div class="mt-6 pt-6 border-t border-gray-100">
-                <h4 class="text-xs font-bold text-gray-400 uppercase mb-2 flex items-center">
-                    <i class="fas fa-sticky-note mr-2"></i> Observaciones
-                </h4>
-                <p class="text-sm text-gray-600 bg-yellow-50 p-4 rounded-lg border border-yellow-100 italic">
-                    <?= nl2br(htmlspecialchars($account['observations'])) ?>
-                </p>
+            <?php if ($account['account_type'] != 'Individual' && !empty($account['max_licenses'])): ?>
+            <div class="bg-amber-50 p-4 rounded-lg border border-amber-200">
+                <span class="block text-xs text-amber-600 mb-1 uppercase font-bold"><i class="fas fa-users mr-1"></i>Licencias</span>
+                <span class="font-bold text-amber-900 text-lg"><?= $account['max_licenses'] ?></span>
+                <span class="block text-xs text-amber-600 uppercase mt-1">Máximo</span>
             </div>
             <?php endif; ?>
         </div>
     </div>
+
+    <!-- SECTION 2: CREDENCIALES DE ACCESO -->
+    <div class="mb-8">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
+            <i class="fas fa-key mr-2 text-green-500"></i> Credenciales de Acceso
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Usuario / Email</span>
+                <div class="flex items-center gap-2">
+                    <span class="font-mono text-gray-900 flex-1"><?= htmlspecialchars($account['username'] ?? '-') ?></span>
+                    <?php if (!empty($account['username'])): ?>
+                    <button onclick="navigator.clipboard.writeText('<?= htmlspecialchars($account['username']) ?>'); showCopyNotification();" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Contraseña</span>
+                <div class="flex items-center gap-2">
+                    <span class="font-mono text-gray-900 flex-1"><?= !empty($account['password']) ? '••••••••' : '-' ?></span>
+                    <?php if (!empty($account['password'])): ?>
+                    <button onclick="navigator.clipboard.writeText('<?= htmlspecialchars($account['password']) ?>'); showCopyNotification();" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 3: INFORMACIÓN ADICIONAL -->
+    <?php if (!empty($account['contract_ref']) || !empty($account['observations'])): ?>
+    <div class="mb-8">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
+            <i class="fas fa-sticky-note mr-2 text-amber-500"></i> Información Adicional
+        </h3>
+        <?php if (!empty($account['contract_ref'])): ?>
+        <div class="mb-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Referencia de Contrato</span>
+            <p class="text-sm text-gray-900 font-mono"><?= htmlspecialchars($account['contract_ref']) ?></p>
+        </div>
+        <?php endif; ?>
+        <?php if (!empty($account['observations'])): ?>
+        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+            <span class="block text-xs text-yellow-700 mb-2 uppercase font-bold"><i class="fas fa-exclamation-triangle mr-1"></i>Observaciones</span>
+            <p class="text-sm text-gray-700"><?= nl2br(htmlspecialchars($account['observations'])) ?></p>
+        </div>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
+    <!-- TIMESTAMPS -->
+    <div class="pt-6 border-t border-gray-200">
+        <div class="text-xs text-gray-500">
+            <span class="block text-gray-400 mb-1 uppercase font-bold">Creado</span>
+            <span class="font-mono"><?= !empty($account['created_at']) ? date('d/m/Y H:i', strtotime($account['created_at'])) : '-' ?></span>
+        </div>
+    </div>
+
 </div>
 
 <!-- ASSIGNMENT SECTION -->

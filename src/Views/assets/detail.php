@@ -51,115 +51,309 @@
 </div>
 
 <!-- MAIN CARD -->
-<div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-8">
-    <div class="md:flex">
-        <!-- PHOTO -->
-        <div class="md:w-1/3 relative bg-gray-50 border-r border-gray-100 min-h-[300px] flex items-center justify-center overflow-hidden group">
-            <?php if (!empty($asset['photo_filename'])): ?>
-            <img src="/uploads/<?= htmlspecialchars($asset['photo_filename']) ?>" class="w-full h-full object-cover absolute inset-0 transition duration-500 group-hover:scale-105">
-            <?php else: ?>
-            <div class="text-6xl text-gray-300">
-                <?php 
-                $icon = 'fa-box';
-                if ($asset['category'] == 'Vehículo') $icon = 'fa-car';
-                elseif (strpos($asset['category'], 'Computadora') !== false) $icon = 'fa-laptop';
-                elseif ($asset['category'] == 'Uniforme') $icon = 'fa-tshirt';
-                elseif ($asset['category'] == 'Herramienta') $icon = 'fa-tools';
-                ?>
-                <i class="fas <?= $icon ?>"></i>
-            </div>
-            <?php endif; ?>
-
-            <div class="absolute top-4 left-4">
-                <?php 
-                $statusColors = [
-                    'Disponible' => 'bg-emerald-500',
-                    'Asignado' => 'bg-blue-600',
-                    'En Mantenimiento' => 'bg-amber-500',
-                    'De Baja' => 'bg-red-600'
-                ];
-                $statusColor = $statusColors[$asset['status']] ?? 'bg-gray-500';
-                ?>
-                <span class="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg text-white <?= $statusColor ?>">
-                    <?= htmlspecialchars($asset['status']) ?>
-                </span>
-            </div>
-        </div>
-
-        <!-- DETAILS -->
-        <div class="md:w-2/3 p-8">
-            <div class="flex justify-between items-start mb-6">
-                <div>
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="text-xs font-bold uppercase tracking-wide bg-gray-100 text-gray-500 px-2 py-0.5 rounded"><?= htmlspecialchars($asset['category']) ?></span>
-                        <span class="text-xs font-mono text-gray-400">ID: <?= $asset['id'] ?></span>
-                        
-                        <?php if ($asset['acquisition_type'] == 'Arrendamiento'): ?>
-                        <span class="text-xs font-bold uppercase tracking-wide bg-purple-100 text-purple-600 px-2 py-0.5 rounded border border-purple-200">
-                            <i class="fas fa-file-contract mr-1"></i>Arrendamiento
-                        </span>
-                        <?php endif; ?>
-                    </div>
-                    <h1 class="text-4xl font-extrabold text-gray-900 mb-2"><?= htmlspecialchars($asset['name']) ?></h1>
-                    <p class="text-gray-500 font-mono text-sm bg-gray-50 inline-block px-2 py-1 rounded border border-gray-200">
-                        <i class="fas fa-barcode mr-2 text-gray-400"></i> <?= htmlspecialchars($asset['serial_number'] ?? 'Sin Identificador') ?>
-                    </p>
+<div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-8 p-8">
+    
+    <!-- HEADER SECTION -->
+    <div class="mb-8 pb-6 border-b border-gray-200">
+        <div class="flex items-start justify-between mb-4">
+            <div class="flex-1">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wide bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg"><?= htmlspecialchars($asset['category']) ?></span>
+                    <?php 
+                    $statusColors = [
+                        'Disponible' => 'bg-emerald-100 text-emerald-700 border-emerald-300',
+                        'Asignado' => 'bg-blue-100 text-blue-700 border-blue-300',
+                        'En Mantenimiento' => 'bg-amber-100 text-amber-700 border-amber-300',
+                        'De Baja' => 'bg-red-100 text-red-700 border-red-300'
+                    ];
+                    $statusClass = $statusColors[$asset['status']] ?? 'bg-gray-100 text-gray-700 border-gray-300';
+                    ?>
+                    <span class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide border <?= $statusClass ?>">
+                        <?= htmlspecialchars($asset['status']) ?>
+                    </span>
+                    <?php if ($asset['acquisition_type'] == 'Arrendamiento'): ?>
+                    <span class="text-xs font-bold uppercase tracking-wide bg-purple-100 text-purple-700 px-3 py-1.5 rounded-lg border border-purple-300">
+                        <i class="fas fa-file-contract mr-1"></i>Arrendamiento
+                    </span>
+                    <?php endif; ?>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900 mb-2"><?= htmlspecialchars($asset['name']) ?></h1>
+                <div class="flex items-center gap-4 text-sm text-gray-500">
+                    <span class="font-mono bg-gray-50 px-3 py-1.5 rounded border border-gray-200">
+                        <i class="fas fa-barcode mr-2 text-gray-400"></i><?= htmlspecialchars($asset['serial_number'] ?? 'Sin Identificador') ?>
+                    </span>
+                    <span class="text-xs text-gray-400">ID: <?= $asset['id'] ?></span>
                 </div>
             </div>
+        </div>
+        
+        <?php if (!empty($asset['description'])): ?>
+        <div class="mt-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <p class="text-sm text-gray-700"><i class="fas fa-align-left mr-2 text-gray-400"></i><?= htmlspecialchars($asset['description']) ?></p>
+        </div>
+        <?php endif; ?>
+    </div>
 
-            <!-- DYNAMIC INFO -->
+    <!-- SECTION 1: INFORMACIÓN GENERAL -->
+    <div class="mb-8">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
+            <i class="fas fa-info-circle mr-2 text-blue-500"></i> Información General
+        </h3>
+
             <div class="grid grid-cols-2 md:grid-cols-3 gap-6 text-sm mb-6 pb-6 border-b border-gray-100">
                 <div><span class="block text-gray-400 text-xs font-bold uppercase">Marca</span><span class="font-bold text-gray-800"><?= htmlspecialchars($asset['brand'] ?? '-') ?></span></div>
                 <div><span class="block text-gray-400 text-xs font-bold uppercase">Modelo</span><span class="font-bold text-gray-800"><?= htmlspecialchars($asset['model'] ?? '-') ?></span></div>
-                <!-- Additional fields can be added here based on category if stored in generic fields or json -->
+                <div><span class="block text-gray-400 text-xs font-bold uppercase">Categoría</span><span class="font-bold text-blue-600"><?= htmlspecialchars($asset['category'] ?? '-') ?></span></div>
             </div>
 
-            <!-- ADMIN INFO -->
-            <div class="mb-6">
+            <!-- CATEGORY-SPECIFIC FIELDS -->
+            <?php 
+            $hasSpecificFields = false;
+            $specificFields = [];
+            
+            // Tech specs (Laptops, Celulares, Tablets, etc.)
+            if (!empty($asset['processor']) || !empty($asset['ram']) || !empty($asset['storage']) || !empty($asset['operating_system'])) {
+                $hasSpecificFields = true;
+                if (!empty($asset['processor'])) $specificFields['Procesador'] = $asset['processor'];
+                if (!empty($asset['ram'])) $specificFields['RAM'] = $asset['ram'];
+                if (!empty($asset['storage'])) $specificFields['Almacenamiento'] = $asset['storage'];
+                if (!empty($asset['operating_system'])) $specificFields['Sistema Operativo'] = $asset['operating_system'];
+            }
+            
+            // Vehicle specs
+            if (!empty($asset['license_plate']) || !empty($asset['vin']) || !empty($asset['vehicle_year']) || !empty($asset['mileage'])) {
+                $hasSpecificFields = true;
+                if (!empty($asset['license_plate'])) $specificFields['Placas'] = $asset['license_plate'];
+                if (!empty($asset['vin'])) $specificFields['VIN'] = $asset['vin'];
+                if (!empty($asset['vehicle_year'])) $specificFields['Año'] = $asset['vehicle_year'];
+                if (!empty($asset['mileage']) && $asset['mileage'] > 0) $specificFields['Kilometraje'] = number_format($asset['mileage']) . ' km';
+            }
+            
+            // Uniform/Clothing specs
+            if (!empty($asset['size']) || !empty($asset['gender_cut']) || !empty($asset['color']) || !empty($asset['material'])) {
+                $hasSpecificFields = true;
+                if (!empty($asset['size'])) $specificFields['Talla'] = $asset['size'];
+                if (!empty($asset['gender_cut'])) $specificFields['Corte/Género'] = $asset['gender_cut'];
+                if (!empty($asset['color'])) $specificFields['Color'] = $asset['color'];
+                if (!empty($asset['material'])) $specificFields['Material'] = $asset['material'];
+            }
+            
+            // Furniture/general dimensions
+            if (!empty($asset['dimensions'])) {
+                $hasSpecificFields = true;
+                $specificFields['Dimensiones'] = $asset['dimensions'];
+            }
+            
+            // Stock/Quantity info
+            if (!empty($asset['quantity']) && $asset['quantity'] > 1) {
+                $hasSpecificFields = true;
+                $specificFields['Cantidad'] = $asset['quantity'];
+                if (!empty($asset['batch_number'])) $specificFields['Lote/Batch'] = $asset['batch_number'];
+                if (!empty($asset['min_stock'])) $specificFields['Stock Mínimo'] = $asset['min_stock'];
+            }
+            
+            if ($hasSpecificFields): ?>
+            <div class="mb-6 pb-6 border-b border-gray-100">
                 <h4 class="text-xs font-bold text-gray-400 uppercase mb-3 flex items-center">
-                    <i class="fas fa-file-invoice-dollar mr-2"></i> Información Administrativa
+                    <i class="fas fa-cogs mr-2"></i> Especificaciones Técnicas
                 </h4>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <?php foreach ($specificFields as $label => $value): ?>
                     <div>
-                        <span class="block text-xs text-gray-500 mb-1">Tipo Adquisición</span>
-                        <span class="font-bold text-gray-800 text-sm"><?= htmlspecialchars($asset['acquisition_type'] ?? 'Compra') ?></span>
+                        <span class="block text-xs text-gray-500 mb-1"><?= htmlspecialchars($label) ?></span>
+                        <span class="font-bold text-gray-800 text-sm"><?= htmlspecialchars($value) ?></span>
                     </div>
-                    <div>
-                        <span class="block text-xs text-gray-500 mb-1">Centro de Costos</span>
-                        <span class="font-bold text-gray-800 text-sm"><?= htmlspecialchars($asset['cost_center'] ?? 'No asignado') ?></span>
-                    </div>
-                    <?php if ($asset['acquisition_type'] == 'Arrendamiento'): ?>
-                    <div class="col-span-2">
-                        <span class="block text-xs text-gray-500 mb-1">Empresa Arrendadora</span>
-                        <span class="font-bold text-purple-700 text-sm"><i class="fas fa-building mr-1"></i> <?= htmlspecialchars($asset['leasing_company'] ?? 'No especificada') ?></span>
-                    </div>
-                    <?php endif; ?>
-                    <div>
-                        <span class="block text-xs text-gray-500 mb-1">Fecha Adquisición</span>
-                        <span class="font-mono text-gray-800 text-sm"><?= htmlspecialchars($asset['purchase_date'] ?? '') ?></span>
-                    </div>
-                    <div>
-                        <span class="block text-xs text-gray-500 mb-1">Costo Original</span>
-                        <span class="font-mono text-gray-800 text-sm">$<?= number_format($asset['purchase_cost'], 2) ?></span>
-                    </div>
-                    
-                    <!-- Depreciation Warning -->
-                     <?php if ($asset['acquisition_type'] != 'Arrendamiento'): ?>
-                     <div class="col-span-2">
-                        <span class="block text-xs text-gray-500 mb-1">Valor en Libros Actual</span>
-                        <span class="font-bold text-gray-800 text-sm">$<?= number_format($asset['current_value'] ?? 0, 2) ?></span>
-                     </div>
-                     <?php endif; ?>
+                    <?php endforeach; ?>
                 </div>
             </div>
+            <?php endif; ?>
+            
+            <!-- DEVICE CREDENTIALS (if exist) -->
+            <?php if (!empty($asset['device_user']) || !empty($asset['device_password'])): ?>
+            <div class="mb-6 pb-6 border-b border-gray-100">
+                <h4 class="text-xs font-bold text-gray-400 uppercase mb-3 flex items-center">
+                    <i class="fas fa-lock mr-2"></i> Credenciales del Dispositivo
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                    <div>
+                        <span class="block text-xs text-gray-500 mb-1">Usuario</span>
+                        <span class="font-mono text-gray-800 text-sm"><?= htmlspecialchars($asset['device_user'] ?? '-') ?></span>
+                    </div>
+                    <div>
+                        <span class="block text-xs text-gray-500 mb-1">Contraseña</span>
+                        <span class="font-mono text-gray-800 text-sm"><?= !empty($asset['device_password']) ? '••••••••' : '-' ?></span>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+            
+            <!-- DISPOSAL INFO (if asset is disposed) -->
+            <?php if (!empty($asset['disposal_date'])): ?>
+            <div class="mb-6 pb-6 border-b border-gray-100">
+                <h4 class="text-xs font-bold text-gray-400 uppercase mb-3 flex items-center">
+                    <i class="fas fa-ban mr-2 text-red-500"></i> Información de Baja
+                </h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-red-50 p-4 rounded-lg border border-red-200">
+                    <div>
+                        <span class="block text-xs text-gray-500 mb-1">Fecha de Baja</span>
+                        <span class="font-bold text-red-700 text-sm"><?= date('d/m/Y', strtotime($asset['disposal_date'])) ?></span>
+                    </div>
+                    <div>
+                        <span class="block text-xs text-gray-500 mb-1">Motivo</span>
+                        <span class="font-bold text-gray-800 text-sm"><?= htmlspecialchars($asset['disposal_reason'] ?? 'No especificado') ?></span>
+                    </div>
+                    <?php if (!empty($asset['disposal_price']) && $asset['disposal_price'] > 0): ?>
+                    <div>
+                        <span class="block text-xs text-gray-500 mb-1">Precio de Venta</span>
+                        <span class="font-mono text-green-700 text-sm">$<?= number_format($asset['disposal_price'], 2) ?></span>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (!empty($asset['book_value_at_disposal'])): ?>
+                    <div>
+                        <span class="block text-xs text-gray-500 mb-1">Valor en Libros</span>
+                        <span class="font-mono text-gray-700 text-sm">$<?= number_format($asset['book_value_at_disposal'], 2) ?></span>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php endif; ?>
 
-            <?php if (!empty($asset['description'])): ?>
-            <div>
-                <p class="text-sm text-gray-600 italic"><i class="fas fa-sticky-note mr-2 text-gray-400"></i><?= htmlspecialchars($asset['description']) ?></p>
+            <!-- TIMESTAMPS -->
+            <div class="mb-6">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs text-gray-500">
+                    <div>
+                        <span class="block text-gray-400 mb-1">Creado</span>
+                        <span class="font-mono"><?= !empty($asset['created_at']) ? date('d/m/Y H:i', strtotime($asset['created_at'])) : '-' ?></span>
+                    </div>
+                    <?php if (!empty($asset['assigned_at'])): ?>
+                    <div>
+                        <span class="block text-gray-400 mb-1">Asignado el</span>
+                        <span class="font-mono"><?= date('d/m/Y H:i', strtotime($asset['assigned_at'])) ?></span>
+                    </div>
+                    <?php endif; ?>
+                </div>
+    </div>
+
+    <!-- SECTION 2: ESPECIFICACIONES TÉCNICAS -->
+    <?php if ($hasSpecificFields): ?>
+    <div class="mb-8">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
+            <i class="fas fa-cogs mr-2 text-green-500"></i> Especificaciones Técnicas
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <?php foreach ($specificFields as $label => $value): ?>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold"><?= htmlspecialchars($label) ?></span>
+                <span class="font-bold text-gray-900"><?= htmlspecialchars($value) ?></span>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+    
+    <!-- SECTION 3: INFORMACIÓN ADMINISTRATIVA -->
+    <div class="mb-8">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
+            <i class="fas fa-file-invoice-dollar mr-2 text-purple-500"></i> Información Administrativa
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Tipo Adquisición</span>
+                <span class="font-bold text-gray-900"><?= htmlspecialchars($asset['acquisition_type'] ?? 'Compra') ?></span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Centro de Costos</span>
+                <span class="font-bold text-gray-900"><?= htmlspecialchars($asset['cost_center'] ?? 'No asignado') ?></span>
+            </div>
+            <?php if ($asset['acquisition_type'] == 'Arrendamiento' && !empty($asset['leasing_company'])): ?>
+            <div class="bg-purple-50 p-4 rounded-lg border border-purple-200 col-span-2">
+                <span class="block text-xs text-purple-600 mb-1 uppercase font-bold">Empresa Arrendadora</span>
+                <span class="font-bold text-purple-900"><i class="fas fa-building mr-1"></i><?= htmlspecialchars($asset['leasing_company']) ?></span>
+            </div>
+            <?php endif; ?>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Fecha Adquisición</span>
+                <span class="font-mono text-gray-900"><?= htmlspecialchars($asset['purchase_date'] ?? '-') ?></span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Costo Original</span>
+                <span class="font-mono text-gray-900">$<?= number_format($asset['purchase_cost'], 2) ?></span>
+            </div>
+            <?php if ($asset['acquisition_type'] != 'Arrendamiento' && isset($asset['current_value'])): ?>
+            <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
+                <span class="block text-xs text-emerald-600 mb-1 uppercase font-bold">Valor en Libros</span>
+                <span class="font-bold text-emerald-900">$<?= number_format($asset['current_value'] ?? 0, 2) ?></span>
             </div>
             <?php endif; ?>
         </div>
     </div>
+    
+    <!-- SECTION 4: CREDENCIALES DEL DISPOSITIVO -->
+    <?php if (!empty($asset['device_user']) || !empty($asset['device_password'])): ?>
+    <div class="mb-8">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
+            <i class="fas fa-lock mr-2 text-amber-500"></i> Credenciales del Dispositivo
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Usuario</span>
+                <span class="font-mono text-gray-900"><?= htmlspecialchars($asset['device_user'] ?? '-') ?></span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Contraseña</span>
+                <span class="font-mono text-gray-900"><?= !empty($asset['device_password']) ? '••••••••' : '-' ?></span>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+    
+    <!-- SECTION 5: INFORMACIÓN DE BAJA -->
+    <?php if (!empty($asset['disposal_date'])): ?>
+    <div class="mb-8">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
+            <i class="fas fa-ban mr-2 text-red-500"></i> Información de Baja
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                <span class="block text-xs text-red-600 mb-1 uppercase font-bold">Fecha de Baja</span>
+                <span class="font-bold text-red-900"><?= date('d/m/Y', strtotime($asset['disposal_date'])) ?></span>
+            </div>
+            <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                <span class="block text-xs text-red-600 mb-1 uppercase font-bold">Motivo</span>
+                <span class="font-bold text-red-900"><?= htmlspecialchars($asset['disposal_reason'] ?? 'No especificado') ?></span>
+            </div>
+            <?php if (!empty($asset['disposal_price']) && $asset['disposal_price'] > 0): ?>
+            <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                <span class="block text-xs text-green-600 mb-1 uppercase font-bold">Precio de Venta</span>
+                <span class="font-mono font-bold text-green-900">$<?= number_format($asset['disposal_price'], 2) ?></span>
+            </div>
+            <?php endif; ?>
+            <?php if (!empty($asset['book_value_at_disposal'])): ?>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Valor en Libros</span>
+                <span class="font-mono text-gray-900">$<?= number_format($asset['book_value_at_disposal'], 2) ?></span>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- TIMESTAMPS -->
+    <div class="pt-6 border-t border-gray-200">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs text-gray-500">
+            <div>
+                <span class="block text-gray-400 mb-1 uppercase font-bold">Creado</span>
+                <span class="font-mono"><?= !empty($asset['created_at']) ? date('d/m/Y H:i', strtotime($asset['created_at'])) : '-' ?></span>
+            </div>
+            <?php if (!empty($asset['assigned_at'])): ?>
+            <div>
+                <span class="block text-gray-400 mb-1 uppercase font-bold">Asignado el</span>
+                <span class="font-mono"><?= date('d/m/Y H:i', strtotime($asset['assigned_at'])) ?></span>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
 </div>
 
 <!-- ASSIGNMENT / STOCK -->

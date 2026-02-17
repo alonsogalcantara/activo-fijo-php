@@ -3,28 +3,101 @@
 <div class="mb-6"><a href="/users" class="text-gray-500 hover:text-gray-800 transition"><i class="fas fa-arrow-left mr-2"></i> Volver a Usuarios</a></div>
 
 <div class="bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-100">
-    <div class="flex flex-col md:flex-row justify-between items-start gap-4">
-        <!-- User Info -->
-        <div>
-            <div class="flex items-center gap-3 mb-2">
-                <h1 class="text-3xl font-bold text-gray-800"><?= htmlspecialchars($user['name']) ?></h1>
-                <?php 
-                    $statusClass = ($user['status'] == 'Activo') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
-                ?>
-                <span class="px-3 py-1 rounded-full text-xs font-bold <?= $statusClass ?>">
-                    <?= htmlspecialchars($user['status']) ?>
-                </span>
+    
+    <!-- HEADER -->
+    <div class="mb-8 pb-6 border-b border-gray-200">
+        <div class="flex items-center gap-3 mb-3">
+            <h1 class="text-4xl font-bold text-gray-900"><?= htmlspecialchars($user['name']) ?></h1>
+            <?php 
+                $statusClass = ($user['status'] == 'Activo') ? 'bg-green-100 text-green-700 border-green-300' : 'bg-red-100 text-red-700 border-red-300';
+            ?>
+            <span class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase border <?= $statusClass ?>">
+                <?= htmlspecialchars($user['status']) ?>
+            </span>
+        </div>
+        <p class="text-gray-500 text-lg flex items-center gap-2"><i class="fas fa-envelope text-gray-400"></i> <?= htmlspecialchars($user['email']) ?></p>
+    </div>
+
+    <!-- SECTION 1: NOMBRE COMPLETO -->
+    <?php if (!empty($user['first_name']) || !empty($user['last_name'])): ?>
+    <div class="mb-8">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
+            <i class="fas fa-id-card mr-2 text-blue-500"></i> Nombre Completo
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Primer Nombre</span>
+                <span class="font-bold text-gray-900"><?= htmlspecialchars($user['first_name'] ?? '-') ?></span>
             </div>
-            <p class="text-gray-500 text-lg flex items-center gap-2"><i class="fas fa-envelope text-gray-400"></i> <?= htmlspecialchars($user['email']) ?></p>
-            <div class="mt-4 flex flex-wrap gap-6 text-sm text-gray-600">
-                <div><span class="block text-xs uppercase font-bold text-gray-400 mb-1">Departamento</span><?= htmlspecialchars($user['department'] ?? '-') ?></div>
-                <div><span class="block text-xs uppercase font-bold text-gray-400 mb-1">Empresa</span><?= htmlspecialchars($user['company'] ?? '-') ?></div>
-                <div><span class="block text-xs uppercase font-bold text-gray-400 mb-1">Teléfono</span><?= htmlspecialchars($user['phone'] ?? '-') ?></div>
-                <div><span class="block text-xs uppercase font-bold text-gray-400 mb-1">Fecha Ingreso</span>
-                <?= !empty($user['entry_date']) ? date('d/m/Y', strtotime($user['entry_date'])) : '-' ?>
-                </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Segundo Nombre</span>
+                <span class="font-bold text-gray-900"><?= htmlspecialchars($user['middle_name'] ?? '-') ?></span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Apellido Pat.</span>
+                <span class="font-bold text-gray-900"><?= htmlspecialchars($user['last_name'] ?? '-') ?></span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Apellido Mat.</span>
+                <span class="font-bold text-gray-900"><?= htmlspecialchars($user['second_last_name'] ?? '-') ?></span>
             </div>
         </div>
+    </div>
+    <?php endif; ?>
+    
+    <!-- SECTION 2: INFORMACIÓN LABORAL -->
+    <div class="mb-8">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
+            <i class="fas fa-briefcase mr-2 text-purple-500"></i> Información Laboral
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Empresa</span>
+                <span class="font-bold text-gray-900"><?= htmlspecialchars($user['company'] ?? '-') ?></span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Departamento</span>
+                <span class="font-bold text-gray-900"><?= htmlspecialchars($user['department'] ?? '-') ?></span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Rol/Puesto</span>
+                <span class="font-bold text-gray-900"><?= htmlspecialchars($user['role'] ?? '-') ?></span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Fecha Ingreso</span>
+                <span class="font-mono text-gray-900"><?= !empty($user['entry_date']) ? date('d/m/Y', strtotime($user['entry_date'])) : '-' ?></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- SECTION 3: CONTACTO Y PERSONAL -->
+    <div class="mb-8">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
+            <i class="fas fa-user mr-2 text-green-500"></i> Contacto y Datos Personales
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Teléfono</span>
+                <span class="font-bold text-gray-900"><?= htmlspecialchars($user['phone'] ?? '-') ?></span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Género</span>
+                <span class="font-bold text-gray-900"><?= htmlspecialchars($user['gender'] ?? '-') ?></span>
+            </div>
+            <?php if (!empty($user['system_role'])): ?>
+            <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <span class="block text-xs text-purple-600 mb-1 uppercase font-bold">Rol del Sistema</span>
+                <span class="px-2 py-0.5 rounded bg-purple-100 text-purple-700 text-sm font-bold"><?= htmlspecialchars($user['system_role']) ?></span>
+            </div>
+            <?php endif; ?>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Creado</span>
+                <span class="font-mono text-gray-900"><?= !empty($user['created_at']) ? date('d/m/Y H:i', strtotime($user['created_at'])) : '-' ?></span>
+            </div>
+        </div>
+    </div>
+
+</div>
 
         <!-- Action Buttons -->
         <div class="flex flex-col gap-2 w-full md:w-auto">
