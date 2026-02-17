@@ -121,7 +121,7 @@ class UsersController {
 
              $userModel = new User();
              if ($userModel->update($id, $data)) {
-                 header('Location: /users');
+                 header('Location: /users/detail/' . $id);
              } else {
                  $error = "Failed to update user";
                  $user = $userModel->getUserById($id);

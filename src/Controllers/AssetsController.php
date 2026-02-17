@@ -132,7 +132,7 @@ class AssetsController {
 
              $assetModel = new Asset();
              if ($assetModel->update($id, $data)) {
-                 header('Location: /assets');
+                 header('Location: /assets/detail/' . $id);
              } else {
                  $error = "Failed to update asset";
                  $asset = $assetModel->getById($id); // Reload for view

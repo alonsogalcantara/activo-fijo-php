@@ -112,7 +112,7 @@ class AccountsController {
 
              $accountModel = new Account();
              if ($accountModel->update($id, $data)) {
-                 header('Location: /accounts');
+                 header('Location: /accounts/detail/' . $id);
              } else {
                  $error = "Failed to update account";
                  $account = $accountModel->getById($id);
