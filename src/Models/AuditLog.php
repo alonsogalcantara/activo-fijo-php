@@ -35,7 +35,7 @@ class AuditLog {
 
     public function log($username, $action, $table_name, $record_id, $old_value = null, $new_value = null) {
         $query = 'INSERT INTO ' . $this->table . ' 
-                  (actor_username, action, table_name, record_id, old_value, new_value, timestamp)
+                  (actor_username, action, table_name, record_id, old_value, new_value, created_at)
                   VALUES (:username, :action, :table_name, :record_id, :old_value, :new_value, NOW())';
         
         $stmt = $this->conn->prepare($query);
