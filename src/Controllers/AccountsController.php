@@ -44,6 +44,7 @@ class AccountsController {
                 'provider' => $_POST['provider'] ?? '',
                 'contract_ref' => $_POST['contract_ref'] ?? '',
                 'renewal_date' => $_POST['renewal_date'] ?? null,
+                'birth_date' => $_POST['birth_date'] ?? null,
                 'cost' => $_POST['cost'] ?? 0.00,
                 'currency' => $_POST['currency'] ?? 'MXN',
                 'frequency' => $_POST['frequency'] ?? 'Mensual',
@@ -52,10 +53,14 @@ class AccountsController {
                 'max_licenses' => $_POST['max_licenses'] ?? 1,
                 'observations' => $_POST['observations'] ?? ''
              ];
+
              
-             // Handle date empty string
+             //Handle date empty strings
              if (empty($data['renewal_date'])) {
                  $data['renewal_date'] = null;
+             }
+             if (empty($data['birth_date'])) {
+                 $data['birth_date'] = null;
              }
 
              $accountModel = new Account();
@@ -100,6 +105,7 @@ class AccountsController {
                 'provider' => $_POST['provider'],
                 'contract_ref' => $_POST['contract_ref'],
                 'renewal_date' => $_POST['renewal_date'],
+                'birth_date' => $_POST['birth_date'] ?? null,
                 'cost' => $_POST['cost'],
                 'currency' => $_POST['currency'],
                 'frequency' => $_POST['frequency'],
@@ -109,9 +115,13 @@ class AccountsController {
                 'observations' => $_POST['observations']
              ];
 
-              // Handle date empty string
+
+              // Handle date empty strings
              if (empty($data['renewal_date'])) {
                  $data['renewal_date'] = null;
+             }
+             if (empty($data['birth_date'])) {
+                 $data['birth_date'] = null;
              }
 
              $accountModel = new Account();

@@ -1,6 +1,13 @@
 <?php ob_start(); ?>
 
-<div class="mb-6"><a href="/users" class="text-gray-500 hover:text-gray-800 transition"><i class="fas fa-arrow-left mr-2"></i> Volver a Usuarios</a></div>
+<div class="mb-6">
+    <a href="/users" class="text-gray-500 hover:text-gray-800 font-medium transition flex items-center group">
+        <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center mr-2 group-hover:bg-gray-100 transition">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        Volver a Usuarios
+    </a>
+</div>
 
 <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-100">
     <h2 class="text-3xl font-bold mb-6 text-gray-800"><i class="fas fa-user-edit mr-3 text-blue-500"></i>Editar Usuario: <?= htmlspecialchars($user['name']) ?></h2>

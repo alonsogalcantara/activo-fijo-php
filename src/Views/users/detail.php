@@ -1,6 +1,13 @@
 <?php ob_start(); ?>
 
-<div class="mb-6"><a href="/users" class="text-gray-500 hover:text-gray-800 transition"><i class="fas fa-arrow-left mr-2"></i> Volver a Usuarios</a></div>
+<div class="mb-6">
+    <a href="/users" class="text-gray-500 hover:text-gray-800 font-medium transition flex items-center group">
+        <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center mr-2 group-hover:bg-gray-100 transition">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        Volver a Usuarios
+    </a>
+</div>
 
 <div class="bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-100">
     
@@ -119,67 +126,160 @@
 
 <!-- Assigned Assets List -->
 <h2 class="font-bold text-xl mb-4 text-gray-700 flex items-center"><i class="fas fa-laptop mr-2 text-blue-500"></i> Activos Asignados (<?= count($assigned_assets) ?>)</h2>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-    <?php if (!empty($assigned_assets)): ?>
-    <?php foreach ($assigned_assets as $a): ?>
-    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md hover:border-blue-300 transition relative group">
-        <a href="/assets/detail/<?= $a['id'] ?>" class="block pr-8">
-            <div class="flex items-start justify-between mb-2">
-                <div class="bg-blue-50 text-blue-600 w-10 h-10 rounded flex items-center justify-center text-lg"><i class="fas fa-desktop"></i></div>
-                <span class="text-xs font-mono text-gray-400 bg-gray-50 px-2 py-1 rounded"><?= htmlspecialchars($a['serial_number'] ?? 'S/N') ?></span>
-            </div>
-            <p class="font-bold text-gray-800 group-hover:text-blue-600 transition"><?= htmlspecialchars($a['name']) ?></p>
-            <p class="text-xs text-gray-500 uppercase font-semibold mt-1"><?= htmlspecialchars($a['brand']) ?> <?= htmlspecialchars($a['model']) ?></p>
-        </a>
-
-        <!-- Unassign Button -->
-        <div class="absolute top-4 right-4 z-10">
-            <form action="/assets/unassign/<?= $a['id'] ?>" method="POST" onsubmit="return confirm('¿Estás seguro de DAR DE BAJA este equipo del usuario? El activo pasará a estado Disponible.');">
-                <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
-                <button type="submit" class="text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-full w-8 h-8 flex items-center justify-center transition" title="Dar de Baja / Devolver">
-                    <i class="fas fa-times-circle text-xl"></i>
-                </button>
-            </form>
-        </div>
+<div class="bg-white rounded-xl shadow overflow-hidden mb-8">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="p-4 text-sm font-semibold tracking-wide">Activo</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide">Marca / Modelo</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Serial Number</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Categoría</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Estado</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                <?php if (!empty($assigned_assets)): ?>
+                <?php foreach ($assigned_assets as $a): ?>
+                <tr class="hover:bg-gray-50 transition duration-150">
+                    <td class="p-4">
+                        <div class="font-bold text-gray-800">
+                            <a href="/assets/detail/<?= $a['id'] ?>" class="hover:text-blue-600 transition">
+                                <?= htmlspecialchars($a['name']) ?>
+                            </a>
+                        </div>
+                    </td>
+                    <td class="p-4 text-sm text-gray-700">
+                        <?= htmlspecialchars($a['brand'] ?? '-') ?> <?= htmlspecialchars($a['model'] ?? '') ?>
+                    </td>
+                    <td class="p-4 text-center">
+                        <span class="font-mono text-xs bg-gray-100 px-2 py-1 rounded"><?= htmlspecialchars($a['serial_number'] ?? 'S/N') ?></span>
+                    </td>
+                    <td class="p-4 text-center">
+                        <span class="text-xs font-bold text-blue-700 bg-blue-100 px-2 py-1 rounded"><?= htmlspecialchars($a['category'] ?? '-') ?></span>
+                    </td>
+                    <td class="p-4 text-center">
+                        <?php 
+                            $statusColors = [
+                                'Asignado' => 'bg-blue-100 text-blue-700',
+                                'Disponible' => 'bg-green-100 text-green-700',
+                                'En Mantenimiento' => 'bg-amber-100 text-amber-700',
+                                'De Baja' => 'bg-red-100 text-red-700'
+                            ];
+                            $statusClass = $statusColors[$a['status'] ?? 'Asignado'] ?? 'bg-gray-100 text-gray-700';
+                        ?>
+                        <span class="text-xs font-bold px-2 py-1 rounded <?= $statusClass ?>">
+                            <?= htmlspecialchars($a['status'] ?? 'Asignado') ?>
+                        </span>
+                    </td>
+                    <td class="p-4 text-center">
+                        <div class="flex justify-center gap-2">
+                            <a href="/assets/detail/<?= $a['id'] ?>" class="text-blue-600 hover:bg-blue-50 border border-blue-200 p-2 rounded transition" title="Ver Detalle">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <form action="/assets/unassign/<?= $a['id'] ?>" method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de DAR DE BAJA este equipo del usuario?');">
+                                <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                <button type="submit" class="text-red-600 hover:bg-red-50 border border-red-200 p-2 rounded transition" title="Dar de Baja">
+                                    <i class="fas fa-times-circle"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+                <?php else: ?>
+                <tr>
+                    <td colspan="6" class="p-8 text-center text-gray-400 italic">
+                        Este usuario no tiene activos asignados actualmente.
+                    </td>
+                </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
     </div>
-    <?php endforeach; ?>
-    <?php else: ?>
-    <div class="col-span-full bg-gray-50 p-6 rounded-lg text-center text-gray-400 italic border border-dashed border-gray-300">
-        <p>Este usuario no tiene activos asignados actualmente.</p>
-    </div>
-    <?php endif; ?>
 </div>
 
 <!-- Assigned Accounts List -->
 <h2 class="font-bold text-xl mb-4 mt-8 text-gray-700 flex items-center"><i class="fas fa-key mr-2 text-yellow-500"></i> Cuentas y Accesos (<?= count($assigned_accounts) ?>)</h2>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    <?php if (!empty($assigned_accounts)): ?>
-    <?php foreach ($assigned_accounts as $acc): ?>
-    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 relative group">
-        <div class="absolute top-4 right-4">
-            <a href="/accounts/edit/<?= $acc['id'] ?>" class="text-gray-300 hover:text-blue-500 transition"><i class="fas fa-pen"></i></a>
-        </div>
-        <div class="flex items-center gap-3 mb-3">
-            <div class="w-8 h-8 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600"><i class="fas fa-lock"></i></div>
-            <p class="font-bold text-gray-800"><?= htmlspecialchars($acc['service_name']) ?></p>
-        </div>
-        <div class="space-y-2 text-sm">
-            <div class="flex justify-between border-b border-gray-50 pb-1">
-                <span class="text-gray-400 text-xs">Usuario</span>
-                <span class="text-gray-700 font-medium"><?= htmlspecialchars($acc['username']) ?></span>
-            </div>
-            <div class="flex justify-between items-center pt-1">
-                <span class="text-gray-400 text-xs">Password</span>
-                <code class="bg-gray-100 px-2 py-0.5 rounded text-xs font-mono text-gray-600 select-all cursor-pointer hover:bg-gray-200 transition" title="Clic para copiar" onclick="navigator.clipboard.writeText('<?= htmlspecialchars($acc['password']) ?>'); alert('Contraseña copiada');"><?= htmlspecialchars($acc['password']) ?></code>
-            </div>
-        </div>
+<div class="bg-white rounded-xl shadow overflow-hidden mb-8">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="p-4 text-sm font-semibold tracking-wide">Servicio</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide">Proveedor</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide">Usuario</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide">Contraseña</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Tipo</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Costo</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                <?php if (!empty($assigned_accounts)): ?>
+                <?php foreach ($assigned_accounts as $acc): ?>
+                <tr class="hover:bg-gray-50 transition duration-150">
+                    <td class="p-4">
+                        <div class="font-bold text-gray-800">
+                            <a href="/accounts/detail/<?= $acc['id'] ?>" class="hover:text-blue-600 transition">
+                                <?= htmlspecialchars($acc['service_name']) ?>
+                            </a>
+                        </div>
+                    </td>
+                    <td class="p-4 text-sm text-gray-700">
+                        <?= htmlspecialchars($acc['provider'] ?? '-') ?>
+                    </td>
+                    <td class="p-4">
+                        <span class="font-mono text-xs text-gray-700"><?= htmlspecialchars($acc['username']) ?></span>
+                    </td>
+                    <td class="p-4">
+                        <div class="flex items-center gap-2">
+                            <code class="bg-gray-100 px-2 py-1 rounded text-xs font-mono text-gray-600 select-all cursor-pointer hover:bg-gray-200 transition" 
+                                  title="Clic para copiar" 
+                                  onclick="navigator.clipboard.writeText('<?= htmlspecialchars($acc['password']) ?>'); alert('Contraseña copiada');">
+                                <?= htmlspecialchars($acc['password']) ?>
+                            </code>
+                            <button onclick="navigator.clipboard.writeText('<?= htmlspecialchars($acc['password']) ?>');" 
+                                    class="text-gray-400 hover:text-blue-600 transition" 
+                                    title="Copiar">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td class="p-4 text-center">
+                        <?php if ($acc['account_type'] == 'Individual'): ?>
+                            <span class="text-xs font-bold text-gray-600 bg-gray-200 px-2 py-1 rounded"><i class="fas fa-user"></i> Indiv.</span>
+                        <?php else: ?>
+                            <span class="text-xs font-bold text-purple-600 bg-purple-100 px-2 py-1 rounded"><i class="fas fa-users"></i> <?= $acc['account_type'] ?></span>
+                        <?php endif; ?>
+                    </td>
+                    <td class="p-4 text-center">
+                        <div class="font-bold text-gray-700">$<?= number_format($acc['cost'], 2) ?> <?= htmlspecialchars($acc['currency'] ?? 'MXN') ?></div>
+                        <div class="text-[10px] uppercase text-gray-400"><?= htmlspecialchars($acc['frequency'] ?? '') ?></div>
+                    </td>
+                    <td class="p-4 text-center">
+                        <div class="flex justify-center gap-2">
+                            <a href="/accounts/detail/<?= $acc['id'] ?>" class="text-blue-600 hover:bg-blue-50 border border-blue-200 p-2 rounded transition" title="Ver Detalle">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="/accounts/edit/<?= $acc['id'] ?>" class="text-yellow-600 hover:bg-yellow-50 border border-yellow-200 p-2 rounded transition" title="Editar">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+                <?php else: ?>
+                <tr>
+                    <td colspan="7" class="p-8 text-center text-gray-400 italic">
+                        Este usuario no tiene cuentas asignadas.
+                    </td>
+                </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
     </div>
-    <?php endforeach; ?>
-    <?php else: ?>
-    <div class="col-span-full bg-gray-50 p-6 rounded-lg text-center text-gray-400 italic border border-dashed border-gray-300">
-        <p>Este usuario no tiene cuentas asignadas.</p>
-    </div>
-    <?php endif; ?>
 </div>
 
 <!-- ASSIGNMENT MODAL -->

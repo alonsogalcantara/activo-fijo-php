@@ -105,6 +105,11 @@
                         <label class="block text-sm font-bold text-gray-700 mb-1">Fecha de Renovación</label>
                         <input type="date" id="accRenewal" name="renewal_date" value="<?= htmlspecialchars($account['renewal_date'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
                     </div>
+                    <div class="col-span-1 md:col-span-3">
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Fecha de Nacimiento (si aplica)</label>
+                        <input type="date" id="accBirthDate" name="birth_date" value="<?= htmlspecialchars($account['birth_date'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+                        <p class="text-xs text-gray-500 mt-1">Para cuentas personales que requieren fecha de nacimiento</p>
+                    </div>
                 </div>
             </div>
 
