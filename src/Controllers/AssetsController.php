@@ -87,6 +87,10 @@ class AssetsController {
              $assetModel = new Asset();
              $newId = $assetModel->create($data);
              if ($newId) {
+                 // Log audit
+                 $audit = new \Models\AuditLog();
+                 $audit->log($_SESSION['user_name'] ?? 'System', 'CREATE', 'assets', $newId, null, "Created asset: {$data['name']}");
+                 
                  header('Location: /assets/detail/' . $newId);
              } else {
                  $error = "Failed to create asset";
@@ -132,6 +136,10 @@ class AssetsController {
 
              $assetModel = new Asset();
              if ($assetModel->update($id, $data)) {
+                 // Log audit
+                 $audit = new \Models\AuditLog();
+                 $audit->log($_SESSION['user_name'] ?? 'System', 'UPDATE', 'assets', $id, null, "Updated asset: {$data['name']}");
+                 
                  header('Location: /assets/detail/' . $id);
              } else {
                  $error = "Failed to update asset";
@@ -143,6 +151,14 @@ class AssetsController {
 
     public function delete($id) {
         $assetModel = new Asset();
+        $asset = $assetModel->getById($id);
+        
+        // Log audit before deletion
+        if ($asset) {
+            $audit = new \Models\AuditLog();
+            $audit->log($_SESSION['user_name'] ?? 'System', 'DELETE', 'assets', $id, "Deleted asset: {$asset['name']}", null);
+        }
+        
         $assetModel->delete($id);
         header('Location: /assets');
     }

@@ -76,6 +76,10 @@ class UsersController {
              $userModel = new User();
              $newId = $userModel->create($data);
              if ($newId) {
+                 // Log audit
+                 $audit = new \Models\AuditLog();
+                 $audit->log($_SESSION['user_name'] ?? 'System', 'CREATE', 'users', $newId, null, "Created user: {$data['name']}");
+                 
                  header('Location: /users/detail/' . $newId);
              } else {
                  $error = "Failed to create user";
@@ -121,6 +125,10 @@ class UsersController {
 
              $userModel = new User();
              if ($userModel->update($id, $data)) {
+                 // Log audit
+                 $audit = new \Models\AuditLog();
+                 $audit->log($_SESSION['user_name'] ?? 'System', 'UPDATE', 'users', $id, null, "Updated user: {$data['name']}");
+                 
                  header('Location: /users/detail/' . $id);
              } else {
                  $error = "Failed to update user";
@@ -132,6 +140,14 @@ class UsersController {
 
     public function delete($id) {
         $userModel = new User();
+        $user = $userModel->getUserById($id);
+        
+        // Log audit before deletion
+        if ($user) {
+            $audit = new \Models\AuditLog();
+            $audit->log($_SESSION['user_name'] ?? 'System', 'DELETE', 'users', $id, "Deleted user: {$user['name']}", null);
+        }
+        
         $userModel->delete($id);
         header('Location: /users');
     }

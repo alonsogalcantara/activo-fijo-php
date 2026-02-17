@@ -61,6 +61,10 @@ class AccountsController {
              $accountModel = new Account();
              $newId = $accountModel->create($data);
              if ($newId) {
+                 // Log audit
+                 $audit = new \Models\AuditLog();
+                 $audit->log($_SESSION['user_name'] ?? 'System', 'CREATE', 'accounts', $newId, null, "Created account: {$data['service_name']}");
+                 
                  header('Location: /accounts/detail/' . $newId);
              } else {
                  $error = "Failed to create account";
@@ -112,6 +116,10 @@ class AccountsController {
 
              $accountModel = new Account();
              if ($accountModel->update($id, $data)) {
+                 // Log audit
+                 $audit = new \Models\AuditLog();
+                 $audit->log($_SESSION['user_name'] ?? 'System', 'UPDATE', 'accounts', $id, null, "Updated account: {$data['service_name']}");
+                 
                  header('Location: /accounts/detail/' . $id);
              } else {
                  $error = "Failed to update account";
@@ -125,6 +133,14 @@ class AccountsController {
 
     public function delete($id) {
         $accountModel = new Account();
+        $account = $accountModel->getById($id);
+        
+        // Log audit before deletion
+        if ($account) {
+            $audit = new \Models\AuditLog();
+            $audit->log($_SESSION['user_name'] ?? 'System', 'DELETE', 'accounts', $id, "Deleted account: {$account['service_name']}", null);
+        }
+        
         $accountModel->delete($id);
         header('Location: /accounts');
     }
