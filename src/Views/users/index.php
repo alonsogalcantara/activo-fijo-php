@@ -33,17 +33,18 @@
 </div>
 
 <div class="bg-white rounded-xl shadow overflow-hidden">
-    <table class="w-full text-left" id="usersTable">
-        <thead class="bg-gray-50 border-b">
-            <tr>
-                <th class="p-4 font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition" onclick="sortTable('usersTable', 0, 'date')">Fecha Registro</th>
-                <th class="p-4 font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition" onclick="sortTable('usersTable', 1)">Nombre / Contacto</th>
-                <th class="p-4 font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition" onclick="sortTable('usersTable', 2)">Organización</th>
-                <th class="p-4 font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition" onclick="sortTable('usersTable', 3)">Rol</th>
-                <th class="p-4 font-semibold text-gray-600 cursor-pointer hover:bg-gray-100 transition" onclick="sortTable('usersTable', 4)">Estado</th>
-                <th class="p-4 font-semibold text-gray-600 text-center">Acciones</th>
-            </tr>
-        </thead>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse" id="usersTable">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('usersTable', 0, 'date')">Fecha Registro</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('usersTable', 1)">Nombre / Contacto</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('usersTable', 2)">Organización</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('usersTable', 3)">Rol</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('usersTable', 4)">Estado</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Acciones</th>
+                </tr>
+            </thead>
         <tbody class="divide-y divide-gray-100">
             <?php if (!empty($users)): ?>
             <?php foreach ($users as $u): ?>
@@ -110,6 +111,7 @@
             <?php endif; ?>
         </tbody>
     </table>
+    </div>
 </div>
 
 <script src="/js/table-sort.js"></script>
