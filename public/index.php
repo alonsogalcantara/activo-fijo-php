@@ -169,6 +169,8 @@ if ($uri[0] === 'accounts') {
              $controller->update($uri[2]);
         } elseif ($uri[1] === 'delete' && isset($uri[2])) {
              $controller->delete($uri[2]);
+        } elseif ($uri[1] === 'detail' && isset($uri[2])) {
+             $controller->show($uri[2]);
         } else {
              $controller->index();
         }
