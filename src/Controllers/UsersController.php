@@ -58,13 +58,19 @@ class UsersController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              $data = [
                 'name' => $_POST['name'],
-                'email' => $_POST['email'],
-                'password' => $_POST['password'],
-                'role' => $_POST['role'],
-                'status' => $_POST['status'] ?? 'Activo',
                 'first_name' => $_POST['first_name'] ?? '',
+                'middle_name' => $_POST['middle_name'] ?? '',
                 'last_name' => $_POST['last_name'] ?? '',
-                // Add other fields as necessary per schema
+                'second_last_name' => $_POST['second_last_name'] ?? '',
+                'email' => $_POST['email'],
+                'phone' => $_POST['phone'] ?? '',
+                'company' => $_POST['company'] ?? '',
+                'department' => $_POST['department'] ?? '',
+                'role' => $_POST['role'] ?? '',
+                'entry_date' => !empty($_POST['entry_date']) ? $_POST['entry_date'] : null,
+                'gender' => $_POST['gender'] ?? '',
+                'password' => $_POST['password'],
+                'status' => $_POST['status'] ?? 'Activo',
              ];
 
              $userModel = new User();
@@ -94,11 +100,18 @@ class UsersController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              $data = [
                 'name' => $_POST['name'],
-                'email' => $_POST['email'],
-                'role' => $_POST['role'],
-                'status' => $_POST['status'],
                 'first_name' => $_POST['first_name'] ?? '',
+                'middle_name' => $_POST['middle_name'] ?? '',
                 'last_name' => $_POST['last_name'] ?? '',
+                'second_last_name' => $_POST['second_last_name'] ?? '',
+                'email' => $_POST['email'],
+                'phone' => $_POST['phone'] ?? '',
+                'company' => $_POST['company'] ?? '',
+                'department' => $_POST['department'] ?? '',
+                'role' => $_POST['role'] ?? '',
+                'entry_date' => !empty($_POST['entry_date']) ? $_POST['entry_date'] : null,
+                'gender' => $_POST['gender'] ?? '',
+                'status' => $_POST['status'],
              ];
              
              // Handle Password only if provided
@@ -153,12 +166,19 @@ class UsersController {
                 // We keep their current job title 'role', but update 'system_role'
                 $data = [
                     'name' => $user['name'],
+                    'first_name' => $user['first_name'] ?? '',
+                    'middle_name' => $user['middle_name'] ?? '',
+                    'last_name' => $user['last_name'] ?? '',
+                    'second_last_name' => $user['second_last_name'] ?? '',
                     'email' => $user['email'],
-                    'role' => $user['role'], // Keep existing job title
+                    'phone' => $user['phone'] ?? '',
+                    'company' => $user['company'] ?? '',
+                    'department' => $user['department'] ?? '',
+                    'role' => $user['role'] ?? '', // Keep existing job title
+                    'entry_date' => $user['entry_date'] ?? null,
+                    'gender' => $user['gender'] ?? '',
                     'system_role' => $role,  // Update system permission
                     'status' => $user['status'],
-                    'first_name' => $user['first_name'],
-                    'last_name' => $user['last_name'],
                     'password' => $password
                 ];
 
@@ -181,12 +201,19 @@ class UsersController {
         if ($user) {
             $data = [
                 'name' => $user['name'],
+                'first_name' => $user['first_name'] ?? '',
+                'middle_name' => $user['middle_name'] ?? '',
+                'last_name' => $user['last_name'] ?? '',
+                'second_last_name' => $user['second_last_name'] ?? '',
                 'email' => $user['email'],
-                'role' => $user['role'], // Keep job title
+                'phone' => $user['phone'] ?? '',
+                'company' => $user['company'] ?? '',
+                'department' => $user['department'] ?? '',
+                'role' => $user['role'] ?? '', // Keep job title
+                'entry_date' => $user['entry_date'] ?? null,
+                'gender' => $user['gender'] ?? '',
                 'system_role' => null,   // Revoke system access
-                'status' => $user['status'],
-                'first_name' => $user['first_name'],
-                'last_name' => $user['last_name']
+                'status' => $user['status']
                 // no password update, keeps old hash or could clear it if desired
             ];
             

@@ -68,18 +68,28 @@ class User {
     }
 
     public function create($data) {
-        $query = 'INSERT INTO ' . $this->table . ' (name, email, password_hash, role, status, first_name, last_name) VALUES (:name, :email, :password_hash, :role, :status, :first_name, :last_name)';
+        $query = 'INSERT INTO ' . $this->table . ' 
+            (name, first_name, middle_name, last_name, second_last_name, email, phone, company, department, role, entry_date, gender, password_hash, status) 
+            VALUES 
+            (:name, :first_name, :middle_name, :last_name, :second_last_name, :email, :phone, :company, :department, :role, :entry_date, :gender, :password_hash, :status)';
         $stmt = $this->conn->prepare($query);
         
         $password_hash = password_hash($data['password'], PASSWORD_DEFAULT);
         
         $stmt->bindParam(':name', $data['name']);
-        $stmt->bindParam(':email', $data['email']);
-        $stmt->bindParam(':password_hash', $password_hash);
-        $stmt->bindParam(':role', $data['role']);
-        $stmt->bindParam(':status', $data['status']);
         $stmt->bindParam(':first_name', $data['first_name']);
+        $stmt->bindParam(':middle_name', $data['middle_name']);
         $stmt->bindParam(':last_name', $data['last_name']);
+        $stmt->bindParam(':second_last_name', $data['second_last_name']);
+        $stmt->bindParam(':email', $data['email']);
+        $stmt->bindParam(':phone', $data['phone']);
+        $stmt->bindParam(':company', $data['company']);
+        $stmt->bindParam(':department', $data['department']);
+        $stmt->bindParam(':role', $data['role']);
+        $stmt->bindParam(':entry_date', $data['entry_date']);
+        $stmt->bindParam(':gender', $data['gender']);
+        $stmt->bindParam(':password_hash', $password_hash);
+        $stmt->bindParam(':status', $data['status']);
 
         if ($stmt->execute()) {
             return $this->conn->lastInsertId();
@@ -88,7 +98,20 @@ class User {
     }
 
     public function update($id, $data) {
-        $query = 'UPDATE ' . $this->table . ' SET name = :name, email = :email, role = :role, status = :status, first_name = :first_name, last_name = :last_name';
+        $query = 'UPDATE ' . $this->table . ' SET 
+            name = :name, 
+            first_name = :first_name, 
+            middle_name = :middle_name, 
+            last_name = :last_name, 
+            second_last_name = :second_last_name, 
+            email = :email, 
+            phone = :phone, 
+            company = :company, 
+            department = :department, 
+            role = :role, 
+            entry_date = :entry_date, 
+            gender = :gender, 
+            status = :status';
         
         if (isset($data['password'])) {
             $query .= ', password_hash = :password_hash';
@@ -105,11 +128,18 @@ class User {
         
         $stmt->bindParam(':id', $id);
         $stmt->bindParam(':name', $data['name']);
-        $stmt->bindParam(':email', $data['email']);
-        $stmt->bindParam(':role', $data['role']);
-        $stmt->bindParam(':status', $data['status']);
         $stmt->bindParam(':first_name', $data['first_name']);
+        $stmt->bindParam(':middle_name', $data['middle_name']);
         $stmt->bindParam(':last_name', $data['last_name']);
+        $stmt->bindParam(':second_last_name', $data['second_last_name']);
+        $stmt->bindParam(':email', $data['email']);
+        $stmt->bindParam(':phone', $data['phone']);
+        $stmt->bindParam(':company', $data['company']);
+        $stmt->bindParam(':department', $data['department']);
+        $stmt->bindParam(':role', $data['role']);
+        $stmt->bindParam(':entry_date', $data['entry_date']);
+        $stmt->bindParam(':gender', $data['gender']);
+        $stmt->bindParam(':status', $data['status']);
         
         if (isset($data['password'])) {
             $password_hash = password_hash($data['password'], PASSWORD_DEFAULT);
