@@ -6,6 +6,8 @@ require_once __DIR__ . '/../Models/User.php'; // For assigned_to dropdown
 
 use Models\Asset;
 use Models\User;
+use Models\Document;
+use Models\Incident;
 
 class AssetsController {
     
@@ -38,8 +40,11 @@ class AssetsController {
         $available_users = $userModel->getAll(); // In real app, filter by Active status
 
         // Mock incidents/documents
-        $asset['incidents'] = [];
-        $asset['documents'] = [];
+        $incidentModel = new \Models\Incident();
+        $asset['incidents'] = $incidentModel->getByAssetId($id);
+
+        $documentModel = new \Models\Document();
+        $asset['documents'] = $documentModel->getByEntity('asset', $id);
 
         // If assigned, get User Name. 
         // The view expects $asset['assigned_to_name']. 

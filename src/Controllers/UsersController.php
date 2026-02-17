@@ -10,6 +10,7 @@ require_once __DIR__ . '/../Models/Account.php';
 use Models\User;
 use Models\Asset;
 use Models\Account;
+use Models\Document;
 
 class UsersController {
     
@@ -46,6 +47,10 @@ class UsersController {
         $available_assets = array_filter($all_assets, function($a) {
             return $a['status'] === 'Disponible';
         });
+
+        // Fetch related documents
+        $documentModel = new \Models\Document();
+        $user['documents'] = $documentModel->getByEntity('user', $id);
 
         require_once __DIR__ . '/../Views/users/detail.php';
     }

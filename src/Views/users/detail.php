@@ -332,6 +332,14 @@
     </div>
 </div>
 
+<!-- DOCUMENTS PARTIAL -->
+<?php 
+$documents = $user['documents'] ?? [];
+$entityType = 'user';
+$entityId = $user['id'];
+include __DIR__ . '/../partials/documents_list.php'; 
+?>
+
 <script>
     function openAssignModal() {
         document.getElementById('assignModal').classList.remove('hidden');

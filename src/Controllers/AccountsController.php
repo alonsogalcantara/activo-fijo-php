@@ -6,6 +6,7 @@ require_once __DIR__ . '/../Models/User.php';
 
 use Models\Account;
 use Models\User;
+use Models\Document;
 
 class AccountsController {
     

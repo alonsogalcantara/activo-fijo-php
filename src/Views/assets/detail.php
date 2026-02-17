@@ -417,24 +417,13 @@
         <?php endif; ?>
     </div>
 
-    <!-- DOCUMENTS (Placeholder) -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
-        <h3 class="font-bold text-gray-800 mb-4 flex items-center"><i class="fas fa-folder-open text-yellow-500 mr-2"></i> Archivos Adjuntos</h3>
-        <div class="text-center py-8 text-gray-400 border-2 border-dashed border-gray-100 rounded-lg">
-            <i class="fas fa-cloud-upload-alt text-3xl mb-2 opacity-50"></i>
-            <p class="text-xs">No hay documentos adjuntos.</p>
-        </div>
-        
-        <!-- Upload Form Placeholder -->
-        <div class="mt-4 pt-4 border-t border-gray-100">
-            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Subir Nuevo Documento</label>
-            <div class="flex gap-2">
-                <input type="file" disabled class="block w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-50 file:text-gray-400 hover:file:bg-gray-100" />
-                <button disabled class="bg-gray-100 text-gray-400 px-3 py-1 rounded text-sm"><i class="fas fa-upload"></i></button>
-            </div>
-            <p class="text-[10px] text-gray-400 mt-1">* Funcionalidad de documentos pendiente de backend</p>
-        </div>
-    </div>
+    <!-- DOCUMENTS PARTIAL -->
+    <?php 
+    $documents = $asset['documents'] ?? [];
+    $entityType = 'asset';
+    $entityId = $asset['id'];
+    include __DIR__ . '/../partials/documents_list.php'; 
+    ?>
 </div>
 
 <!-- INCIDENTS (Placeholder) -->

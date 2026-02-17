@@ -203,6 +203,14 @@
     <?php endif; ?>
 </div>
 
+<!-- DOCUMENTS PARTIAL -->
+<?php 
+$documents = $account['documents'] ?? [];
+$entityType = 'account';
+$entityId = $account['id'];
+include __DIR__ . '/../partials/documents_list.php'; 
+?>
+
 <!-- DANGER ZONE -->
 <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-red-500 mb-8">
     <h3 class="font-bold text-gray-800 mb-4 flex items-center">
