@@ -9,12 +9,17 @@ $current_sort = $_GET['sort_by'] ?? 'id';
 $current_order = $_GET['order'] ?? 'desc';
 ?>
 
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-    <div>
-        <h1 class="text-3xl font-bold text-gray-800">Contabilidad y Depreciación</h1>
-        <p class="text-gray-500 text-sm">Edición en lote y ordenamiento. <span class="text-blue-600 font-bold">
-            <?= 'Página ' . $pagination['page'] . ' de ' . $pagination['total_pages'] ?>
-        </span></p>
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 mt-6">
+    <div class="flex items-center">
+        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl mr-4 shadow-sm border border-blue-200">
+            <i class="fas fa-calculator"></i>
+        </div>
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Contabilidad y Depreciación</h1>
+            <p class="text-gray-500 text-sm mt-1">Edición en lote y ordenamiento. <span class="text-blue-600 font-bold">
+                <?= 'Página ' . $pagination['page'] . ' de ' . $pagination['total_pages'] ?>
+            </span></p>
+        </div>
     </div>
 
     <div class="flex flex-wrap items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-gray-100">
@@ -133,38 +138,51 @@ $current_order = $_GET['order'] ?? 'desc';
 </div>
 
 <!-- FILTROS -->
-<div class="bg-white p-3 rounded-xl shadow-sm mb-6 border border-gray-100 flex flex-col md:flex-row gap-3 items-center">
-    <div class="relative flex-1 w-full">
-        <i class="fas fa-search absolute left-4 top-3 text-gray-400"></i>
-        <input type="text" id="accountingSearch" placeholder="Buscar en esta página..."
-            class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition text-sm"
-            onkeyup="filterVisualRows()">
+<div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6 mt-8">
+    <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+        
+        <!-- Search -->
+        <div class="relative w-full md:w-96 flex-shrink-0">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400"></i>
+            </div>
+            <input type="text" id="accountingSearch" placeholder="Buscar en esta página..."
+                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition text-sm"
+                onkeyup="filterVisualRows()">
+        </div>
+        
+        <!-- Filter Dropdown -->
+        <div class="relative w-full md:w-48 flex-shrink-0">
+            <select id="filterCategory" onchange="applyServerFilters()"
+                class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm cursor-pointer transition">
+                <option value="">Todas las Categorías</option>
+                <option value="Computadora">Computadora</option>
+                <option value="Vehículo">Vehículo</option>
+                <option value="Mobiliario">Mobiliario</option>
+                <option value="Servidor">Servidor</option>
+                <option value="Otro">Otro</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                <i class="fas fa-chevron-down text-xs"></i>
+            </div>
+        </div>
+        
     </div>
-    <select id="filterCategory" onchange="applyServerFilters()"
-        class="w-full md:w-48 p-2 border border-gray-200 rounded-lg bg-gray-50 text-sm focus:ring-2 focus:ring-blue-500 cursor-pointer">
-        <option value="">Todas las Categorías</option>
-        <option value="Computadora">Computadora</option>
-        <option value="Vehículo">Vehículo</option>
-        <option value="Mobiliario">Mobiliario</option>
-        <option value="Servidor">Servidor</option>
-        <option value="Otro">Otro</option>
-    </select>
 </div>
 
-<!-- TABLA PRINCIPAL CON HEADERS ORDENABLES -->
-<div class="bg-white rounded-xl shadow overflow-hidden w-full border border-gray-200 flex flex-col mb-20">
+<div class="bg-white rounded-xl shadow-md overflow-hidden w-full border border-gray-200 flex flex-col mb-20">
     <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
             <thead
-                class="bg-gray-50 text-gray-500 uppercase text-[10px] font-bold tracking-wider border-b border-gray-200">
+                class="bg-gray-800 text-white uppercase text-[10px] font-bold tracking-wider">
                 <tr>
                     <!-- ACTIVO (NAME) -->
-                    <th class="p-3 w-1/4 cursor-pointer hover:bg-gray-100 transition select-none group"
+                    <th class="p-3 w-1/4 cursor-pointer hover:bg-gray-700 transition select-none group border-b border-gray-700"
                         onclick="toggleSort('name')">
                         Activo / Descripción
-                        <span class="ml-1 text-gray-300 group-hover:text-gray-400">
+                        <span class="ml-1 text-gray-400 group-hover:text-white transition">
                             <?php if ($current_sort == 'name'): ?>
-                            <i class="fas fa-sort-<?= $current_order == 'asc' ? 'alpha-down' : 'alpha-up' ?> text-blue-500"></i>
+                            <i class="fas fa-sort-<?= $current_order == 'asc' ? 'alpha-down' : 'alpha-up' ?> text-blue-400"></i>
                             <?php else: ?>
                             <i class="fas fa-sort"></i>
                             <?php endif; ?>
@@ -172,12 +190,12 @@ $current_order = $_GET['order'] ?? 'desc';
                     </th>
 
                     <!-- FECHA (DATE) -->
-                    <th class="p-3 text-left w-32 cursor-pointer hover:bg-gray-100 transition select-none group"
+                    <th class="p-3 text-left w-32 cursor-pointer hover:bg-gray-700 transition select-none group border-b border-gray-700"
                         onclick="toggleSort('date')">
                         F. Adquisición
-                        <span class="ml-1 text-gray-300 group-hover:text-gray-400">
+                        <span class="ml-1 text-gray-400 group-hover:text-white transition">
                             <?php if ($current_sort == 'date'): ?>
-                            <i class="fas fa-sort-<?= $current_order == 'asc' ? 'numeric-down' : 'numeric-up' ?> text-blue-500"></i>
+                            <i class="fas fa-sort-<?= $current_order == 'asc' ? 'numeric-down' : 'numeric-up' ?> text-blue-400"></i>
                             <?php else: ?>
                             <i class="fas fa-sort"></i>
                             <?php endif; ?>
@@ -185,30 +203,30 @@ $current_order = $_GET['order'] ?? 'desc';
                     </th>
 
                     <!-- COSTO (COST) -->
-                    <th class="p-3 text-right cursor-pointer hover:bg-gray-100 transition select-none group"
+                    <th class="p-3 text-right cursor-pointer hover:bg-gray-700 transition select-none group border-b border-gray-700"
                         onclick="toggleSort('cost')">
                         Costo (MOI)
-                        <span class="ml-1 text-gray-300 group-hover:text-gray-400">
+                        <span class="ml-1 text-gray-400 group-hover:text-white transition">
                              <?php if ($current_sort == 'cost'): ?>
-                            <i class="fas fa-sort-<?= $current_order == 'asc' ? 'amount-down' : 'amount-up' ?> text-blue-500"></i>
+                            <i class="fas fa-sort-<?= $current_order == 'asc' ? 'amount-down' : 'amount-up' ?> text-blue-400"></i>
                             <?php else: ?>
                             <i class="fas fa-sort"></i>
                             <?php endif; ?>
                         </span>
                     </th>
 
-                    <th class="p-3 text-center">Vida Útil</th>
-                    <th class="p-3 text-right w-32">Depr. Acum ($)</th>
-                    <th class="p-3 text-center w-24">% Depr.</th>
-                    <th class="p-3 text-right">Valor Libros</th>
+                    <th class="p-3 text-center border-b border-gray-700">Vida Útil</th>
+                    <th class="p-3 text-right w-32 border-b border-gray-700">Depr. Acum ($)</th>
+                    <th class="p-3 text-center w-24 border-b border-gray-700">% Depr.</th>
+                    <th class="p-3 text-right border-b border-gray-700">Valor Libros</th>
 
                     <!-- ESTATUS -->
-                    <th class="p-3 text-center cursor-pointer hover:bg-gray-100 transition select-none group"
+                    <th class="p-3 text-center cursor-pointer hover:bg-gray-700 transition select-none group border-b border-gray-700"
                         onclick="toggleSort('status')">
                         Estatus
-                        <span class="ml-1 text-gray-300 group-hover:text-gray-400">
+                        <span class="ml-1 text-gray-400 group-hover:text-white transition">
                              <?php if ($current_sort == 'status'): ?>
-                            <i class="fas fa-sort-<?= $current_order == 'asc' ? 'alpha-down' : 'alpha-up' ?> text-blue-500"></i>
+                            <i class="fas fa-sort-<?= $current_order == 'asc' ? 'alpha-down' : 'alpha-up' ?> text-blue-400"></i>
                             <?php else: ?>
                             <i class="fas fa-sort"></i>
                             <?php endif; ?>

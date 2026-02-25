@@ -1,24 +1,31 @@
 <?php ob_start(); ?>
 
-<h1 class="text-3xl font-bold text-gray-800 mb-6">Registro de Auditoría</h1>
-
+<div class="flex items-center mb-6">
+    <div class="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center text-xl mr-4 shadow-sm border border-red-200">
+        <i class="fas fa-shield-alt"></i>
+    </div>
+    <div>
+        <h1 class="text-3xl font-bold text-gray-800">Registro de Auditoría</h1>
+        <p class="text-gray-500 text-sm mt-1">Historial de acciones y cambios en el sistema.</p>
+    </div>
+</div>
 <?php if (isset($error)): ?>
     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
         <?= htmlspecialchars($error) ?>
     </div>
 <?php endif; ?>
 
-<div class="bg-white rounded-xl shadow overflow-hidden">
+<div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden mb-8">
     <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm">
-            <thead class="bg-gray-800 text-white">
+        <table class="w-full text-left text-sm border-collapse">
+            <thead class="bg-gray-800 text-white uppercase text-[10px] font-bold tracking-wider">
                 <tr>
-                    <th class="p-3">Fecha</th>
-                    <th class="p-3">Usuario</th>
-                    <th class="p-3">Acción</th>
-                    <th class="p-3">Tabla</th>
-                    <th class="p-3">ID Reg.</th>
-                    <th class="p-3">Detalle (Cambios)</th>
+                    <th class="p-3 border-b border-gray-700">Fecha</th>
+                    <th class="p-3 border-b border-gray-700">Usuario</th>
+                    <th class="p-3 border-b border-gray-700">Acción</th>
+                    <th class="p-3 border-b border-gray-700">Tabla</th>
+                    <th class="p-3 border-b border-gray-700">ID Reg.</th>
+                    <th class="p-3 border-b border-gray-700">Detalle (Cambios)</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">

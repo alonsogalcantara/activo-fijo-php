@@ -12,7 +12,7 @@
 <!-- TOP ACTIONS -->
 <div class="flex justify-end gap-2 mb-6">
     <div class="relative group">
-        <button class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg shadow-sm hover:bg-gray-50 font-medium flex items-center">
+        <button class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg shadow-sm hover:bg-gray-50 font-bold transition flex items-center">
             <i class="fas fa-print mr-2"></i> Exportar <i class="fas fa-chevron-down ml-2 text-xs"></i>
         </button>
         <!-- Dropdown -->
@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <a href="/accounts/edit/<?= $account['id'] ?>" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 shadow-md font-bold transition flex items-center">
+    <a href="/accounts/edit/<?= $account['id'] ?>" class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 font-bold flex items-center justify-center transition">
         <i class="fas fa-pen mr-2"></i> Editar
     </a>
 </div>
@@ -118,9 +118,9 @@
             <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                 <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Usuario / Email</span>
                 <div class="flex items-center gap-2">
-                    <span class="font-mono text-gray-900 flex-1"><?= htmlspecialchars($account['username'] ?? '-') ?></span>
+                    <span class="font-mono font-bold text-gray-900 flex-1"><?= htmlspecialchars($account['username'] ?? '-') ?></span>
                     <?php if (!empty($account['username'])): ?>
-                    <button onclick="navigator.clipboard.writeText('<?= htmlspecialchars($account['username']) ?>'); showCopyNotification();" class="text-gray-400 hover:text-gray-600 transition">
+                    <button onclick="navigator.clipboard.writeText('<?= htmlspecialchars($account['username']) ?>'); showCopyNotification();" class="text-blue-500 hover:text-blue-700 transition" title="Copiar Usuario">
                         <i class="fas fa-copy"></i>
                     </button>
                     <?php endif; ?>
@@ -129,9 +129,9 @@
             <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                 <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Contraseña</span>
                 <div class="flex items-center gap-2">
-                    <span class="font-mono text-gray-900 flex-1"><?= !empty($account['password']) ? '••••••••' : '-' ?></span>
+                    <span class="font-mono font-bold text-gray-900 flex-1"><?= !empty($account['password']) ? '••••••••' : '-' ?></span>
                     <?php if (!empty($account['password'])): ?>
-                    <button onclick="navigator.clipboard.writeText('<?= htmlspecialchars($account['password']) ?>'); showCopyNotification();" class="text-gray-400 hover:text-gray-600 transition">
+                    <button onclick="navigator.clipboard.writeText('<?= htmlspecialchars($account['password']) ?>'); showCopyNotification();" class="text-blue-500 hover:text-blue-700 transition" title="Copiar Contraseña">
                         <i class="fas fa-copy"></i>
                     </button>
                     <?php endif; ?>
@@ -212,16 +212,16 @@ include __DIR__ . '/../partials/documents_list.php';
 ?>
 
 <!-- DANGER ZONE -->
-<div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-red-500 mb-8">
+<div class="bg-white p-6 rounded-xl shadow-sm border border-red-200 border-l-4 border-l-red-500 mb-8">
     <h3 class="font-bold text-gray-800 mb-4 flex items-center">
         <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i> Zona de Peligro
     </h3>
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
             <p class="font-bold text-gray-700">Eliminar este servicio</p>
             <p class="text-sm text-gray-500">Esta acción no se puede deshacer. Se eliminarán todos los datos asociados.</p>
         </div>
-        <a href="/accounts/delete/<?= $account['id'] ?>" onclick="return confirm('¿Estás completamente seguro de eliminar este servicio? Esta acción no se puede deshacer.')" class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-700 transition flex items-center">
+        <a href="/accounts/delete/<?= $account['id'] ?>" onclick="return confirm('¿Estás completamente seguro de eliminar este servicio? Esta acción no se puede deshacer.')" class="bg-red-50 text-red-600 border border-red-200 px-6 py-2 rounded-lg font-bold hover:bg-red-100 transition flex items-center">
             <i class="fas fa-trash-alt mr-2"></i> Eliminar Servicio
         </a>
     </div>

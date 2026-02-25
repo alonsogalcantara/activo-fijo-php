@@ -17,31 +17,37 @@
         <form action="/admin/users/grant" method="POST">
             
             <div class="mb-4">
-                <label class="block text-sm font-bold mb-1 text-gray-700">Seleccionar Empleado</label>
-                <select name="user_id" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white focus:ring-2 focus:ring-blue-500" required>
-                    <option value="">-- Buscar empleado --</option>
-                    <?php if (!empty($employees)): ?>
-                        <?php foreach ($employees as $emp): ?>
-                        <option value="<?= $emp['id'] ?>">
-                            <?= htmlspecialchars($emp['name']) ?> (<?= htmlspecialchars($emp['email']) ?>)
-                        </option>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </select>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Seleccionar Empleado</label>
+                <div class="relative">
+                    <select name="user_id" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition bg-white appearance-none pr-8" required>
+                        <option value="">-- Buscar empleado --</option>
+                        <?php if (!empty($employees)): ?>
+                            <?php foreach ($employees as $emp): ?>
+                            <option value="<?= $emp['id'] ?>">
+                                <?= htmlspecialchars($emp['name']) ?> (<?= htmlspecialchars($emp['email']) ?>)
+                            </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                    <i class="fas fa-chevron-down absolute right-3 top-3.5 text-gray-400 pointer-events-none"></i>
+                </div>
                 <p class="text-xs text-gray-400 mt-1">Solo se muestran empleados sin acceso actual.</p>
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-bold mb-1 text-gray-700">Contraseña de Sistema</label>
-                <input type="password" name="password" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="Mínimo 6 caracteres" required>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Contraseña de Sistema</label>
+                <input type="password" name="password" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="Mínimo 6 caracteres" required>
             </div>
 
             <div class="mb-6">
-                <label class="block text-sm font-bold mb-1 text-gray-700">Nivel de Acceso</label>
-                <select name="role" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white">
-                    <option value="normal">Normal (Editor de Inventario)</option>
-                    <option value="admin">Administrador (Total + Auditoría)</option>
-                </select>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nivel de Acceso</label>
+                <div class="relative">
+                    <select name="role" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition bg-white appearance-none pr-8">
+                        <option value="normal">Normal (Editor de Inventario)</option>
+                        <option value="admin">Administrador (Total + Auditoría)</option>
+                    </select>
+                    <i class="fas fa-chevron-down absolute right-3 top-3.5 text-gray-400 pointer-events-none"></i>
+                </div>
             </div>
 
             <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-lg hover:bg-blue-700 shadow transition transform hover:scale-105">
@@ -51,31 +57,32 @@
     </div>
 
     <!-- LISTA: USUARIOS CON ACCESO -->
-    <div class="lg:col-span-2 bg-white rounded-xl shadow overflow-hidden border border-gray-200">
-        <div class="p-4 bg-gray-50 border-b border-gray-200">
+    <div class="lg:col-span-2 bg-white rounded-xl shadow overflow-hidden w-full border border-gray-200">
+        <div class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
             <h3 class="font-bold text-gray-700">Usuarios Habilitados (<?= count($systemUsers) ?>)</h3>
         </div>
-        <table class="w-full text-left">
-            <thead class="bg-white text-gray-500 border-b border-gray-100 text-sm uppercase">
-                <tr>
-                    <th class="p-4">Usuario / Email</th>
-                    <th class="p-4">Departamento</th>
-                    <th class="p-4">Rol Sistema</th>
-                    <th class="p-4 text-right">Acciones</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-50">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="p-4 text-sm font-semibold tracking-wide">Usuario / Email</th>
+                        <th class="p-4 text-sm font-semibold tracking-wide">Departamento</th>
+                        <th class="p-4 text-sm font-semibold tracking-wide text-center">Rol Sistema</th>
+                        <th class="p-4 text-sm font-semibold tracking-wide text-center">Acciones</th>
+                    </tr>
+                </thead>
+            <tbody class="divide-y divide-gray-100">
                 <?php if (!empty($systemUsers)): ?>
                     <?php foreach ($systemUsers as $u): ?>
-                    <tr class="hover:bg-blue-50 transition">
+                    <tr class="hover:bg-gray-50 transition">
                         <td class="p-4">
                             <div class="font-bold text-gray-800"><?= htmlspecialchars($u['name']) ?></div>
                             <div class="text-xs text-gray-500"><?= htmlspecialchars($u['email']) ?></div>
                         </td>
-                        <td class="p-4 text-sm text-gray-600">
+                        <td class="p-4 text-sm text-gray-700">
                             <?= htmlspecialchars($u['department'] ?? '-') ?>
                         </td>
-                        <td class="p-4">
+                        <td class="p-4 text-center">
                             <?php 
                                 $sys_role = strtolower($u['system_role'] ?? 'normal');
                                 $is_admin = $sys_role === 'admin';
@@ -85,14 +92,16 @@
                                 <?= strtoupper($sys_role) ?>
                             </span>
                         </td>
-                        <td class="p-4 text-right">
-                            <!-- Prevent deleting self or main admin if easy to identify, else just link -->
-                            <a href="/admin/users/revoke/<?= $u['id'] ?>" 
-                               class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded transition" 
-                               onclick="return confirm('¿Seguro que desea revocar el acceso al sistema de <?= htmlspecialchars($u['name']) ?>? El empleado NO será eliminado, solo su login.')"
-                               title="Revocar Acceso">
-                                <i class="fas fa-user-slash"></i>
-                            </a>
+                        <td class="p-4 text-center">
+                            <div class="flex justify-center gap-2">
+                                <!-- Prevent deleting self or main admin if easy to identify, else just link -->
+                                <a href="/admin/users/revoke/<?= $u['id'] ?>" 
+                                   class="text-red-600 hover:bg-red-50 border border-red-200 p-2 rounded transition" 
+                                   onclick="return confirm('¿Seguro que desea revocar el acceso al sistema de <?= htmlspecialchars($u['name']) ?>? El empleado NO será eliminado, solo su login.')"
+                                   title="Revocar Acceso">
+                                    <i class="fas fa-user-slash"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>
@@ -103,6 +112,7 @@
                 <?php endif; ?>
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 

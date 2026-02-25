@@ -21,13 +21,14 @@
     <div class="w-full md:w-64">
         <div class="relative">
             <i class="fas fa-filter absolute left-3 top-3 text-gray-400"></i>
-            <select id="userStatusFilter" onchange="filterUsers()" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700">
+            <select id="userStatusFilter" onchange="filterUsers()" class="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700 appearance-none">
                 <option value="">Todos los Estados</option>
                 <option value="Activo">Activo</option>
                 <option value="Inactivo">Inactivo / Baja</option>
                 <option value="Vacaciones">Vacaciones</option>
                 <option value="Incapacidad">Incapacidad</option>
             </select>
+            <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400 pointer-events-none"></i>
         </div>
     </div>
 </div>
@@ -99,9 +100,9 @@
 
                 <td class="p-4 text-center">
                     <div class="flex justify-center gap-2">
-                        <a href="/users/detail/<?= $u['id'] ?>" class="text-blue-500 hover:bg-blue-50 p-2 rounded" title="Ver Detalle"><i class="fas fa-eye"></i></a>
-                        <a href="/users/edit/<?= $u['id'] ?>" class="text-yellow-600 hover:bg-yellow-50 p-2 rounded" title="Editar"><i class="fas fa-pen"></i></a>
-                        <a href="/users/delete/<?= $u['id'] ?>" onclick="return confirm('¿Estás seguro?')" class="text-red-600 hover:bg-red-50 p-2 rounded" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
+                        <a href="/users/detail/<?= $u['id'] ?>" class="text-blue-600 hover:bg-blue-50 border border-blue-200 p-2 rounded transition" title="Ver Detalle"><i class="fas fa-eye"></i></a>
+                        <a href="/users/edit/<?= $u['id'] ?>" class="text-yellow-600 hover:bg-yellow-50 border border-yellow-200 p-2 rounded transition" title="Editar"><i class="fas fa-pen"></i></a>
+                        <a href="/users/delete/<?= $u['id'] ?>" onclick="return confirm('¿Estás seguro?')" class="text-red-600 hover:bg-red-50 border border-red-200 p-2 rounded transition" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
                     </div>
                 </td>
             </tr>

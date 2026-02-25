@@ -125,13 +125,13 @@
 
 <!-- Assigned Assets List -->
 <h2 class="font-bold text-xl mb-4 text-gray-700 flex items-center"><i class="fas fa-laptop mr-2 text-blue-500"></i> Activos Asignados (<?= count($assigned_assets) ?>)</h2>
-<div class="bg-white rounded-xl shadow overflow-hidden mb-8">
+<div class="bg-white rounded-xl shadow overflow-hidden mb-8 w-full">
     <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
             <thead class="bg-gray-800 text-white">
                 <tr>
-                    <th class="p-4 text-sm font-semibold tracking-wide">Activo</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide">Marca / Modelo</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Activo</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Marca / Modelo</th>
                     <th class="p-4 text-sm font-semibold tracking-wide text-center">Serial Number</th>
                     <th class="p-4 text-sm font-semibold tracking-wide text-center">Categoría</th>
                     <th class="p-4 text-sm font-semibold tracking-wide text-center">Estado</th>
@@ -201,15 +201,15 @@
 
 <!-- Assigned Accounts List -->
 <h2 class="font-bold text-xl mb-4 mt-8 text-gray-700 flex items-center"><i class="fas fa-key mr-2 text-yellow-500"></i> Cuentas y Accesos (<?= count($assigned_accounts) ?>)</h2>
-<div class="bg-white rounded-xl shadow overflow-hidden mb-8">
+<div class="bg-white rounded-xl shadow overflow-hidden mb-8 w-full">
     <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
             <thead class="bg-gray-800 text-white">
                 <tr>
-                    <th class="p-4 text-sm font-semibold tracking-wide">Servicio</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide">Proveedor</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide">Usuario</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide">Contraseña</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Servicio</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Proveedor</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Usuario</th>
+                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Contraseña</th>
                     <th class="p-4 text-sm font-semibold tracking-wide text-center">Tipo</th>
                     <th class="p-4 text-sm font-semibold tracking-wide text-center">Costo</th>
                     <th class="p-4 text-sm font-semibold tracking-wide text-center">Acciones</th>

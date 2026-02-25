@@ -17,38 +17,50 @@
     </div>
 
     <div class="w-full md:w-40">
-        <select id="filterCategory" onchange="filterAssets()"
-            class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-gray-700">
-            <option value="">Categorías</option>
-            <option value="Computadora">Computadora</option>
-            <option value="Celular">Celular / Tablet</option>
-            <option value="Vehículo">Vehículo</option>
-            <option value="Uniforme">Uniforme</option>
-            <option value="Mobiliario">Mobiliario</option>
-            <option value="Herramienta">Herramienta</option>
-            <option value="Otro">Otro</option>
-        </select>
+        <div class="relative">
+            <i class="fas fa-filter absolute left-3 top-3 text-gray-400"></i>
+            <select id="filterCategory" onchange="filterAssets()"
+                class="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-gray-700 appearance-none">
+                <option value="">Categorías</option>
+                <option value="Computadora">Computadora</option>
+                <option value="Celular">Celular / Tablet</option>
+                <option value="Vehículo">Vehículo</option>
+                <option value="Uniforme">Uniforme</option>
+                <option value="Mobiliario">Mobiliario</option>
+                <option value="Herramienta">Herramienta</option>
+                <option value="Otro">Otro</option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400 pointer-events-none"></i>
+        </div>
     </div>
 
     <!-- NUEVO FILTRO TIPO DE ADQUISICIÓN -->
     <div class="w-full md:w-40">
-        <select id="filterAcquisition" onchange="filterAssets()"
-            class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-gray-700">
-            <option value="">Adquisición</option>
-            <option value="Compra">Compras</option>
-            <option value="Arrendamiento">Leasing / Renta</option>
-        </select>
+        <div class="relative">
+            <i class="fas fa-filter absolute left-3 top-3 text-gray-400"></i>
+            <select id="filterAcquisition" onchange="filterAssets()"
+                class="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-gray-700 appearance-none">
+                <option value="">Adquisición</option>
+                <option value="Compra">Compras</option>
+                <option value="Arrendamiento">Leasing / Renta</option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400 pointer-events-none"></i>
+        </div>
     </div>
 
     <div class="w-full md:w-40">
-        <select id="filterStatus" onchange="filterAssets()"
-            class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-gray-700">
-            <option value="">Estados</option>
-            <option value="Disponible">Disponible</option>
-            <option value="Asignado">Asignado</option>
-            <option value="En Mantenimiento">En Mantenimiento</option>
-            <option value="De Baja">De Baja</option>
-        </select>
+        <div class="relative">
+            <i class="fas fa-filter absolute left-3 top-3 text-gray-400"></i>
+            <select id="filterStatus" onchange="filterAssets()"
+                class="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-gray-700 appearance-none">
+                <option value="">Estados</option>
+                <option value="Disponible">Disponible</option>
+                <option value="Asignado">Asignado</option>
+                <option value="En Mantenimiento">En Mantenimiento</option>
+                <option value="De Baja">De Baja</option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400 pointer-events-none"></i>
+        </div>
     </div>
 </div>
 

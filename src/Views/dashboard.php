@@ -27,14 +27,22 @@ $installDirAccessible = is_dir(__DIR__ . '/../../public/install') &&
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div class="mb-8 flex justify-between items-center">
-    <h1 class="text-3xl font-bold text-gray-800">Panel de Control</h1>
-    <div class="flex gap-2">
-        <a href="/assets/create" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold shadow text-sm flex items-center">
-            <i class="fas fa-plus mr-2"></i> Activo
+<div class="mb-8 flex justify-between items-center mt-6">
+    <div class="flex items-center">
+        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl mr-4 shadow-sm border border-blue-200">
+            <i class="fas fa-chart-pie"></i>
+        </div>
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Panel de Control</h1>
+            <p class="text-sm text-gray-500 mt-1">Resumen general del sistema y métricas clave.</p>
+        </div>
+    </div>
+    <div class="flex gap-3">
+        <a href="/assets/create" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-bold shadow-md transition flex items-center transform hover:scale-105">
+            <i class="fas fa-laptop text-sm mr-2"></i> Nuevo Activo
         </a>
-        <a href="/accounts/create" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold shadow text-sm flex items-center">
-            <i class="fas fa-plus mr-2"></i> Servicio
+        <a href="/accounts/create" class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg font-bold shadow-md transition flex items-center transform hover:scale-105">
+            <i class="fas fa-cloud text-sm mr-2"></i> Nuevo Servicio
         </a>
     </div>
 </div>
@@ -42,54 +50,54 @@ $installDirAccessible = is_dir(__DIR__ . '/../../public/install') &&
 <!-- TOP CARDS -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
     <!-- Total Activos -->
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between hover:shadow-md transition">
         <div>
             <p class="text-gray-500 text-xs font-bold uppercase tracking-wider">Total Activos</p>
             <p class="text-3xl font-bold text-gray-800 mt-1"><?= $data['total_assets'] ?? 0 ?></p>
         </div>
-        <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 text-xl">
+        <div class="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-xl shadow-sm">
             <i class="fas fa-laptop"></i>
         </div>
     </div>
 
     <!-- Usuarios Activos -->
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between hover:shadow-md transition">
         <div>
             <p class="text-gray-500 text-xs font-bold uppercase tracking-wider">Usuarios Activos</p>
             <p class="text-3xl font-bold text-gray-800 mt-1"><?= $data['total_users'] ?? 0 ?></p>
         </div>
-        <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 text-xl">
-            <i class="fas fa-users"></i>
+        <div class="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-xl shadow-sm">
+            <i class="fas fa-users-cog"></i>
         </div>
     </div>
 
     <!-- Servicios -->
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between hover:shadow-md transition">
         <div>
             <p class="text-gray-500 text-xs font-bold uppercase tracking-wider">Servicios / SaaS</p>
             <p class="text-3xl font-bold text-gray-800 mt-1"><?= $data['total_accounts'] ?? 0 ?></p>
         </div>
-        <div class="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 text-xl">
+        <div class="w-12 h-12 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 text-xl shadow-sm">
             <i class="fas fa-cloud"></i>
         </div>
     </div>
 
     <!-- Gasto Mensual -->
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between relative overflow-hidden">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between relative overflow-hidden hover:shadow-md transition">
         <div class="relative z-10">
             <p class="text-gray-500 text-xs font-bold uppercase tracking-wider">Gasto Mensual Est.</p>
             
-            <p class="text-2xl font-bold text-green-700 mt-1" id="monthlySpendMXN">
+            <p class="text-2xl font-bold text-emerald-600 mt-1" id="monthlySpendMXN">
                 $<?= number_format($data['monthly_spend_mxn'] ?? 0, 2) ?> <span class="text-xs text-gray-400">MXN</span>
             </p>
             
             <?php if (($data['monthly_spend_usd'] ?? 0) > 0): ?>
-            <p class="text-sm font-bold text-green-600" id="monthlySpendUSD">
+            <p class="text-sm font-bold text-emerald-500" id="monthlySpendUSD">
                 $<?= number_format($data['monthly_spend_usd'], 2) ?> <span class="text-xs text-gray-400">USD</span>
             </p>
             <?php endif; ?>
         </div>
-        <div class="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-green-600 text-xl relative z-10">
+        <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 text-xl relative z-10 shadow-sm">
             <i class="fas fa-money-bill-wave"></i>
         </div>
     </div>
@@ -126,17 +134,17 @@ $installDirAccessible = is_dir(__DIR__ . '/../../public/install') &&
         
         <!-- Próximos Pagos -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
                 <i class="fas fa-bell text-amber-500 mr-2"></i> Próximos Vencimientos
             </h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm">
-                    <thead class="bg-gray-50 text-gray-500 uppercase font-bold text-xs">
+                    <thead class="bg-gray-50 text-gray-500 uppercase font-bold text-[10px] tracking-wider border-b border-gray-200">
                         <tr>
-                            <th class="p-3 rounded-l-lg">Servicio</th>
+                            <th class="p-3">Servicio</th>
                             <th class="p-3">Responsable</th>
                             <th class="p-3">Fecha</th>
-                            <th class="p-3 rounded-r-lg text-right">Estatus</th>
+                            <th class="p-3 text-right">Estatus</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
@@ -144,15 +152,15 @@ $installDirAccessible = is_dir(__DIR__ . '/../../public/install') &&
                         <?php foreach ($data['renewals'] as $r): ?>
                         <?php 
                             $days_left = $r['days_left'];
-                            $color = ($days_left < 0) ? 'text-red-600 bg-red-50' : (($days_left < 7) ? 'text-amber-600 bg-amber-50' : 'text-blue-600 bg-blue-50');
+                            $color = ($days_left < 0) ? 'text-red-600 bg-red-50 border-red-200' : (($days_left < 7) ? 'text-amber-600 bg-amber-50 border-amber-200' : 'text-blue-600 bg-blue-50 border-blue-200');
                             $status_text = ($days_left < 0) ? "Venció hace " . abs($days_left) . " días" : "Vence en " . $days_left . " días";
                         ?>
-                        <tr>
+                        <tr class="hover:bg-gray-50 transition">
                             <td class="p-3 font-bold text-gray-700"><?= htmlspecialchars($r['service_name']) ?></td>
                             <td class="p-3 text-gray-500"><?= htmlspecialchars($r['username'] ?: 'N/A') ?></td>
-                            <td class="p-3 text-gray-500"><?= htmlspecialchars($r['renewal_date']) ?></td>
+                            <td class="p-3 text-gray-500 font-mono text-xs"><?= date('d/m/Y', strtotime($r['renewal_date'])) ?></td>
                             <td class="p-3 text-right">
-                                <span class="px-2 py-1 rounded text-xs font-bold <?= $color ?>"><?= $status_text ?></span>
+                                <span class="px-2 py-1 rounded-full text-xs font-bold border <?= $color ?>"><?= $status_text ?></span>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -166,7 +174,7 @@ $installDirAccessible = is_dir(__DIR__ . '/../../public/install') &&
 
         <!-- Actividad Reciente -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
                 <i class="fas fa-stream text-gray-400 mr-2"></i> Actividad Reciente
             </h3>
             <div class="space-y-4">
