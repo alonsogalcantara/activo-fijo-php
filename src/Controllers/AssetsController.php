@@ -94,12 +94,13 @@ class AssetsController {
                 'acquisition_type' => $_POST['acquisition_type'],
                 'leasing_company' => $_POST['leasing_company'] ?? '',
                 'cost_center' => $_POST['cost_center'] ?? '',
-                'photo_filename' => '' // Handle upload later
+                'photo_filename' => $this->handlePhotoUpload()
              ];
 
              $assetModel = new Asset();
              $newId = $assetModel->create($data);
              if ($newId) {
+                 $this->handleDocumentUpload('asset', $newId);
                  // Log audit
                  $audit = new \Models\AuditLog();
                  $audit->log($_SESSION['user_name'] ?? 'System', 'CREATE', 'assets', $newId, null, "Created asset: {$data['name']}");
@@ -146,9 +147,18 @@ class AssetsController {
                 'leasing_company' => $_POST['leasing_company'],
                 'cost_center' => $_POST['cost_center']
              ];
+             
+             $photo = $this->handlePhotoUpload();
+             if ($photo !== '') {
+                 // In Asset.php update method, we should make sure photo_filename acts properly.
+                 // Let's modify the query in Asset.php separately or just update it via a specific call, 
+                 // but wait, Asset update doesn't include photo_filename right now! We will need to update the model.
+                 $data['photo_filename'] = $photo;
+             }
 
              $assetModel = new Asset();
              if ($assetModel->update($id, $data)) {
+                 $this->handleDocumentUpload('asset', $id);
                  // Log audit
                  $audit = new \Models\AuditLog();
                  $audit->log($_SESSION['user_name'] ?? 'System', 'UPDATE', 'assets', $id, null, "Updated asset: {$data['name']}");
@@ -174,5 +184,56 @@ class AssetsController {
         
         $assetModel->delete($id);
         header('Location: /assets');
+    }
+
+    private function handlePhotoUpload() {
+        if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES['photo'];
+            $max_size = 10 * 1024 * 1024;
+            if ($file['size'] > $max_size) return '';
+            
+            $allowed_mimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $allowed_exts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            
+            if (in_array($file['type'], $allowed_mimes) || in_array($ext, $allowed_exts)) {
+                $upload_dir = __DIR__ . '/../../public/uploads/';
+                if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
+                
+                $filename = uniqid() . '_' . time() . '.' . $ext;
+                if (move_uploaded_file($file['tmp_name'], $upload_dir . $filename)) {
+                    return $filename;
+                }
+            }
+        }
+        return '';
+    }
+
+    private function handleDocumentUpload($entity_type, $entity_id) {
+        if (isset($_FILES['document']) && $_FILES['document']['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES['document'];
+            $max_size = 10 * 1024 * 1024;
+            if ($file['size'] > $max_size) return;
+
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $clean_name = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', pathinfo($file['name'], PATHINFO_FILENAME));
+            $final_filename = $clean_name . '_' . time() . '.' . $ext;
+            
+            $upload_dir = __DIR__ . '/../../public/uploads/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
+
+            if (move_uploaded_file($file['tmp_name'], $upload_dir . $final_filename)) {
+                require_once __DIR__ . '/../Models/Document.php';
+                $documentModel = new \Models\Document();
+                $documentModel->create([
+                    'entity_id' => $entity_id,
+                    'entity_type' => $entity_type,
+                    'filename' => $final_filename,
+                    'file_type' => $ext,
+                    'file_size' => $file['size'],
+                    'uploaded_by' => $_SESSION['user_id'] ?? 0
+                ]);
+            }
+        }
     }
 }

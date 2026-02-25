@@ -70,7 +70,7 @@ class DocumentsController {
             }
 
             // Generate unique filename
-            $upload_dir = __DIR__ . '/../../public/uploads/documents/';
+            $upload_dir = __DIR__ . '/../../public/uploads/';
             if (!file_exists($upload_dir)) {
                 mkdir($upload_dir, 0777, true);
             }
@@ -139,7 +139,7 @@ class DocumentsController {
 
         if ($doc) {
             // Delete physical file
-            $file_path = __DIR__ . '/../../public/uploads/documents/' . $doc['filename'];
+            $file_path = __DIR__ . '/../../public/uploads/' . $doc['filename'];
             if (file_exists($file_path)) {
                 unlink($file_path);
             }

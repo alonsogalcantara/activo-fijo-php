@@ -11,7 +11,7 @@
         <h2 class="text-3xl font-bold text-gray-800"><i class="fas fa-key mr-3 text-yellow-500"></i>Editar Servicio</h2>
     </div>
 
-    <form id="accountForm" action="/accounts/update/<?= $account['id'] ?>" method="POST">
+    <form id="accountForm" action="/accounts/update/<?= $account['id'] ?>" method="POST" enctype="multipart/form-data">
         
         <div class="space-y-8">
             <!-- SECTION 1: CONTRACT INFO -->
@@ -119,6 +119,20 @@
                     <i class="fas fa-comment-alt mr-2"></i> Observaciones Adicionales
                 </h3>
                 <textarea name="observations" rows="3" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="Notas sobre la cuenta..."><?= htmlspecialchars($account['observations'] ?? '') ?></textarea>
+            </div>
+
+            <!-- SECTION 5: DOCUMENTS -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                <h3 class="text-lg font-bold text-gray-700 mb-4 pb-2 border-b border-gray-200">
+                    <i class="fas fa-file-alt mr-2 text-gray-400"></i>Documentos Adjuntos
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Documento Asociado</label>
+                        <input type="file" name="document" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer">
+                        <p class="text-xs text-gray-500 mt-1">Contrato, Factura, Recibo, etc. Máx 10MB.</p>
+                    </div>
+                </div>
             </div>
 
         </div>

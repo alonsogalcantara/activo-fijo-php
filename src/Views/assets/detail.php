@@ -416,15 +416,16 @@
         </div>
         <?php endif; ?>
     </div>
-
-    <!-- DOCUMENTS PARTIAL -->
-    <?php 
-    $documents = $asset['documents'] ?? [];
-    $entityType = 'asset';
-    $entityId = $asset['id'];
-    include __DIR__ . '/../partials/documents_list.php'; 
-    ?>
+    </div>
 </div>
+
+<!-- DOCUMENTS PARTIAL -->
+<?php 
+$documents = $asset['documents'] ?? [];
+$entityType = 'asset';
+$entityId = $asset['id'];
+include __DIR__ . '/../partials/documents_list.php'; 
+?>
 
 <!-- INCIDENTS (Placeholder) -->
 <div class="bg-white p-6 rounded-xl shadow mb-12 border-t-4 border-amber-500">

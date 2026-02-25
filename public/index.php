@@ -203,6 +203,23 @@ if ($uri[0] === 'accounting') {
     exit();
 }
 
+// Documents
+if ($uri[0] === 'documents') {
+    if (!isset($_SESSION['user_id'])) {
+        header('Location: /login');
+        exit();
+    }
+    require_once __DIR__ . '/../src/Controllers/DocumentsController.php';
+    $controller = new \Controllers\DocumentsController();
+    
+    if (isset($uri[1])) {
+        if ($uri[1] === 'delete' && isset($uri[2])) {
+             $controller->delete($uri[2]);
+        }
+    }
+    exit();
+}
+
 // Reports
 if ($uri[0] === 'reports') {
     if (!isset($_SESSION['user_id'])) {

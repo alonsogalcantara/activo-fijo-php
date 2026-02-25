@@ -85,7 +85,13 @@ class Asset {
     }
 
     public function update($id, $data) {
-         $query = 'UPDATE ' . $this->table . ' SET name = :name, category = :category, brand = :brand, model = :model, description = :description, purchase_date = :purchase_date, purchase_cost = :purchase_cost, status = :status, assigned_to = :assigned_to, quantity = :quantity, batch_number = :batch_number, serial_number = :serial_number, acquisition_type = :acquisition_type, leasing_company = :leasing_company, cost_center = :cost_center WHERE id = :id';
+         $query = 'UPDATE ' . $this->table . ' SET name = :name, category = :category, brand = :brand, model = :model, description = :description, purchase_date = :purchase_date, purchase_cost = :purchase_cost, status = :status, assigned_to = :assigned_to, quantity = :quantity, batch_number = :batch_number, serial_number = :serial_number, acquisition_type = :acquisition_type, leasing_company = :leasing_company, cost_center = :cost_center';
+         
+         if (isset($data['photo_filename'])) {
+             $query .= ', photo_filename = :photo_filename';
+         }
+         
+         $query .= ' WHERE id = :id';
          
          $stmt = $this->conn->prepare($query);
 
@@ -106,6 +112,10 @@ class Asset {
          $stmt->bindParam(':acquisition_type', $data['acquisition_type']);
          $stmt->bindParam(':leasing_company', $data['leasing_company']);
          $stmt->bindParam(':cost_center', $data['cost_center']);
+
+         if (isset($data['photo_filename'])) {
+             $stmt->bindParam(':photo_filename', $data['photo_filename']);
+         }
 
          return $stmt->execute();
     }

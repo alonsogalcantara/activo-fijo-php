@@ -33,6 +33,10 @@ class AccountsController {
             header('Location: /accounts');
             exit();
         }
+
+        // Fetch related documents
+        $documentModel = new \Models\Document();
+        $account['documents'] = $documentModel->getByEntity('account', $id);
         
         require_once __DIR__ . '/../Views/accounts/detail.php';
     }
@@ -75,6 +79,7 @@ class AccountsController {
              $accountModel = new Account();
              $newId = $accountModel->create($data);
              if ($newId) {
+                 $this->handleDocumentUpload('account', $newId);
                  // Log audit
                  $audit = new \Models\AuditLog();
                  $audit->log($_SESSION['user_name'] ?? 'System', 'CREATE', 'accounts', $newId, null, "Created account: {$data['service_name']}");
@@ -135,6 +140,7 @@ class AccountsController {
 
              $accountModel = new Account();
              if ($accountModel->update($id, $data)) {
+                 $this->handleDocumentUpload('account', $id);
                  // Log audit
                  $audit = new \Models\AuditLog();
                  $audit->log($_SESSION['user_name'] ?? 'System', 'UPDATE', 'accounts', $id, null, "Updated account: {$data['service_name']}");
@@ -162,5 +168,33 @@ class AccountsController {
         
         $accountModel->delete($id);
         header('Location: /accounts');
+    }
+
+    private function handleDocumentUpload($entity_type, $entity_id) {
+        if (isset($_FILES['document']) && $_FILES['document']['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES['document'];
+            $max_size = 10 * 1024 * 1024;
+            if ($file['size'] > $max_size) return;
+
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $clean_name = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', pathinfo($file['name'], PATHINFO_FILENAME));
+            $final_filename = $clean_name . '_' . time() . '.' . $ext;
+            
+            $upload_dir = __DIR__ . '/../../public/uploads/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
+
+            if (move_uploaded_file($file['tmp_name'], $upload_dir . $final_filename)) {
+                require_once __DIR__ . '/../Models/Document.php';
+                $documentModel = new \Models\Document();
+                $documentModel->create([
+                    'entity_id' => $entity_id,
+                    'entity_type' => $entity_type,
+                    'filename' => $final_filename,
+                    'file_type' => $ext,
+                    'file_size' => $file['size'],
+                    'uploaded_by' => $_SESSION['user_id'] ?? 0
+                ]);
+            }
+        }
     }
 }

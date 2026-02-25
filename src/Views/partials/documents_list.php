@@ -35,7 +35,7 @@
                         </div>
                         
                         <div class="flex-1 overflow-hidden">
-                            <a href="/uploads/documents/<?= htmlspecialchars($doc['filename']) ?>" target="_blank" class="font-medium text-gray-700 hover:text-blue-600 truncate block transition" title="<?= htmlspecialchars($doc['filename']) ?>">
+                            <a href="/uploads/<?= htmlspecialchars($doc['filename']) ?>" target="_blank" class="font-medium text-gray-700 hover:text-blue-600 truncate block transition" title="<?= htmlspecialchars($doc['filename']) ?>">
                                 <?= htmlspecialchars($doc['filename']) ?>
                             </a>
                             <div class="text-xs text-gray-400 mt-1 flex items-center gap-2">

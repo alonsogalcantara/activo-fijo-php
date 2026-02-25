@@ -89,6 +89,7 @@ class UsersController {
              $userModel = new User();
              $newId = $userModel->create($data);
              if ($newId) {
+                 $this->handleDocumentUpload('user', $newId);
                  // Log audit
                  $audit = new \Models\AuditLog();
                  $audit->log($_SESSION['user_name'] ?? 'System', 'CREATE', 'users', $newId, null, "Created user: {$data['name']}");
@@ -138,6 +139,7 @@ class UsersController {
 
              $userModel = new User();
              if ($userModel->update($id, $data)) {
+                 $this->handleDocumentUpload('user', $id);
                  // Log audit
                  $audit = new \Models\AuditLog();
                  $audit->log($_SESSION['user_name'] ?? 'System', 'UPDATE', 'users', $id, null, "Updated user: {$data['name']}");
@@ -250,6 +252,34 @@ class UsersController {
                $audit = new \Models\AuditLog();
                $audit->log($_SESSION['user_name'] ?? 'System', 'UPDATE', 'users', $id, 'system_role=' . $user['system_role'], "Revoked access");
                header('Location: /admin/users');
+            }
+        }
+    }
+
+    private function handleDocumentUpload($entity_type, $entity_id) {
+        if (isset($_FILES['document']) && $_FILES['document']['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES['document'];
+            $max_size = 10 * 1024 * 1024;
+            if ($file['size'] > $max_size) return;
+
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $clean_name = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', pathinfo($file['name'], PATHINFO_FILENAME));
+            $final_filename = $clean_name . '_' . time() . '.' . $ext;
+            
+            $upload_dir = __DIR__ . '/../../public/uploads/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
+
+            if (move_uploaded_file($file['tmp_name'], $upload_dir . $final_filename)) {
+                require_once __DIR__ . '/../Models/Document.php';
+                $documentModel = new \Models\Document();
+                $documentModel->create([
+                    'entity_id' => $entity_id,
+                    'entity_type' => $entity_type,
+                    'filename' => $final_filename,
+                    'file_type' => $ext,
+                    'file_size' => $file['size'],
+                    'uploaded_by' => $_SESSION['user_id'] ?? 0
+                ]);
             }
         }
     }
