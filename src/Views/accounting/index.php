@@ -312,41 +312,76 @@ $current_order = $_GET['order'] ?? 'desc';
 
     <!-- PAGINACIÓN -->
     <?php if ($pagination['total_pages'] > 1): ?>
-    <div class="bg-gray-50 px-4 py-3 border-t border-gray-200 flex items-center justify-between sm:px-6">
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-                <p class="text-sm text-gray-700">
-                    Mostrando <span class="font-medium"><?= ($pagination['page'] - 1) * $pagination['per_page'] + 1 ?></span> a
-                    <span class="font-medium"><?= min([$pagination['page'] * $pagination['per_page'], $pagination['total']]) ?></span> de <span class="font-medium"><?= $pagination['total'] ?></span> resultados
-                </p>
-            </div>
-            <div>
-                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                    <?php 
+    <div class="bg-gray-50 px-4 py-3 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between sm:px-6 gap-4">
+        <div class="w-full sm:w-auto text-center sm:text-left">
+            <p class="text-sm text-gray-700">
+                Mostrando <span class="font-medium"><?= ($pagination['page'] - 1) * $pagination['per_page'] + 1 ?></span> a
+                <span class="font-medium"><?= min([$pagination['page'] * $pagination['per_page'], $pagination['total']]) ?></span> de <span class="font-medium"><?= $pagination['total'] ?></span> resultados
+            </p>
+        </div>
+        <div class="w-full sm:w-auto flex justify-center sm:justify-end">
+            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <?php 
+                if (!function_exists('page_url')) {
                     function page_url($p) {
                         $params = $_GET;
                         $params['page'] = $p;
                         return '?' . http_build_query($params);
                     }
-                    ?>
-                    <?php if ($pagination['page'] > 1): ?>
-                    <a href="<?= page_url($pagination['page'] - 1) ?>"
-                        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"><i
-                            class="fas fa-chevron-left"></i></a>
-                    <?php endif; ?>
+                }
+                ?>
+                <!-- Previous Button -->
+                <?php if ($pagination['page'] > 1): ?>
+                <a href="<?= page_url($pagination['page'] - 1) ?>"
+                    class="relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition">
+                    <i class="fas fa-chevron-left mr-1 text-xs"></i> Ant.
+                </a>
+                <?php else: ?>
+                <span class="relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400 cursor-not-allowed">
+                    <i class="fas fa-chevron-left mr-1 text-xs"></i> Ant.
+                </span>
+                <?php endif; ?>
 
-                    <span
-                        class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">Página
-                        <?= $pagination['page'] ?> de <?= $pagination['total_pages'] ?></span>
-
-                    <?php if ($pagination['page'] < $pagination['total_pages']): ?> <a href="<?= page_url($pagination['page'] + 1) ?>"
-                        class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                        <i class="fas fa-chevron-right"></i></a>
+                <!-- Numbered Buttons -->
+                <?php 
+                $start = max(1, $pagination['page'] - 2);
+                $end = min($pagination['total_pages'], $pagination['page'] + 2);
+                
+                if ($start > 1): ?>
+                    <a href="<?= page_url(1) ?>" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">1</a>
+                    <?php if ($start > 2): ?>
+                        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">...</span>
                     <?php endif; ?>
-                </nav>
-            </div>
+                <?php endif; ?>
+
+                <?php for ($i = $start; $i <= $end; $i++): ?>
+                    <?php if ($pagination['page'] == $i): ?>
+                        <span class="relative inline-flex items-center px-4 py-2 border border-blue-500 bg-blue-50 text-sm font-bold text-blue-600 z-10"><?= $i ?></span>
+                    <?php else: ?>
+                        <a href="<?= page_url($i) ?>" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition"><?= $i ?></a>
+                    <?php endif; ?>
+                <?php endfor; ?>
+
+                <?php if ($end < $pagination['total_pages']): ?>
+                    <?php if ($end < $pagination['total_pages'] - 1): ?>
+                        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">...</span>
+                    <?php endif; ?>
+                    <a href="<?= page_url($pagination['total_pages']) ?>" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"><?= $pagination['total_pages'] ?></a>
+                <?php endif; ?>
+
+                <!-- Next Button -->
+                <?php if ($pagination['page'] < $pagination['total_pages']): ?>
+                <a href="<?= page_url($pagination['page'] + 1) ?>"
+                    class="relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition">
+                    Sig. <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                </a>
+                <?php else: ?>
+                <span class="relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400 cursor-not-allowed">
+                    Sig. <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                </span>
+                <?php endif; ?>
+            </nav>
         </div>
-    </div>
     <?php endif; ?>
 </div>
 
