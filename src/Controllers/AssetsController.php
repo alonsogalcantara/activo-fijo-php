@@ -19,6 +19,14 @@ class AssetsController {
     }
 
     public function show($id) {
+        // Handle Document Upload
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'upload_document') {
+            require_once __DIR__ . '/DocumentsController.php';
+            $docController = new \Controllers\DocumentsController();
+            $docController->upload();
+            exit();
+        }
+
         $assetModel = new Asset();
         $asset = $assetModel->getById($id);
         

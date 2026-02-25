@@ -62,7 +62,8 @@
         <?php endif; ?>
 
         <!-- Upload Form -->
-        <form action="/documents/upload" method="POST" enctype="multipart/form-data" class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+        <form action="" method="POST" enctype="multipart/form-data" class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <input type="hidden" name="action" value="upload_document">
             <input type="hidden" name="entity_type" value="<?= htmlspecialchars($entityType) ?>">
             <input type="hidden" name="entity_id" value="<?= htmlspecialchars($entityId) ?>">
             <input type="hidden" name="redirect_url" value="<?= $_SERVER['REQUEST_URI'] ?>">

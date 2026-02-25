@@ -17,7 +17,7 @@
         window.AUDIT_USER = "<?= htmlspecialchars($_SESSION['user_name'] ?? 'System') ?>";
     </script>
 </head>
-<body class="bg-gray-100 flex h-screen text-gray-800">
+<body class="bg-gray-100 flex min-h-screen text-gray-800">
 
     <?php 
     $uri = $_SERVER['REQUEST_URI'];
@@ -86,7 +86,7 @@
     </aside>
     <?php endif; ?>
 
-    <main class="flex-1 p-8 overflow-y-auto <?= !isset($_SESSION['user_id']) ? 'flex items-center justify-center bg-gray-200' : '' ?>">
+    <main class="flex-1 p-8 <?= !isset($_SESSION['user_id']) ? 'flex items-center justify-center bg-gray-200' : '' ?>">
         
         <!-- Flash Messages (Placeholder) -->
         <?php if (isset($_SESSION['flash_message'])): ?>

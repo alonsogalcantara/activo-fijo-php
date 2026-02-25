@@ -2,86 +2,90 @@
  * Sorts a HTML table.
  * 
  * @param {string} tableId The ID of the table to sort.
- * @param {number} n The index of the column to sort by (0-based).
+ * @param {number} colIndex The index of the column to sort by (0-based).
  * @param {string} type The type of data: 'string', 'number', 'date'. Default 'string'.
  */
-function sortTable(tableId, n, type = 'string') {
-    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-    table = document.getElementById(tableId);
-    switching = true;
-    // Set the sorting direction to ascending:
-    dir = "asc";
-
-    // Reset other headers icons if implemented (optional)
-    // For now simple sort logic
-
-    while (switching) {
-        switching = false;
-        rows = table.rows;
-        /* Loop through all table rows (except the first, which contains table headers): */
-        for (i = 1; i < (rows.length - 1); i++) {
-            shouldSwitch = false;
-            /* Get the two elements you want to compare, one from current row and one from the next: */
-            x = rows[i].getElementsByTagName("TD")[n];
-            y = rows[i + 1].getElementsByTagName("TD")[n];
-
-            let xVal = x ? (x.getAttribute('data-raw') || x.innerText.toLowerCase()) : '';
-            let yVal = y ? (y.getAttribute('data-raw') || y.innerText.toLowerCase()) : '';
-
-            if (type === 'number') {
-                xVal = parseFloat(xVal) || 0;
-                yVal = parseFloat(yVal) || 0;
-            } else if (type === 'date') {
-                // Expecting data-raw to be YYYY-MM-DD or similar parseable format
-                xVal = new Date(xVal).getTime() || 0;
-                yVal = new Date(yVal).getTime() || 0;
-            }
-
-            if (dir == "asc") {
-                if (xVal > yVal) {
-                    shouldSwitch = true;
-                    break;
-                }
-            } else if (dir == "desc") {
-                if (xVal < yVal) {
-                    shouldSwitch = true;
-                    break;
-                }
-            }
-        }
-        if (shouldSwitch) {
-            /* If a switch has been marked, make the switch and mark that a switch has been done: */
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
-            // Each time a switch is done, increase this count by 1:
-            switchcount++;
-        } else {
-            /* If no switching has been done AND the direction is "asc", set the direction to "desc" and run the while loop again. */
-            if (switchcount == 0 && dir == "asc") {
-                dir = "desc";
-                switching = true;
-            }
-        }
+function sortTable(tableId, colIndex, type = 'string') {
+    const table = document.getElementById(tableId);
+    if (!table) return;
+    
+    const tbody = table.tBodies[0];
+    const rows = Array.from(tbody.rows);
+    
+    // Determine sort direction
+    let dir = 'asc';
+    const currentDir = table.getAttribute('data-sort-dir');
+    const currentCol = table.getAttribute('data-sort-col');
+    
+    if (currentCol == colIndex && currentDir === 'asc') {
+        dir = 'desc';
     }
+    
+    table.setAttribute('data-sort-dir', dir);
+    table.setAttribute('data-sort-col', colIndex);
+
+    // Sort the rows
+    rows.sort((a, b) => {
+        const aVal = parseValue(a, colIndex, type);
+        const bVal = parseValue(b, colIndex, type);
+
+        if (aVal === bVal) return 0;
+        
+        const comparison = (aVal > bVal) ? 1 : -1;
+        return dir === 'asc' ? comparison : -comparison;
+    });
+
+    // Re-append rows in sorted order
+    rows.forEach(row => tbody.appendChild(row));
 
     // Update Header Icons
-    updateSortIcons(tableId, n, dir);
+    updateSortIcons(table, colIndex, dir);
 }
 
-function updateSortIcons(tableId, colIndex, dir) {
-    const table = document.getElementById(tableId);
-    const headers = table.rows[0].getElementsByTagName("TH");
+function parseValue(row, colIndex, type) {
+    const cell = row.cells[colIndex];
+    if (!cell) return type === 'number' ? -Infinity : '';
 
+    let val = cell.getAttribute('data-raw');
+    if (val === null) {
+        val = cell.innerText.trim();
+    }
+
+    if (type === 'number') {
+        return cleanNumber(val);
+    } else if (type === 'date') {
+        // Try parsing data-raw first (SQL format), then innerText
+        const date = new Date(val);
+        return isNaN(date.getTime()) ? 0 : date.getTime();
+    } else {
+        return val.toLowerCase();
+    }
+}
+
+function cleanNumber(str) {
+    if (!str) return 0;
+    // Remove currency symbols, commas, and spaces
+    const cleaned = str.replace(/[$, ]/g, '');
+    const num = parseFloat(cleaned);
+    return isNaN(num) ? 0 : num;
+}
+
+function updateSortIcons(table, colIndex, dir) {
+    const headers = table.tHead.rows[0].cells;
+    
     for (let i = 0; i < headers.length; i++) {
         // Remove existing arrow icons
         let icon = headers[i].querySelector('.sort-icon');
         if (icon) icon.remove();
 
-        // Add icon to current column
+        // Add icon to current column if it matches
         if (i === colIndex) {
             const arrow = document.createElement('i');
-            arrow.className = `fas fa-sort-${dir === 'asc' ? 'up' : 'down'} sort-icon ml-1`;
+            arrow.className = `fas fa-sort-${dir === 'asc' ? 'up' : 'down'} sort-icon ml-1 text-blue-400`;
             headers[i].appendChild(arrow);
+            headers[i].classList.add('text-blue-400'); // Highlight active logical column header if desired
+        } else {
+             headers[i].classList.remove('text-blue-400');
         }
     }
 }

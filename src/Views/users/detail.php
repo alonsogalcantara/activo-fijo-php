@@ -122,7 +122,6 @@
             </a> -->
         </div>
     </div>
-</div>
 
 <!-- Assigned Assets List -->
 <h2 class="font-bold text-xl mb-4 text-gray-700 flex items-center"><i class="fas fa-laptop mr-2 text-blue-500"></i> Activos Asignados (<?= count($assigned_assets) ?>)</h2>
