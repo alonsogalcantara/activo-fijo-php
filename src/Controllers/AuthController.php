@@ -8,11 +8,23 @@ use Models\User;
 class AuthController {
 
     public function login() {
+        // If already logged in, redirect to dashboard
+        if (isset($_SESSION['user_id'])) {
+            header('Location: /dashboard');
+            exit();
+        }
+
         // Show login view
         require_once __DIR__ . '/../Views/auth/login.php';
     }
 
     public function authenticate() {
+        // If already logged in, redirect to dashboard
+        if (isset($_SESSION['user_id'])) {
+            header('Location: /dashboard');
+            exit();
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = $_POST['email'] ?? '';
             $password = $_POST['password'] ?? '';

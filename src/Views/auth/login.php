@@ -1,7 +1,7 @@
 <?php ob_start(); ?>
 
-<div class="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8 bg-white rounded-2xl shadow-xl border border-gray-100 p-10">
+<div class="flex items-center justify-center w-full min-h-[80vh]">
+    <div class="max-w-md w-full mx-auto space-y-8 bg-white rounded-2xl shadow-xl border border-gray-100 p-10">
         <div>
             <div class="w-20 h-20 mx-auto bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-4xl shadow-sm mb-4">
                 <i class="fas fa-cubes"></i>
@@ -46,7 +46,7 @@
             </div>
 
             <div>
-                <button class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-lg transform transition hover:-translate-y-0.5" type="submit">
+                <button class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-md transform transition" type="submit">
                     <span class="absolute left-0 inset-y-0 flex items-center pl-3">
                         <i class="fas fa-sign-in-alt text-blue-500 group-hover:text-blue-400 transition"></i>
                     </span>
