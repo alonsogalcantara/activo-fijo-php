@@ -41,9 +41,6 @@
             <button onclick="downloadHistory(<?= $asset['id'] ?>)" class="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50">
                 <i class="fas fa-history text-blue-500 mr-2"></i> Historial Completo
             </button>
-            <button onclick="printLabel(<?= $asset['id'] ?>)" class="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-t border-gray-50">
-                <i class="fas fa-qrcode text-gray-800 mr-2"></i> Etiqueta QR
-            </button>
         </div>
     </div>
 

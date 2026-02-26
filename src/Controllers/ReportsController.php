@@ -5,10 +5,12 @@ require_once __DIR__ . '/../Lib/fpdf.php';
 require_once __DIR__ . '/../Models/Accounting.php';
 require_once __DIR__ . '/../Models/Asset.php';
 require_once __DIR__ . '/../Models/User.php';
+require_once __DIR__ . '/../Models/Incident.php';
 
 use Models\Accounting;
 use Models\Asset;
 use Models\User;
+use Models\Incident;
 use FPDF;
 
 /**
@@ -577,9 +579,12 @@ class ReportsController {
      */
     public function history_pdf($id) {
         $assetModel = new Asset();
-        $asset = $assetModel->getById($id);
+        $incidentModel = new Incident();
         
+        $asset = $assetModel->getById($id);
         if (!$asset) die("Activo no encontrado");
+        
+        $incidents = $incidentModel->getByAssetId($id);
         
         $assigned_name = "Sin Asignar";
         // Get user if assigned
@@ -655,9 +660,45 @@ class ReportsController {
         $render_grid($data_financial);
         $pdf->Ln(4);
 
-        // Future: Add history table from database
-        $pdf->SetFont("Arial", 'I', 9);
-        $pdf->Cell(0, 8, clean_text("Historial de movimientos pendiente de implementación."), 0, 1, 'C');
+        // 3. EVENTOS E INCIDENCIAS
+        $pdf->SetFont("Arial", 'B', 12);
+        $pdf->SetFillColor(240, 240, 240);
+        $pdf->Cell(0, 8, clean_text("3. Historial de Eventos e Incidencias"), 1, 1, 'L', true);
+        $pdf->Ln(2);
+
+        if (!empty($incidents)) {
+            $pdf->SetFont("Arial", 'B', 9);
+            $pdf->SetFillColor(220, 230, 241);
+            $pdf->Cell(25, 7, "Fecha", 1, 0, 'C', true);
+            $pdf->Cell(35, 7, "Tipo Res.", 1, 0, 'C', true);
+            $pdf->Cell(85, 7, "Problema / Notas", 1, 0, 'L', true);
+            $pdf->Cell(25, 7, "Costo ($)", 1, 0, 'R', true);
+            $pdf->Cell(20, 7, "CAPEX", 1, 1, 'C', true);
+            
+            $pdf->SetFont("Arial", '', 8);
+            foreach ($incidents as $inc) {
+                $date_txt = substr($inc['incident_date'], 0, 10);
+                $type_txt = substr(clean_text($inc['resolution_type'] ?? '-'), 0, 20);
+                
+                $desc_clean = clean_text($inc['description']);
+                if (!empty($inc['resolution_notes'])) {
+                    $desc_clean .= " | Res: " . clean_text($inc['resolution_notes']);
+                }
+                $desc_txt = substr($desc_clean, 0, 58);
+
+                $cost_txt = (!empty($inc['cost']) && $inc['cost'] > 0) ? number_format($inc['cost'], 2) : '-';
+                $capex_txt = (!empty($inc['is_capex']) && $inc['is_capex']) ? 'SI' : '';
+                
+                $pdf->Cell(25, 7, $date_txt, 1, 0, 'C');
+                $pdf->Cell(35, 7, $type_txt, 1, 0, 'C');
+                $pdf->Cell(85, 7, $desc_txt, 1, 0, 'L');
+                $pdf->Cell(25, 7, $cost_txt, 1, 0, 'R');
+                $pdf->Cell(20, 7, $capex_txt, 1, 1, 'C');
+            }
+        } else {
+            $pdf->SetFont("Arial", 'I', 9);
+            $pdf->Cell(0, 8, clean_text("No hay eventos o incidencias registradas para este activo."), 0, 1, 'C');
+        }
 
         $pdf->Ln(10);
         $pdf->add_signatures();
