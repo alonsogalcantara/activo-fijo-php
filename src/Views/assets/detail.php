@@ -277,7 +277,7 @@
             </div>
             <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                 <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Costo Original</span>
-                <span class="font-mono text-gray-900">$<?= number_format($asset['purchase_cost'], 2) ?></span>
+                <span class="font-mono text-gray-900">$<?= number_format($asset['purchase_cost'] ?? 0, 2) ?></span>
             </div>
             <?php if ($asset['acquisition_type'] != 'Arrendamiento' && isset($asset['current_value'])): ?>
             <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
@@ -427,20 +427,98 @@ $entityId = $asset['id'];
 include __DIR__ . '/../partials/documents_list.php'; 
 ?>
 
-<!-- INCIDENTS (Placeholder) -->
+<!-- INCIDENTS -->
 <div class="bg-white p-6 rounded-xl shadow mb-12 border-t-4 border-amber-500">
     <div class="flex justify-between items-center mb-6">
         <h3 class="font-bold text-gray-800 text-lg flex items-center"><i class="fas fa-history text-amber-500 mr-2"></i> Historial de Eventos</h3>
+        <button onclick="openIncidentModal()" class="text-sm bg-amber-50 text-amber-700 hover:bg-amber-100 px-3 py-1.5 rounded border border-amber-200 font-bold transition">
+            + Nuevo
+        </button>
     </div>
-    <div class="pl-8 text-gray-400 italic">Sin historial de incidencias (Módulo pendiente).</div>
+    
+    <?php if (!empty($asset['incidents'])): ?>
+    <div class="space-y-4">
+        <?php foreach ($asset['incidents'] as $incident): ?>
+        <div class="border-l-2 border-amber-400 pl-4 py-2 bg-white hover:bg-amber-50 transition p-2 rounded-r-lg">
+            <div class="flex justify-between items-start mb-1">
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-gray-800"><?= date('d/m/Y', strtotime($incident['incident_date'])) ?></span>
+                    <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded border border-gray-200"><?= htmlspecialchars($incident['resolution_type'] ?? 'Pendiente') ?></span>
+                    <?php if (!empty($incident['is_capex'])): ?>
+                    <span class="text-[10px] bg-green-100 text-green-700 font-bold px-1.5 py-0.5 rounded border border-green-300 uppercase"><i class="fas fa-arrow-up mr-1 text-[8px]"></i>CAPEX</span>
+                    <?php endif; ?>
+                </div>
+                <?php if (!empty($incident['cost']) && $incident['cost'] > 0): ?>
+                <span class="font-mono text-sm font-bold text-gray-700">$<?= number_format($incident['cost'], 2) ?></span>
+                <?php endif; ?>
+            </div>
+            <p class="text-sm text-gray-600 mb-1"><span class="font-bold text-gray-800 text-xs uppercase">Problema:</span> <?= nl2br(htmlspecialchars($incident['description'])) ?></p>
+            <?php if (!empty($incident['resolution_notes'])): ?>
+            <p class="text-xs text-gray-500 bg-gray-50 p-2 rounded border border-gray-100"><span class="font-bold text-gray-700 uppercase">Resolución:</span> <?= nl2br(htmlspecialchars($incident['resolution_notes'])) ?></p>
+            <?php endif; ?>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <?php else: ?>
+    <div class="pl-8 text-gray-400 italic">No hay incidencias registradas para este activo.</div>
+    <?php endif; ?>
 </div>
 
 <!-- MODALS (Placeholder Structure) -->
 <div id="incidentModal" class="fixed inset-0 bg-gray-900/60 hidden items-center justify-center z-50 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg text-center">
-        <h2 class="text-lg font-bold mb-4">Reportar Incidencia</h2>
-        <p class="text-gray-600 mb-4">Esta funcionalidad estará disponible cuando se implemente el módulo de incidencias en el backend.</p>
-        <button onclick="document.getElementById('incidentModal').classList.add('hidden'); document.getElementById('incidentModal').classList.remove('flex');" class="bg-gray-200 px-4 py-2 rounded text-gray-800 font-bold">Cerrar</button>
+    <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg text-left">
+        <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-100">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center"><i class="fas fa-exclamation-triangle mr-2 text-amber-500"></i> Reportar Evento / Incidencia</h2>
+            <button type="button" onclick="document.getElementById('incidentModal').classList.add('hidden'); document.getElementById('incidentModal').classList.remove('flex');" class="text-gray-400 hover:text-gray-700 transition"><i class="fas fa-times text-lg"></i></button>
+        </div>
+        
+        <form action="/assets/incident/<?= $asset['id'] ?>" method="POST">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Fecha del Evento <span class="text-red-500">*</span></label>
+                    <input type="date" name="incident_date" required value="<?= date('Y-m-d') ?>" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-white">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Tipo de Resolución / Evento <span class="text-red-500">*</span></label>
+                    <select name="resolution_type" id="resolution_type" required onchange="toggleIncidentFields()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-white text-sm">
+                        <option value="Falla Reportada (Pendiente)">Falla Reportada (Pendiente)</option>
+                        <option value="Mantenimiento Preventivo">Mantenimiento Preventivo</option>
+                        <option value="Reparación Regular">Reparación Regular</option>
+                        <option value="Mejora (CAPEX)">Mejora / Adición (Capitalizable - CAPEX)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Descripción de la Falla o Evento <span class="text-red-500">*</span></label>
+                    <textarea name="description" required rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-white" placeholder="Detalle lo sucedido con el equipo..."></textarea>
+                </div>
+                
+                <div id="resolutionNotesContainer" class="hidden">
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Notas de Resolución</label>
+                    <textarea name="resolution_notes" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition bg-white" placeholder="¿Qué se hizo o se cambió?"></textarea>
+                </div>
+
+                <div id="incidentCostContainer" class="hidden">
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Costo de Inversión / Reparación ($)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">$</span>
+                        </div>
+                        <input type="number" step="0.01" min="0" name="cost" id="incident_cost" placeholder="0.00" class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition font-mono bg-white">
+                    </div>
+                    <p id="capexWarning" class="text-xs text-amber-600 mt-1 font-bold hidden"><i class="fas fa-arrow-up mr-1 text-[10px]"></i> Este costo se sumará al valor total del activo en libros (CAPEX).</p>
+                    <input type="hidden" name="is_capex" id="is_capex" value="0">
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-end gap-3 pt-4 border-t border-gray-100">
+                <button type="button" onclick="document.getElementById('incidentModal').classList.add('hidden'); document.getElementById('incidentModal').classList.remove('flex');" class="bg-gray-100 px-5 py-2.5 rounded-lg text-gray-700 font-bold hover:bg-gray-200 transition">Cancelar</button>
+                <button type="submit" class="bg-amber-500 px-5 py-2.5 rounded-lg text-white font-bold hover:bg-amber-600 transition shadow">
+                    Guardar Registro
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -508,6 +586,31 @@ include __DIR__ . '/../partials/documents_list.php';
             priceContainer.classList.add('hidden');
             priceInput.removeAttribute('required');
             priceInput.value = ''; // Reset price
+        }
+    }
+
+    function toggleIncidentFields() {
+        const type = document.getElementById('resolution_type').value;
+        const costContainer = document.getElementById('incidentCostContainer');
+        const notesContainer = document.getElementById('resolutionNotesContainer');
+        const isCapex = document.getElementById('is_capex');
+        const capexWarning = document.getElementById('capexWarning');
+        
+        if (type !== 'Falla Reportada (Pendiente)') {
+            costContainer.classList.remove('hidden');
+            notesContainer.classList.remove('hidden');
+        } else {
+            costContainer.classList.add('hidden');
+            notesContainer.classList.add('hidden');
+            document.getElementById('incident_cost').value = '';
+        }
+        
+        if (type === 'Mejora (CAPEX)') {
+            isCapex.value = '1';
+            capexWarning.classList.remove('hidden');
+        } else {
+            isCapex.value = '0';
+            capexWarning.classList.add('hidden');
         }
     }
 

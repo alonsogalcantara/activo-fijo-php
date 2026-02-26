@@ -30,4 +30,20 @@ class Incident {
         $stmt->execute([':asset_id' => $assetId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function create($data) {
+        $sql = "INSERT INTO incidents (asset_id, incident_date, description, resolution_type, resolution_notes, cost, is_capex) 
+                VALUES (:asset_id, :incident_date, :description, :resolution_type, :resolution_notes, :cost, :is_capex)";
+        
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':asset_id' => $data['asset_id'],
+            ':incident_date' => $data['incident_date'],
+            ':description' => $data['description'],
+            ':resolution_type' => $data['resolution_type'] ?? 'Pendiente',
+            ':resolution_notes' => $data['resolution_notes'] ?? '',
+            ':cost' => $data['cost'] ?? 0.00,
+            ':is_capex' => $data['is_capex'] ?? 0
+        ]);
+    }
 }

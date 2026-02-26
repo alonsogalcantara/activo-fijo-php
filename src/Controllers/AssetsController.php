@@ -259,6 +259,37 @@ class AssetsController {
         }
     }
 
+    public function storeIncident($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $incidentModel = new \Models\Incident();
+            
+            $data = [
+                'asset_id' => $id,
+                'incident_date' => $_POST['incident_date'] ?? date('Y-m-d'),
+                'description' => $_POST['description'] ?? '',
+                'resolution_type' => $_POST['resolution_type'] ?? 'Pendiente',
+                'resolution_notes' => $_POST['resolution_notes'] ?? '',
+                'cost' => !empty($_POST['cost']) ? floatval($_POST['cost']) : 0.00,
+                'is_capex' => isset($_POST['is_capex']) && $_POST['is_capex'] == '1' ? 1 : 0
+            ];
+            
+            if ($incidentModel->create($data)) {
+                
+                // Update asset status to 'En Mantenimiento'
+                $assetModel = new Asset();
+                $assetModel->update($id, ['status' => 'En Mantenimiento']);
+
+                // Log audit
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new \Models\AuditLog();
+                $audit->log($_SESSION['user_name'] ?? 'System', 'INCIDENT', 'assets', $id, null, "Reported incident on asset ID $id. Status changed to En Mantenimiento.");
+            }
+            
+            header('Location: /assets/detail/' . $id);
+            exit();
+        }
+    }
+
     private function handlePhotoUpload() {
         if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
             $file = $_FILES['photo'];

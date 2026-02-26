@@ -21,7 +21,10 @@ class Accounting {
         // SQL is faster but complex if logic is complex (straight line vs specific).
         // Let's do a fetch all and loop for accuracy with existing logic suitable for this scale.
         
-        $query = 'SELECT * FROM assets';
+        $query = 'SELECT a.*, COALESCE(SUM(i.cost), 0) as capex_additions 
+                  FROM assets a 
+                  LEFT JOIN incidents i ON a.id = i.asset_id AND i.is_capex = 1
+                  GROUP BY a.id';
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $assets = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -31,7 +34,7 @@ class Accounting {
         $total_accumulated_depreciation = 0;
 
         foreach ($assets as $asset) {
-            $cost = floatval($asset['purchase_cost']);
+            $cost = floatval($asset['purchase_cost']) + floatval($asset['capex_additions']);
             $total_acquisition_cost += $cost;
 
             // Use the same logic as Asset Model for depreciation
@@ -184,36 +187,41 @@ class Accounting {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function getAssetsWithFinancials($filters = []) {
-        $sql = "SELECT * FROM assets WHERE 1=1";
+        $sql = "SELECT a.*, COALESCE(SUM(i.cost), 0) as capex_additions 
+                FROM assets a 
+                LEFT JOIN incidents i ON a.id = i.asset_id AND i.is_capex = 1 
+                WHERE 1=1";
         $params = [];
 
         if (!empty($filters['year']) && $filters['year'] !== 'all') {
             if ($filters['year'] === 'custom' && !empty($filters['start_date']) && !empty($filters['end_date'])) {
-                $sql .= " AND purchase_date BETWEEN :start_date AND :end_date";
+                $sql .= " AND a.purchase_date BETWEEN :start_date AND :end_date";
                 $params[':start_date'] = $filters['start_date'];
                 $params[':end_date'] = $filters['end_date'];
             } elseif (is_numeric($filters['year'])) {
-                $sql .= " AND YEAR(purchase_date) = :year";
+                $sql .= " AND YEAR(a.purchase_date) = :year";
                 $params[':year'] = $filters['year'];
             }
         }
 
         if (!empty($filters['category'])) {
-            $sql .= " AND category = :category";
+            $sql .= " AND a.category = :category";
             $params[':category'] = $filters['category'];
         }
+
+        $sql .= " GROUP BY a.id";
 
         // Sorting
         $sort_by = $filters['sort_by'] ?? 'id';
         $order = strtoupper($filters['order'] ?? 'DESC');
         $allowed_sorts = ['id', 'name', 'purchase_date', 'purchase_cost', 'status'];
         if (in_array($sort_by, $allowed_sorts)) {
-             $sort_col = $sort_by;
-             if ($sort_by === 'date') $sort_col = 'purchase_date';
-             if ($sort_by === 'cost') $sort_col = 'purchase_cost';
+             $sort_col = "a." . $sort_by;
+             if ($sort_by === 'date') $sort_col = 'a.purchase_date';
+             if ($sort_by === 'cost') $sort_col = '(a.purchase_cost + COALESCE(SUM(i.cost), 0))';
              $sql .= " ORDER BY $sort_col $order";
         } else {
-             $sql .= " ORDER BY id DESC";
+             $sql .= " ORDER BY a.id DESC";
         }
         
         // Pagination (if needed, implemented in Controller usually, but fetchAll here for now)
@@ -242,7 +250,7 @@ class Accounting {
         
         $cat = $asset['category'];
         $years_useful = isset($lifespan_map[$cat]) ? $lifespan_map[$cat] : 5; 
-        $cost = floatval($asset['purchase_cost']);
+        $cost = floatval($asset['purchase_cost']) + floatval($asset['capex_additions'] ?? 0);
 
         if (empty($asset['purchase_date'])) {
              return [

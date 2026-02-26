@@ -239,7 +239,7 @@ $current_order = $_GET['order'] ?? 'desc';
                 <?php $acc = $a['accounting']; ?>
                 <tr class="hover:bg-blue-50 transition group acc-row" id="row-<?= $a['id'] ?>" data-id="<?= $a['id'] ?>"
                     data-search="<?= htmlspecialchars(strtolower($a['name'] . ' ' . $a['category'] . ' ' . $acc['status'])) ?>"
-                    data-cost="<?= $a['purchase_cost'] ?: 0 ?>"
+                    data-cost="<?= ($a['purchase_cost'] ?: 0) + ($a['capex_additions'] ?? 0) ?>"
                     data-depreciation="<?= $acc['accumulated_depreciation'] ?: 0 ?>"
                     data-current-value="<?= $acc['current_value'] ?: 0 ?>">
 
@@ -259,9 +259,16 @@ $current_order = $_GET['order'] ?? 'desc';
                         <span class="value-display"><?= htmlspecialchars($a['purchase_date'] ? date('d/m/Y', strtotime($a['purchase_date'])) : '-') ?></span>
                     </td>
 
-                    <td class="p-3 text-right font-mono text-gray-700 border-r border-gray-100 cursor-pointer hover:bg-yellow-50 cell-editable"
+                    <td class="p-3 text-right border-r border-gray-100 cursor-pointer hover:bg-yellow-50 cell-editable"
                         ondblclick="makeEditable(this, 'cost', '<?= $a['id'] ?>')">
-                        <span class="value-display">$<?= number_format($a['purchase_cost'] ?: 0, 2) ?></span>
+                        <div class="flex flex-col items-end">
+                            <span class="value-display font-mono text-gray-700">$<?= number_format(($a['purchase_cost'] ?: 0) + ($a['capex_additions'] ?? 0), 2) ?></span>
+                            <?php if (!empty($a['capex_additions']) && $a['capex_additions'] > 0): ?>
+                            <span class="text-[9px] font-sans text-green-600 font-bold bg-green-50 px-1.5 py-0.5 rounded border border-green-200 mt-1" title="Incluye CAPEX por $<?= number_format($a['capex_additions'], 2) ?>">
+                                <i class="fas fa-plus mr-0.5"></i>CAPEX
+                            </span>
+                            <?php endif; ?>
+                        </div>
                     </td>
 
                     <td class="p-3 text-center">
@@ -271,7 +278,7 @@ $current_order = $_GET['order'] ?? 'desc';
                     </td>
 
                     <td class="p-3 text-right font-mono text-red-600 border-l border-gray-100 cursor-pointer hover:bg-yellow-50 relative cell-editable"
-                        ondblclick="makeEditable(this, 'amount', '<?= $a['id'] ?>', <?= $a['purchase_cost'] ?: 0 ?>)">
+                        ondblclick="makeEditable(this, 'amount', '<?= $a['id'] ?>', <?= ($a['purchase_cost'] ?: 0) + ($a['capex_additions'] ?? 0) ?>)">
                         <span class="value-display">-$<?= number_format($acc['accumulated_depreciation'] ?: 0, 2) ?></span>
                         <?php if ($acc['is_manual']): ?>
                         <div class="absolute top-1 right-1 text-[8px] text-orange-400 manual-indicator"><i
@@ -280,7 +287,7 @@ $current_order = $_GET['order'] ?? 'desc';
                     </td>
 
                     <td class="p-3 text-center font-mono text-purple-600 border-r border-gray-100 cursor-pointer hover:bg-yellow-50 cell-editable"
-                        ondblclick="makeEditable(this, 'percent', '<?= $a['id'] ?>', <?= $a['purchase_cost'] ?: 0 ?>)">
+                        ondblclick="makeEditable(this, 'percent', '<?= $a['id'] ?>', <?= ($a['purchase_cost'] ?: 0) + ($a['capex_additions'] ?? 0) ?>)">
                         <span class="value-display"><?= $acc['percentage_depreciated'] ?>%</span>
                     </td>
 
