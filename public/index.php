@@ -109,6 +109,8 @@ if ($uri[0] === 'assets') {
              $controller->dispose($uri[2]);
         } elseif ($uri[1] === 'incident' && isset($uri[2]) && $_SERVER['REQUEST_METHOD'] === 'POST') {
              $controller->storeIncident($uri[2]);
+        } elseif ($uri[1] === 'end_maintenance' && isset($uri[2]) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+             $controller->endMaintenance($uri[2]);
         } elseif ($uri[1] === 'delete' && isset($uri[2])) {
              $controller->delete($uri[2]);
         } elseif ($uri[1] === 'detail' && isset($uri[2])) {

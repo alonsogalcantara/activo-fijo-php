@@ -277,7 +277,7 @@ class AssetsController {
                 
                 // Update asset status to 'En Mantenimiento'
                 $assetModel = new Asset();
-                $assetModel->update($id, ['status' => 'En Mantenimiento']);
+                $assetModel->updateStatus($id, 'En Mantenimiento');
 
                 // Log audit
                 require_once __DIR__ . '/../Models/AuditLog.php';
@@ -285,6 +285,23 @@ class AssetsController {
                 $audit->log($_SESSION['user_name'] ?? 'System', 'INCIDENT', 'assets', $id, null, "Reported incident on asset ID $id. Status changed to En Mantenimiento.");
             }
             
+            header('Location: /assets/detail/' . $id);
+            exit();
+        }
+    }
+
+    public function endMaintenance($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $assetModel = new Asset();
+            $asset = $assetModel->getById($id);
+            if ($asset && $asset['status'] === 'En Mantenimiento') {
+                $status = !empty($asset['assigned_to']) ? 'Asignado' : 'Disponible';
+                $assetModel->updateStatus($id, $status);
+                
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new \Models\AuditLog();
+                $audit->log($_SESSION['user_name'] ?? 'System', 'UPDATE', 'assets', $id, null, "Mantenimiento terminado. Estado actualizado a $status.");
+            }
             header('Location: /assets/detail/' . $id);
             exit();
         }

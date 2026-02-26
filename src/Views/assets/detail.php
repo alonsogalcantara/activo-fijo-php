@@ -12,9 +12,11 @@
 <!-- TOP ACTIONS -->
 <div class="flex justify-end gap-2 mb-6">
     <?php if ($asset['status'] == 'En Mantenimiento'): ?>
-    <button onclick="endMaintenance(<?= $asset['id'] ?>)" class="bg-emerald-600 text-white px-4 py-2 rounded-lg shadow hover:bg-emerald-700 transition font-bold flex items-center">
-        <i class="fas fa-check-circle mr-2"></i> Terminar Mantenimiento
-    </button>
+    <form action="/assets/end_maintenance/<?= $asset['id'] ?>" method="POST" onsubmit="return confirm('¿Confirmar que el activo ha terminado su mantenimiento y está listo para usarse?')">
+        <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded-lg shadow hover:bg-emerald-700 transition font-bold flex items-center">
+            <i class="fas fa-check-circle mr-2"></i> Terminar Mantenimiento
+        </button>
+    </form>
     <?php endif; ?>
 
     <button onclick="openIncidentModal()" class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg shadow-sm hover:bg-gray-50 transition font-bold flex items-center">
@@ -624,7 +626,6 @@ include __DIR__ . '/../partials/documents_list.php';
     }
     
     // PDF Download Functions
-    function endMaintenance(id) { alert('Funcionalidad pendiente.'); }
     function downloadPdf(id) { 
         window.open('/reports/responsive_letter/' + id, '_blank'); 
     }

@@ -120,6 +120,14 @@ class Asset {
          return $stmt->execute();
     }
 
+    public function updateStatus($id, $status) {
+         $query = 'UPDATE ' . $this->table . ' SET status = :status WHERE id = :id';
+         $stmt = $this->conn->prepare($query);
+         $stmt->bindParam(':id', $id);
+         $stmt->bindParam(':status', $status);
+         return $stmt->execute();
+    }
+
     public function delete($id) {
          $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';
          $stmt = $this->conn->prepare($query);
