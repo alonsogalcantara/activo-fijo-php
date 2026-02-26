@@ -147,7 +147,7 @@
 
                     <td class="p-4">
                         <div class="text-sm font-mono text-gray-600"><?= htmlspecialchars($a['serial_number'] ?: '-') ?></div>
-                        <div class="text-xs text-gray-400"><?= htmlspecialchars($a['brand']) ?> <?= htmlspecialchars($a['model']) ?></div>
+                        <div class="text-xs text-gray-400"><?= htmlspecialchars($a['brand'] ?? '') ?> <?= htmlspecialchars($a['model'] ?? '') ?></div>
                     </td>
 
                     <td class="p-4">
