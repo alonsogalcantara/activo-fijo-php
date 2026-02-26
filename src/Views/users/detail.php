@@ -9,20 +9,42 @@
     </a>
 </div>
 
-<div class="bg-white p-8 rounded-xl shadow-lg mb-8 border border-gray-100">
+<!-- TOP ACTIONS -->
+<div class="flex justify-end gap-2 mb-6">
+    <a href="/reports/kardex/<?= $user['id'] ?>" target="_blank" class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg shadow-sm hover:bg-gray-50 transition font-bold flex items-center" title="Descargar Historial de Movimientos">
+        <i class="fas fa-file-contract mr-2"></i> Kardex / Reporte RRHH
+    </a>
+    <button onclick="openAssignModal()" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 shadow-md font-bold transition flex items-center">
+        <i class="fas fa-laptop-medical mr-2"></i> Asignar Equipo
+    </button>
+    <a href="/users/edit/<?= $user['id'] ?>" class="bg-yellow-500 text-white px-5 py-2 rounded-lg shadow hover:bg-yellow-600 font-bold flex items-center transition">
+        <i class="fas fa-pen mr-2"></i> Editar
+    </a>
+</div>
+
+<div class="bg-white p-8 rounded-2xl shadow-lg mb-8 border border-gray-100 overflow-hidden">
     
-    <!-- HEADER -->
+    <!-- HEADER SECTION -->
     <div class="mb-8 pb-6 border-b border-gray-200">
-        <div class="flex items-center gap-3 mb-3">
-            <h1 class="text-4xl font-bold text-gray-900"><?= htmlspecialchars($user['name']) ?></h1>
-            <?php 
-                $statusClass = ($user['status'] == 'Activo') ? 'bg-green-100 text-green-700 border-green-300' : 'bg-red-100 text-red-700 border-red-300';
-            ?>
-            <span class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase border <?= $statusClass ?>">
-                <?= htmlspecialchars($user['status']) ?>
-            </span>
+        <div class="flex items-start justify-between mb-4">
+            <div class="flex-1">
+                <div class="flex items-center gap-3 mb-3">
+                    <?php 
+                        $statusClass = ($user['status'] == 'Activo') ? 'bg-green-100 text-green-700 border-green-300' : 'bg-red-100 text-red-700 border-red-300';
+                    ?>
+                    <span class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase border <?= $statusClass ?>">
+                        <?= htmlspecialchars($user['status']) ?>
+                    </span>
+                    <span class="text-xs text-gray-400 font-mono">ID: <?= $user['id'] ?></span>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900 mb-2"><?= htmlspecialchars($user['name']) ?></h1>
+                <p class="text-gray-500 text-sm flex items-center gap-2">
+                    <span class="font-mono bg-gray-50 px-3 py-1.5 rounded border border-gray-200">
+                        <i class="fas fa-envelope text-gray-400 mr-2"></i> <?= htmlspecialchars($user['email']) ?>
+                    </span>
+                </p>
+            </div>
         </div>
-        <p class="text-gray-500 text-lg flex items-center gap-2"><i class="fas fa-envelope text-gray-400"></i> <?= htmlspecialchars($user['email']) ?></p>
     </div>
 
     <!-- SECTION 1: NOMBRE COMPLETO -->
@@ -97,31 +119,18 @@
                 <span class="px-2 py-0.5 rounded bg-purple-100 text-purple-700 text-sm font-bold"><?= htmlspecialchars($user['system_role']) ?></span>
             </div>
             <?php endif; ?>
-            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <span class="block text-xs text-gray-500 mb-1 uppercase font-bold">Creado</span>
-                <span class="font-mono text-gray-900"><?= !empty($user['created_at']) ? date('d/m/Y H:i', strtotime($user['created_at'])) : '-' ?></span>
-            </div>
+        </div>
+    </div>
+
+    <!-- TIMESTAMPS -->
+    <div class="pt-6 border-t border-gray-200">
+        <div class="text-xs text-gray-500">
+            <span class="block text-gray-400 mb-1 uppercase font-bold">Creado</span>
+            <span class="font-mono"><?= !empty($user['created_at']) ? date('d/m/Y H:i', strtotime($user['created_at'])) : '-' ?></span>
         </div>
     </div>
 
 </div>
-
-        <!-- Action Buttons -->
-        <div class="flex flex-col gap-2 w-full md:w-auto">
-            <a href="/reports/kardex/<?= $user['id'] ?>" target="_blank" class="bg-white text-indigo-600 border border-indigo-200 hover:bg-indigo-50 px-4 py-2 rounded-lg shadow-sm font-bold flex items-center justify-center transition" title="Descargar Historial de Movimientos">
-                <i class="fas fa-file-contract mr-2"></i> Kardex / Reporte RRHH
-            </a>
-            
-            <button onclick="openAssignModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 font-bold flex items-center justify-center transition">
-                <i class="fas fa-laptop-medical mr-2"></i> Asignar Equipo
-            </button>
-
-            <!-- Need edit route for users -->
-            <!-- <a href="/users/edit/<?= $user['id'] ?>" class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 font-bold flex items-center justify-center transition">
-                <i class="fas fa-user-edit mr-2"></i> Editar Usuario
-            </a> -->
-        </div>
-    </div>
 
 <!-- Assigned Assets List -->
 <h2 class="font-bold text-xl mb-4 text-gray-700 flex items-center"><i class="fas fa-laptop mr-2 text-blue-500"></i> Activos Asignados (<?= count($assigned_assets) ?>)</h2>
