@@ -127,6 +127,31 @@ class Asset {
          return $stmt->execute();
     }
 
+    public function dispose($id, $data) {
+         $query = 'UPDATE ' . $this->table . ' SET 
+                    status = :status, 
+                    assigned_to = NULL, 
+                    disposal_date = :disposal_date, 
+                    disposal_reason = :disposal_reason, 
+                    disposal_price = :disposal_price, 
+                    book_value_at_disposal = :book_value_at_disposal, 
+                    accumulated_depreciation_override = :accumulated_depreciation_override 
+                  WHERE id = :id';
+         
+         $stmt = $this->conn->prepare($query);
+         
+         $status = 'De Baja';
+         $stmt->bindParam(':id', $id);
+         $stmt->bindParam(':status', $status);
+         $stmt->bindParam(':disposal_date', $data['disposal_date']);
+         $stmt->bindParam(':disposal_reason', $data['disposal_reason']);
+         $stmt->bindParam(':disposal_price', $data['disposal_price']);
+         $stmt->bindParam(':book_value_at_disposal', $data['book_value_at_disposal']);
+         $stmt->bindParam(':accumulated_depreciation_override', $data['accumulated_depreciation_override']);
+
+         return $stmt->execute();
+    }
+
     private function calculateDepreciation($asset) {
         $lifespan_map = [
             'Computadora' => 3,	// 30% approx in Mexico is 3.33, often rounded to 3 or 4. Using 3 based on description.

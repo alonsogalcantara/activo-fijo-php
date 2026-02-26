@@ -105,6 +105,8 @@ if ($uri[0] === 'assets') {
              $controller->edit($uri[2]);
         } elseif ($uri[1] === 'update' && isset($uri[2]) && $_SERVER['REQUEST_METHOD'] === 'POST') {
              $controller->update($uri[2]);
+        } elseif ($uri[1] === 'dispose' && isset($uri[2]) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+             $controller->dispose($uri[2]);
         } elseif ($uri[1] === 'delete' && isset($uri[2])) {
              $controller->delete($uri[2]);
         } elseif ($uri[1] === 'detail' && isset($uri[2])) {

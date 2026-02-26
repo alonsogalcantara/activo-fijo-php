@@ -445,14 +445,72 @@ include __DIR__ . '/../partials/documents_list.php';
 </div>
 
 <div id="disposalModal" class="fixed inset-0 bg-gray-900/60 hidden items-center justify-center z-50 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg text-center">
-        <h2 class="text-lg font-bold mb-4">Procesar Baja</h2>
-        <p class="text-gray-600 mb-4">Esta funcionalidad requiere lógica de backend adicional (stop depreciation, calc P&L).</p>
-        <button onclick="document.getElementById('disposalModal').classList.add('hidden'); document.getElementById('disposalModal').classList.remove('flex');" class="bg-gray-200 px-4 py-2 rounded text-gray-800 font-bold">Cerrar</button>
+    <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg text-left">
+        <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-100">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center"><i class="fas fa-trash-alt mr-2 text-red-500"></i> Procesar Baja</h2>
+            <button type="button" onclick="document.getElementById('disposalModal').classList.add('hidden'); document.getElementById('disposalModal').classList.remove('flex');" class="text-gray-400 hover:text-gray-700 transition"><i class="fas fa-times text-lg"></i></button>
+        </div>
+        
+        <form action="/assets/dispose/<?= $asset['id'] ?>" method="POST">
+            <p class="text-sm text-red-700 mb-6 bg-red-50 p-3 rounded-lg border border-red-100 block">
+                <i class="fas fa-exclamation-triangle mr-1"></i> Al proceder, se <strong class="text-red-800">congelará la depreciación</strong> y cambiará el estado del activo a "De Baja".
+            </p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Fecha de Baja <span class="text-red-500">*</span></label>
+                    <input type="date" name="disposal_date" required value="<?= date('Y-m-d') ?>" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition bg-white">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Motivo <span class="text-red-500">*</span></label>
+                    <select name="disposal_reason" id="disposal_reason" required onchange="toggleDisposalPrice()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition bg-white text-sm">
+                        <option value="">Seleccione un motivo...</option>
+                        <option value="Obsolescencia">Obsolescencia</option>
+                        <option value="Venta">Venta</option>
+                        <option value="Robo">Robo / Extravío</option>
+                        <option value="Donación">Donación</option>
+                        <option value="Chatarra">Desecho / Chatarra</option>
+                    </select>
+                </div>
+
+                <div id="priceFieldContainer" class="hidden">
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Precio de Venta Recuperado ($)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">$</span>
+                        </div>
+                        <input type="number" step="0.01" min="0" name="disposal_price" id="disposal_price" placeholder="0.00" class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition font-mono bg-white">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-end gap-3 pt-4 border-t border-gray-100">
+                <button type="button" onclick="document.getElementById('disposalModal').classList.add('hidden'); document.getElementById('disposalModal').classList.remove('flex');" class="bg-gray-100 px-5 py-2.5 rounded-lg text-gray-700 font-bold hover:bg-gray-200 transition">Cancelar</button>
+                <button type="submit" class="bg-red-600 px-5 py-2.5 rounded-lg text-white font-bold hover:bg-red-700 transition shadow">
+                    Confirmar Baja
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
 <script>
+    function toggleDisposalPrice() {
+        const reason = document.getElementById('disposal_reason').value;
+        const priceContainer = document.getElementById('priceFieldContainer');
+        const priceInput = document.getElementById('disposal_price');
+        
+        if (reason === 'Venta') {
+            priceContainer.classList.remove('hidden');
+            priceInput.setAttribute('required', 'required');
+        } else {
+            priceContainer.classList.add('hidden');
+            priceInput.removeAttribute('required');
+            priceInput.value = ''; // Reset price
+        }
+    }
+
     function openIncidentModal() {
         document.getElementById('incidentModal').classList.remove('hidden');
         document.getElementById('incidentModal').classList.add('flex');

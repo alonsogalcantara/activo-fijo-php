@@ -186,6 +186,79 @@ class AssetsController {
         header('Location: /assets');
     }
 
+    public function dispose($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $assetModel = new Asset();
+            $asset = $assetModel->getById($id);
+            
+            if (!$asset) {
+                header('Location: /assets');
+                exit();
+            }
+
+            $disposal_date = $_POST['disposal_date'] ?? date('Y-m-d');
+            $disposal_reason = $_POST['disposal_reason'] ?? '';
+            $disposal_price = !empty($_POST['disposal_price']) ? floatval($_POST['disposal_price']) : 0.00;
+
+            // Calculate accumulated depreciation up to the disposal date
+            // We use the same generic lifespans as calculateDepreciation
+            $lifespan_map = [
+                'Computadora' => 3, 'Laptop' => 3, 'Servidor' => 3, 'Celular' => 3, 'Impresora' => 3,
+                'Vehículo' => 4, 'Automóvil' => 4, 'Camioneta' => 4,
+                'Mobiliario' => 10, 'Silla' => 10, 'Escritorio' => 10
+            ];
+            $category = $asset['category'];
+            $years_useful_life = isset($lifespan_map[$category]) ? $lifespan_map[$category] : 10;
+            
+            $purchase_cost = floatval($asset['purchase_cost']);
+            $purchase_date = !empty($asset['purchase_date']) ? new \DateTime($asset['purchase_date']) : new \DateTime();
+            $dispose_date_obj = new \DateTime($disposal_date);
+            
+            $accumulated_depreciation = 0;
+            $book_value_at_disposal = $purchase_cost;
+
+            if ($asset['acquisition_type'] !== 'Arrendamiento') {
+                 // Calculate interval up to disposal date
+                 $interval = $purchase_date->diff($dispose_date_obj);
+                 $age_years = $interval->y + ($interval->m / 12) + ($interval->d / 365);
+                 
+                 // If disposal date is before purchase, age is negative -> 0
+                 if ($dispose_date_obj < $purchase_date) {
+                     $age_years = 0;
+                 }
+                 
+                 if ($asset['accumulated_depreciation_override'] !== null) {
+                      $accumulated_depreciation = floatval($asset['accumulated_depreciation_override']);
+                 } else {
+                      $annual_depreciation = $purchase_cost / $years_useful_life;
+                      $accumulated_depreciation = $annual_depreciation * $age_years;
+                 }
+
+                 if ($accumulated_depreciation > $purchase_cost) {
+                     $accumulated_depreciation = $purchase_cost;
+                 }
+                 $book_value_at_disposal = $purchase_cost - $accumulated_depreciation;
+            }
+
+            $data = [
+                'disposal_date' => $disposal_date,
+                'disposal_reason' => $disposal_reason,
+                'disposal_price' => $disposal_price,
+                'book_value_at_disposal' => $book_value_at_disposal,
+                'accumulated_depreciation_override' => $accumulated_depreciation
+            ];
+
+            if ($assetModel->dispose($id, $data)) {
+                // Unassign from user implicitly handled by model, maybe add history event
+                $audit = new \Models\AuditLog();
+                $audit->log($_SESSION['user_name'] ?? 'System', 'DISPOSE', 'assets', $id, null, "Dar de baja activo: {$asset['name']} por $disposal_reason");
+            }
+            
+            header('Location: /assets/detail/' . $id);
+            exit();
+        }
+    }
+
     private function handlePhotoUpload() {
         if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
             $file = $_FILES['photo'];
