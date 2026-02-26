@@ -23,7 +23,9 @@
     $uri = $_SERVER['REQUEST_URI'];
     // Determine active page for highlighting
     $active_page = 'dashboard';
-    if (strpos($uri, '/assets') !== false) $active_page = 'assets';
+    if (strpos($uri, '/admin/users') !== false) $active_page = 'admin_users';
+    elseif (strpos($uri, '/audit') !== false) $active_page = 'audit';
+    elseif (strpos($uri, '/assets') !== false) $active_page = 'assets';
     elseif (strpos($uri, '/users') !== false) $active_page = 'users';
     elseif (strpos($uri, '/accounts') !== false && strpos($uri, 'accounting') === false) $active_page = 'accounts';
     elseif (strpos($uri, '/accounting') !== false) $active_page = 'accounting';

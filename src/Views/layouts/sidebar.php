@@ -31,10 +31,10 @@
             <p class="px-4 text-xs font-bold text-slate-500 uppercase mb-2">
                 Administración
             </p>
-            <a href="/admin/users" class="block py-2.5 px-4 rounded transition hover:bg-slate-800 text-slate-300">
+            <a href="/admin/users" class="block py-2.5 px-4 rounded transition <?= $active_page == 'admin_users' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800 text-slate-300' ?>">
                 <i class="fas fa-users-cog w-6"></i> Usuarios Sistema
             </a>
-            <a href="/audit" class="block py-2.5 px-4 rounded transition hover:bg-slate-800 text-slate-300">
+            <a href="/audit" class="block py-2.5 px-4 rounded transition <?= $active_page == 'audit' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800 text-slate-300' ?>">
                 <i class="fas fa-shield-alt w-6"></i> Auditoría
             </a>
         </div>
