@@ -144,91 +144,118 @@
         </div>
 
         <!-- CAMPOS ESPECÍFICOS (VISIBILIDAD CONTROLADA POR JS) -->
+        <div id="specificFieldsContainer" class="space-y-6">
 
-        <!-- VEHÍCULOS -->
-        <div id="vehicleFields" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hidden">
-            <h3 class="text-lg font-bold text-blue-800 border-b border-gray-100 pb-3 mb-6 flex items-center"><i class="fas fa-car mr-2"></i> Datos del Vehículo</h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Placas</label>
-                <input type="text" id="vehiclePlate" name="license_plate" class="w-full p-2.5 border border-gray-300 rounded-lg uppercase placeholder-gray-300" placeholder="ABC-123"></div>
-                
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">VIN / NIV</label>
-                <input type="text" id="vehicleVin" name="vin" class="w-full p-2.5 border border-gray-300 rounded-lg uppercase font-mono text-sm placeholder-gray-300" maxlength="17" placeholder="17 Caracteres"></div>
-                
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Año</label>
-                <input type="number" id="vehicleYear" name="vehicle_year" min="1900" max="2100" class="w-full p-2.5 border border-gray-300 rounded-lg placeholder-gray-300" placeholder="YYYY"></div>
-                
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Kilometraje</label>
-                <input type="number" id="vehicleMileage" name="mileage" min="0" class="w-full p-2.5 border border-gray-300 rounded-lg text-right placeholder-gray-300" placeholder="0"></div>
-                
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Color</label>
-                <input type="text" id="vehicleColor" name="color" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
-            </div>
-        </div>
-
-        <!-- UNIFORMES -->
-        <div id="uniformFields" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hidden">
-            <h3 class="text-lg font-bold text-orange-600 border-b border-gray-100 pb-3 mb-6 flex items-center"><i class="fas fa-tshirt mr-2"></i> Detalles de Prenda</h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Talla</label>
-                <input type="text" id="uniSize" name="size" class="w-full p-2.5 border border-gray-300 rounded-lg placeholder-gray-300" placeholder="S, M, L, 32..."></div>
-                
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Corte / Género</label>
-                    <select id="uniGender" name="gender_cut" class="w-full p-2.5 border border-gray-300 rounded-lg bg-white">
-                        <option value="">Seleccione</option>
-                        <option value="Caballero">Caballero</option>
-                        <option value="Dama">Dama</option>
-                        <option value="Unisex">Unisex</option>
-                    </select>
+            <!-- VEHÍCULOS -->
+            <div id="form-Vehículo" class="specific-form bg-white rounded-xl shadow-sm border border-gray-200 p-6 hidden">
+                <h3 class="text-lg font-bold text-blue-800 border-b border-gray-100 pb-3 mb-6 flex items-center"><i class="fas fa-car mr-2"></i> Datos del Vehículo</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Placas</label>
+                    <input type="text" name="license_plate" class="w-full p-2.5 border border-gray-300 rounded-lg uppercase placeholder-gray-300" placeholder="ABC-123"></div>
+                    
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">VIN / NIV</label>
+                    <input type="text" name="vin" class="w-full p-2.5 border border-gray-300 rounded-lg uppercase font-mono text-sm placeholder-gray-300" maxlength="17" placeholder="17 Caracteres"></div>
+                    
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Año</label>
+                    <input type="number" name="vehicle_year" min="1900" max="2100" class="w-full p-2.5 border border-gray-300 rounded-lg placeholder-gray-300" placeholder="YYYY"></div>
+                    
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Kilometraje</label>
+                    <input type="number" name="mileage" min="0" step="0.01" class="w-full p-2.5 border border-gray-300 rounded-lg text-right placeholder-gray-300" placeholder="0"></div>
+                    
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Color</label>
+                    <input type="text" name="color" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
                 </div>
-                
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Material / Tela</label>
-                <input type="text" id="uniMaterial" name="material" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
-                
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Color</label>
-                <input type="text" id="uniColor" name="uni_color" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
             </div>
-        </div>
 
-        <!-- MOBILIARIO Y HERRAMIENTAS -->
-        <div id="furnitureFields" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hidden">
-            <h3 id="furnTitle" class="text-lg font-bold text-amber-600 border-b border-gray-100 pb-3 mb-6 flex items-center">
-                <i class="fas fa-chair mr-2"></i> Mobiliario y Herramientas
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Dimensiones / Medidas</label>
-                <input type="text" id="furnDim" name="dimensions" class="w-full p-2.5 border border-gray-300 rounded-lg placeholder-gray-300" placeholder="Largo x Ancho x Alto"></div>
-                
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Material / Acabado</label>
-                <input type="text" id="furnMat" name="furn_material" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
-                
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Color</label>
-                <input type="text" id="furnColor" name="furn_color" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+            <!-- UNIFORMES -->
+            <div id="form-Uniforme" class="specific-form bg-white rounded-xl shadow-sm border border-gray-200 p-6 hidden">
+                <h3 class="text-lg font-bold text-orange-600 border-b border-gray-100 pb-3 mb-6 flex items-center"><i class="fas fa-tshirt mr-2"></i> Detalles de Prenda</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Talla</label>
+                    <input type="text" name="size" class="w-full p-2.5 border border-gray-300 rounded-lg placeholder-gray-300" placeholder="S, M, L, 32..."></div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Corte / Género</label>
+                        <select name="gender_cut" class="w-full p-2.5 border border-gray-300 rounded-lg bg-white">
+                            <option value="">Seleccione</option>
+                            <option value="Caballero">Caballero</option>
+                            <option value="Dama">Dama</option>
+                            <option value="Unisex">Unisex</option>
+                        </select>
+                    </div>
+                    
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Material / Tela</label>
+                    <input type="text" name="material" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+                    
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Color</label>
+                    <input type="text" name="color" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+                </div>
             </div>
-        </div>
 
-        <!-- CÓMPUTO -->
-        <div id="techSpecsSection" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hidden">
-            <h3 class="text-lg font-bold text-purple-700 border-b border-gray-100 pb-3 mb-6 flex items-center"><i class="fas fa-microchip mr-2"></i> Especificaciones Técnicas</h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Procesador</label>
-                <input type="text" id="assetProcessor" name="processor" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
-                
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">RAM</label>
-                <input type="text" id="assetRam" name="ram" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
-                
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Almacenamiento</label>
-                <input type="text" id="assetStorage" name="storage" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
-                
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">SO / Versión</label>
-                <input type="text" id="assetOS" name="operating_system" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+            <!-- MOBILIARIO -->
+            <div id="form-Mobiliario" class="specific-form bg-white rounded-xl shadow-sm border border-gray-200 p-6 hidden">
+                <h3 class="text-lg font-bold text-amber-600 border-b border-gray-100 pb-3 mb-6 flex items-center">
+                    <i class="fas fa-chair mr-2"></i> Detalles del Mobiliario
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Dimensiones / Medidas</label>
+                    <input type="text" name="dimensions" class="w-full p-2.5 border border-gray-300 rounded-lg placeholder-gray-300" placeholder="Largo x Ancho x Alto"></div>
+                    
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Material / Acabado</label>
+                    <input type="text" name="material" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+                    
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Color</label>
+                    <input type="text" name="color" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+                </div>
             </div>
+
+            <!-- HERRAMIENTA -->
+            <div id="form-Herramienta" class="specific-form bg-white rounded-xl shadow-sm border border-gray-200 p-6 hidden">
+                <h3 class="text-lg font-bold text-amber-600 border-b border-gray-100 pb-3 mb-6 flex items-center">
+                    <i class="fas fa-tools mr-2"></i> Detalles de Herramienta
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Material</label>
+                    <input type="text" name="material" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+                    
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Color</label>
+                    <input type="text" name="color" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+                </div>
+            </div>
+
+            <!-- CÓMPUTO Y CELULAR -->
+            <div id="form-Tech" class="specific-form bg-white rounded-xl shadow-sm border border-gray-200 p-6 hidden">
+                <h3 class="text-lg font-bold text-purple-700 border-b border-gray-100 pb-3 mb-6 flex items-center"><i class="fas fa-microchip mr-2"></i> Especificaciones Técnicas y Acceso</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                    <div class="lg:col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Procesador</label>
+                    <input type="text" name="processor" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+                    
+                    <div class="lg:col-span-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">RAM</label>
+                    <input type="text" name="ram" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+                    
+                    <div class="lg:col-span-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Almacenamiento</label>
+                    <input type="text" name="storage" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+                    
+                    <div class="lg:col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">SO / Versión</label>
+                    <input type="text" name="operating_system" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+
+                    <div class="lg:col-span-3">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Usuario del Equipo</label>
+                        <input type="text" name="device_user" class="w-full p-2.5 border border-gray-300 rounded-lg" placeholder="Ej: admin, jperez">
+                    </div>
+                    
+                    <div class="lg:col-span-3">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Contraseña del Equipo</label>
+                        <input type="text" name="device_password" class="w-full p-2.5 border border-gray-300 rounded-lg" placeholder="Contraseña de acceso local">
+                    </div>
+                </div>
+            </div>
+            
         </div>
 
         <!-- SECCIÓN 2: ESTADO Y FINANZAS -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
+            <div id="assignmentSection" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-2 opacity-10 text-9xl text-gray-300 pointer-events-none"><i class="fas fa-users"></i></div>
                 <h3 class="text-sm font-bold text-gray-800 uppercase mb-4 flex items-center text-blue-600 relative z-10">
                     <i class="fas fa-user-tag mr-2"></i> Asignación y Estado
@@ -344,37 +371,58 @@
         const badge = document.getElementById('leaseLockBadge');
         const hintText = document.getElementById('catHint');
 
-        // 1. Mostrar campos específicos
-        ['vehicleFields', 'uniformFields', 'furnitureFields', 'techSpecsSection'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        // 1. Ocultar todas las formas específicas y desactivar sus inputs
+        document.querySelectorAll('.specific-form').forEach(form => {
+            form.classList.add('hidden');
+            form.querySelectorAll('input, select, textarea').forEach(input => {
+                input.disabled = true;
+            });
+        });
 
         document.getElementById('lblSerial').textContent = 'No. Serie / Identificador';
         document.getElementById('lblModel').textContent = 'Modelo';
-        document.getElementById('furnTitle').innerHTML = '<i class="fas fa-chair mr-2"></i> Mobiliario y Herramientas';
 
+        // 2. Mostrar la forma específica según la categoría y activarla
+        let activeFormId = null;
         if (cat === 'Vehículo') {
-            document.getElementById('vehicleFields').classList.remove('hidden');
+            activeFormId = 'form-Vehículo';
             document.getElementById('lblSerial').textContent = 'VIN (NIV)';
             document.getElementById('lblModel').textContent = 'Versión';
-        }
-        else if (cat === 'Uniforme') {
-            document.getElementById('uniformFields').classList.remove('hidden');
+        } else if (cat === 'Uniforme') {
+            activeFormId = 'form-Uniforme';
             document.getElementById('lblSerial').textContent = 'SKU / Código';
             document.getElementById('lblModel').textContent = 'Tipo';
-        }
-        else if (cat === 'Mobiliario') {
-            document.getElementById('furnitureFields').classList.remove('hidden');
+        } else if (cat === 'Mobiliario') {
+            activeFormId = 'form-Mobiliario';
             document.getElementById('lblSerial').textContent = 'Cód. Inventario';
-        }
-        else if (cat === 'Herramienta') {
-            document.getElementById('furnitureFields').classList.remove('hidden');
-            document.getElementById('furnTitle').innerHTML = '<i class="fas fa-tools mr-2"></i> Detalles de Herramienta';
+        } else if (cat === 'Herramienta') {
+            activeFormId = 'form-Herramienta';
             document.getElementById('lblSerial').textContent = 'No. Serie / ID';
-        }
-        else if (cat === 'Computadora' || cat === 'Laptop' || cat === 'Celular') {
-            document.getElementById('techSpecsSection').classList.remove('hidden');
+        } else if (cat === 'Computadora' || cat === 'Laptop' || cat === 'Celular') {
+            activeFormId = 'form-Tech';
             if (cat === 'Celular') {
                 document.getElementById('lblSerial').textContent = 'IMEI / Serie';
             }
+        }
+
+        if (activeFormId) {
+            const activeForm = document.getElementById(activeFormId);
+            if (activeForm) {
+                activeForm.classList.remove('hidden');
+                activeForm.querySelectorAll('input, select, textarea').forEach(input => {
+                    input.disabled = false;
+                });
+            }
+        }
+
+        // 3. Mostrar / Ocultar bloque de asignación
+        const assignmentSection = document.getElementById('assignmentSection');
+        if (cat === 'Mobiliario' || cat === 'Herramienta' || cat === 'Otro') {
+            assignmentSection.classList.add('hidden');
+            document.getElementById('assetAssignedTo').value = ''; // Clean assignment
+            document.getElementById('assetAssignedTo').dispatchEvent(new Event('change')); // Trigger status update
+        } else {
+            assignmentSection.classList.remove('hidden');
         }
 
         // 2. Aplicar Reglas de Arrendamiento
