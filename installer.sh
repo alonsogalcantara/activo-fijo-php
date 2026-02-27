@@ -41,14 +41,10 @@ sudo systemctl start mariadb
 # ==========================================
 # 2. Download from GitHub Repository
 # ==========================================
-if [ -d "$INSTALL_DIR/.git" ]; then
-    echo "Directory $INSTALL_DIR already exists and is a git repository. Pulling latest changes..."
-    cd "$INSTALL_DIR"
-    sudo git pull origin main
+if [ -d "$INSTALL_DIR" ]; then
+    echo "Directory $INSTALL_DIR already exists. Skipping clone process..."
 else
     echo "Cloning repository from $REPO_URL..."
-    # Remove directory if it exists but is empty or not a git repo to prevent clone errors
-    sudo rm -rf "$INSTALL_DIR"
     sudo git clone "$REPO_URL" "$INSTALL_DIR"
 fi
 
@@ -108,7 +104,28 @@ else
 fi
 
 # ==========================================
-# 5. Output Credentials
+# 5. Create Default Admin User
+# ==========================================
+ADMIN_EMAIL="admin@admin.com"
+# Check if the user already exists
+USER_EXISTS=$(sudo mysql -N -B -e "SELECT COUNT(*) FROM \`$DB_NAME\`.users WHERE email='$ADMIN_EMAIL';")
+
+if [ "$USER_EXISTS" -eq 0 ]; then
+    echo "Creating default admin user..."
+    ADMIN_PASS=$(openssl rand -base64 8 | tr -dc 'a-zA-Z0-9' | head -c 8)
+    
+    # Generate the bcrypt hash using PHP (it's already installed on the system at this point)
+    ADMIN_HASH=$(php -r "echo password_hash('$ADMIN_PASS', PASSWORD_DEFAULT);")
+    
+    sudo mysql -e "INSERT INTO \`$DB_NAME\`.users (name, first_name, email, role, system_role, password_hash, status) VALUES ('Super Admin', 'Super', '$ADMIN_EMAIL', 'Administrator', 'admin', '$ADMIN_HASH', 'Activo');"
+    ADMIN_CREATED=true
+else
+    echo "Default admin user already exists. Skipping creation."
+    ADMIN_CREATED=false
+fi
+
+# ==========================================
+# 6. Output Credentials
 # ==========================================
 echo ""
 echo "========================================================"
@@ -120,6 +137,14 @@ echo "--------------------------------------------------------"
 echo " Database Name    : $DB_NAME"
 echo " Database User    : $DB_USER"
 echo " Database Password: $DB_PASS"
+echo "--------------------------------------------------------"
+if [ "$ADMIN_CREATED" = true ]; then
+    echo " Default Admin Email   : $ADMIN_EMAIL"
+    echo " Default Admin Password: $ADMIN_PASS"
+else
+    echo " Default Admin Email   : $ADMIN_EMAIL"
+    echo " Default Admin Password: (Already Created - use existing)"
+fi
 echo "========================================================"
 echo "Please save these credentials securely!"
 echo "You can access the application by navigating to your server's IP address or domain: http://$(hostname -I | awk '{print $1}')/activoFijo"

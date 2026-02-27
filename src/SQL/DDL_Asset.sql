@@ -1,6 +1,6 @@
 -- asset_manager.account_members definition
 
-CREATE TABLE `account_members` (
+CREATE TABLE IF NOT EXISTS `account_members` (
   `id` int NOT NULL AUTO_INCREMENT,
   `account_id` int NOT NULL,
   `name` varchar(255) DEFAULT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE `account_members` (
 
 -- asset_manager.accounts definition
 
-CREATE TABLE `accounts` (
+CREATE TABLE IF NOT EXISTS `accounts` (
   `id` int NOT NULL AUTO_INCREMENT,
   `service_name` varchar(150) NOT NULL,
   `username` varchar(150) DEFAULT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE `accounts` (
 
 -- asset_manager.admins definition
 
-CREATE TABLE `admins` (
+CREATE TABLE IF NOT EXISTS `admins` (
   `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(100) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE `admins` (
 
 -- asset_manager.asset_credentials definition
 
-CREATE TABLE `asset_credentials` (
+CREATE TABLE IF NOT EXISTS `asset_credentials` (
   `id` int NOT NULL AUTO_INCREMENT,
   `asset_id` int NOT NULL,
   `username` varchar(150) DEFAULT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE `asset_credentials` (
 
 -- asset_manager.asset_history definition
 
-CREATE TABLE `asset_history` (
+CREATE TABLE IF NOT EXISTS `asset_history` (
   `id` int NOT NULL AUTO_INCREMENT,
   `asset_id` int NOT NULL,
   `action` varchar(100) NOT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE `asset_history` (
 
 -- asset_manager.assets definition
 
-CREATE TABLE `assets` (
+CREATE TABLE IF NOT EXISTS `assets` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `category` varchar(100) NOT NULL,
@@ -130,7 +130,7 @@ CREATE TABLE `assets` (
 
 -- asset_manager.audit_logs definition
 
-CREATE TABLE `audit_logs` (
+CREATE TABLE IF NOT EXISTS `audit_logs` (
   `id` int NOT NULL AUTO_INCREMENT,
   `actor_username` varchar(100) DEFAULT NULL,
   `action` varchar(50) DEFAULT NULL,
@@ -145,7 +145,7 @@ CREATE TABLE `audit_logs` (
 
 -- asset_manager.documents definition
 
-CREATE TABLE `documents` (
+CREATE TABLE IF NOT EXISTS `documents` (
   `id` int NOT NULL AUTO_INCREMENT,
   `entity_id` int NOT NULL,
   `entity_type` enum('asset','account','user') NOT NULL,
@@ -162,7 +162,7 @@ CREATE TABLE `documents` (
 
 -- asset_manager.incidents definition
 
-CREATE TABLE `incidents` (
+CREATE TABLE IF NOT EXISTS `incidents` (
   `id` int NOT NULL AUTO_INCREMENT,
   `asset_id` int NOT NULL,
   `incident_date` date DEFAULT NULL,
@@ -179,7 +179,7 @@ CREATE TABLE `incidents` (
 
 -- asset_manager.maintenance_logs definition
 
-CREATE TABLE `maintenance_logs` (
+CREATE TABLE IF NOT EXISTS `maintenance_logs` (
   `id` int NOT NULL AUTO_INCREMENT,
   `asset_id` int NOT NULL,
   `reason` varchar(255) NOT NULL,
@@ -195,7 +195,7 @@ CREATE TABLE `maintenance_logs` (
 
 -- asset_manager.service_payments definition
 
-CREATE TABLE `service_payments` (
+CREATE TABLE IF NOT EXISTS `service_payments` (
   `id` int NOT NULL AUTO_INCREMENT,
   `account_id` int NOT NULL,
   `payment_date` date NOT NULL,
@@ -212,7 +212,7 @@ CREATE TABLE `service_payments` (
 
 -- asset_manager.stock_movements definition
 
-CREATE TABLE `stock_movements` (
+CREATE TABLE IF NOT EXISTS `stock_movements` (
   `id` int NOT NULL AUTO_INCREMENT,
   `asset_id` int NOT NULL,
   `movement_type` varchar(20) DEFAULT NULL,
@@ -228,7 +228,7 @@ CREATE TABLE `stock_movements` (
 
 -- asset_manager.users definition
 
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `first_name` varchar(100) DEFAULT NULL,
