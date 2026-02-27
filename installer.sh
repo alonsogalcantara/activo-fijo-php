@@ -56,6 +56,25 @@ fi
 sudo chown -R www-data:www-data "$INSTALL_DIR"
 sudo chmod -R 755 "$INSTALL_DIR"
 
+# Configure Apache Default Page to serve the application
+echo "Configuring Apache to serve the application..."
+# Remove the default index.html if it exists
+sudo rm -f /var/www/html/index.html
+# Update the default Apache configuration document root
+sudo sed -i "s|DocumentRoot /var/www/html|DocumentRoot $INSTALL_DIR|g" /etc/apache2/sites-available/000-default.conf
+# Enable Apache rewrite module
+sudo a2enmod rewrite
+# Create an override allowed configuration for the directory
+sudo tee /etc/apache2/conf-available/activoFijo.conf > /dev/null <<EOF
+<Directory $INSTALL_DIR>
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+</Directory>
+EOF
+sudo a2enconf activoFijo
+sudo systemctl restart apache2
+
 # ==========================================
 # 3. Setup Database and User
 # ==========================================
