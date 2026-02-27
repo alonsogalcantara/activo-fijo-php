@@ -15,7 +15,7 @@
         <?php if (isset($error)): ?>
             <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r shadow-sm flex items-start mt-4" role="alert">
                 <i class="fas fa-exclamation-circle mt-1 mr-3"></i>
-                <span class="block sm:inlinetext-sm"><?= htmlspecialchars($error) ?></span>
+                <span class="block sm:inline text-sm"><?= htmlspecialchars($error) ?></span>
             </div>
         <?php endif; ?>
 

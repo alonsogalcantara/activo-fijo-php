@@ -203,6 +203,8 @@ $installDirAccessible = is_dir(__DIR__ . '/../../public/install') &&
     </div>
 </div>
 
+</div> <!-- END MAIN GRID -->
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('assetsChart').getContext('2d');
