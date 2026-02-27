@@ -1,6 +1,6 @@
 .env
 .agent/
 .vscode/
-*.sh
+**.sh
 node_modules/
 uploads/

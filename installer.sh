@@ -73,6 +73,8 @@ SQL_FILE="$INSTALL_DIR/src/SQL/DDL_Asset.sql"
 
 if [ -f "$SQL_FILE" ]; then
     echo "Importing SQL schema from $SQL_FILE..."
+    # Ensure compatibility with older MySQL/MariaDB versions
+    sudo sed -i 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' "$SQL_FILE"
     sudo mysql "$DB_NAME" < "$SQL_FILE"
     echo "Database imported successfully."
 else
@@ -80,6 +82,8 @@ else
     # Optional fallback if script is run locally where the file exists relative to the script
     if [ -f "./src/SQL/DDL_Asset.sql" ]; then
         echo "Found local copy of SQL file, importing..."
+        # Ensure compatibility with older MySQL/MariaDB versions
+        sed -i 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' "./src/SQL/DDL_Asset.sql"
         sudo mysql "$DB_NAME" < "./src/SQL/DDL_Asset.sql"
     fi
 fi
