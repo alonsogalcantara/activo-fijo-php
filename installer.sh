@@ -54,23 +54,18 @@ sudo chmod -R 755 "$INSTALL_DIR"
 
 # Configure Apache Default Page to serve the application
 echo "Configuring Apache to serve the application..."
+# Remove the custom index.php redirect if we created it previously
+sudo rm -f /var/www/html/index.php
 # Remove the default index.html if it exists
 sudo rm -f /var/www/html/index.html
-# Create an index.php redirecting to activoFijo to make it the default page
-sudo tee /var/www/html/index.php > /dev/null <<EOF
-<?php
-header('Location: /activoFijo/');
-exit;
-?>
-EOF
 
-# Update the default Apache configuration document root to ensure it stays at /var/www/html
-sudo sed -i "s|DocumentRoot .*|DocumentRoot /var/www/html|g" /etc/apache2/sites-available/000-default.conf
+# Update the default Apache configuration document root to the public directory
+sudo sed -i "s|DocumentRoot .*|DocumentRoot $INSTALL_DIR/public|g" /etc/apache2/sites-available/000-default.conf
 # Enable Apache rewrite module
 sudo a2enmod rewrite
 # Create an override allowed configuration for the directory
 sudo tee /etc/apache2/conf-available/activoFijo.conf > /dev/null <<EOF
-<Directory $INSTALL_DIR>
+<Directory $INSTALL_DIR/public>
     Options Indexes FollowSymLinks
     AllowOverride All
     Require all granted
