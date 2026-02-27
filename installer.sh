@@ -128,7 +128,31 @@ else
 fi
 
 # ==========================================
-# 6. Output Credentials
+# 6. Create Environment File and Installation Lock
+# ==========================================
+echo "Creating environment configuration..."
+sudo tee "$INSTALL_DIR/.env" > /dev/null <<EOF
+# Database Configuration
+DB_HOST='127.0.0.1'
+DB_USER='$DB_USER'
+DB_PASS='$DB_PASS'
+DB_NAME='$DB_NAME'
+DB_PORT=3306
+
+# Security
+SECRET_KEY='$(openssl rand -base64 32)'
+EOF
+sudo chmod 644 "$INSTALL_DIR/.env"
+sudo chown www-data:www-data "$INSTALL_DIR/.env"
+
+# Create installed.lock to prevent router redirection loop
+sudo mkdir -p "$INSTALL_DIR/config"
+sudo touch "$INSTALL_DIR/config/installed.lock"
+sudo chmod 644 "$INSTALL_DIR/config/installed.lock"
+sudo chown www-data:www-data "$INSTALL_DIR/config/installed.lock"
+
+# ==========================================
+# 7. Output Credentials
 # ==========================================
 echo ""
 echo "========================================================"
