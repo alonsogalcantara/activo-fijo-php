@@ -4,3 +4,4 @@
 **.sh
 node_modules/
 uploads/
+*.txt
