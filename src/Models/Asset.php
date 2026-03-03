@@ -56,68 +56,31 @@ class Asset {
     }
 
     public function create($data) {
-        $query = 'INSERT INTO ' . $this->table . ' (name, category, brand, model, description, purchase_date, purchase_cost, status, assigned_to, quantity, batch_number, serial_number, acquisition_type, leasing_company, cost_center, photo_filename) VALUES (:name, :category, :brand, :model, :description, :purchase_date, :purchase_cost, :status, :assigned_to, :quantity, :batch_number, :serial_number, :acquisition_type, :leasing_company, :cost_center, :photo_filename)';
+        $columns = array_keys($data);
+        $placeholders = array_map(function($col) { return ':' . $col; }, $columns);
+        
+        $query = 'INSERT INTO ' . $this->table . ' (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $placeholders) . ')';
         
         $stmt = $this->conn->prepare($query);
 
-        // Sanitize and bind
-        $stmt->bindParam(':name', $data['name']);
-        $stmt->bindParam(':category', $data['category']);
-        $stmt->bindParam(':brand', $data['brand']);
-        $stmt->bindParam(':model', $data['model']);
-        $stmt->bindParam(':description', $data['description']);
-        $stmt->bindParam(':purchase_date', $data['purchase_date']);
-        $stmt->bindParam(':purchase_cost', $data['purchase_cost']);
-        $stmt->bindParam(':status', $data['status']);
-        $stmt->bindParam(':assigned_to', $data['assigned_to']);
-        $stmt->bindParam(':quantity', $data['quantity']);
-        $stmt->bindParam(':batch_number', $data['batch_number']);
-        $stmt->bindParam(':serial_number', $data['serial_number']);
-        $stmt->bindParam(':acquisition_type', $data['acquisition_type']);
-        $stmt->bindParam(':leasing_company', $data['leasing_company']);
-        $stmt->bindParam(':cost_center', $data['cost_center']);
-        $stmt->bindParam(':photo_filename', $data['photo_filename']);
-
-        if ($stmt->execute()) {
+        if ($stmt->execute($data)) {
             return $this->conn->lastInsertId();
         }
         return false;
     }
 
     public function update($id, $data) {
-         $query = 'UPDATE ' . $this->table . ' SET name = :name, category = :category, brand = :brand, model = :model, description = :description, purchase_date = :purchase_date, purchase_cost = :purchase_cost, status = :status, assigned_to = :assigned_to, quantity = :quantity, batch_number = :batch_number, serial_number = :serial_number, acquisition_type = :acquisition_type, leasing_company = :leasing_company, cost_center = :cost_center';
-         
-         if (isset($data['photo_filename'])) {
-             $query .= ', photo_filename = :photo_filename';
+         $setStr = '';
+         foreach ($data as $key => $value) {
+             $setStr .= $key . ' = :' . $key . ', ';
          }
+         $setStr = rtrim($setStr, ', ');
          
-         $query .= ' WHERE id = :id';
-         
+         $query = 'UPDATE ' . $this->table . ' SET ' . $setStr . ' WHERE id = :id';
          $stmt = $this->conn->prepare($query);
 
-         $stmt->bindParam(':id', $id);
-         $stmt->bindParam(':name', $data['name']);
-         $stmt->bindParam(':category', $data['category']);
-         $stmt->bindParam(':brand', $data['brand']);
-         $stmt->bindParam(':model', $data['model']);
-         $stmt->bindParam(':description', $data['description']);
-         $stmt->bindParam(':purchase_date', $data['purchase_date']);
-         $stmt->bindParam(':purchase_cost', $data['purchase_cost']);
-         // Note: Status logic might need more complexity if handling specific transitions
-         $stmt->bindParam(':status', $data['status']);
-         $stmt->bindParam(':assigned_to', $data['assigned_to']);
-         $stmt->bindParam(':quantity', $data['quantity']);
-         $stmt->bindParam(':batch_number', $data['batch_number']);
-         $stmt->bindParam(':serial_number', $data['serial_number']);
-         $stmt->bindParam(':acquisition_type', $data['acquisition_type']);
-         $stmt->bindParam(':leasing_company', $data['leasing_company']);
-         $stmt->bindParam(':cost_center', $data['cost_center']);
-
-         if (isset($data['photo_filename'])) {
-             $stmt->bindParam(':photo_filename', $data['photo_filename']);
-         }
-
-         return $stmt->execute();
+         $data['id'] = $id;
+         return $stmt->execute($data);
     }
 
     public function updateStatus($id, $status) {

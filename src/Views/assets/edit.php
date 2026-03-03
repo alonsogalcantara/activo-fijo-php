@@ -126,12 +126,17 @@
                         placeholder="Ej: Ventas, TI, Administración...">
                 </div>
                 <!-- STOCK / CANTIDAD -->
-                <div class="md:col-span-3 grid grid-cols-2 gap-4 bg-yellow-50 p-4 rounded-lg border border-yellow-100 mt-2">
+                <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 bg-yellow-50 p-4 rounded-lg border border-yellow-100 mt-2">
                     <div>
                         <label class="block text-xs font-bold text-yellow-800 uppercase mb-1">Cantidad (Stock)</label>
                         <input type="number" id="assetQty" name="quantity" value="<?= htmlspecialchars($asset['quantity'] ?? 1) ?>" min="1"
                             class="w-full p-2 border border-yellow-300 rounded-lg font-bold text-center bg-white focus:ring-2 focus:ring-yellow-400 outline-none"
                             title="Para activos únicos dejar en 1">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-yellow-800 uppercase mb-1">Stock Mínimo</label>
+                        <input type="number" id="minStock" name="min_stock" value="<?= htmlspecialchars($asset['min_stock'] ?? 0) ?>" min="0"
+                            class="w-full p-2 border border-yellow-300 rounded-lg font-bold text-center bg-white focus:ring-2 focus:ring-yellow-400 outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-yellow-800 uppercase mb-1">No. Lote / Batch</label>
@@ -187,7 +192,7 @@
                 <input type="text" id="uniMaterial" name="material" value="<?= htmlspecialchars($asset['material'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
                 
                 <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Color</label>
-                <input type="text" id="uniColor" name="uni_color" value="<?= htmlspecialchars($asset['color'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+                <input type="text" id="uniColor" name="color" value="<?= htmlspecialchars($asset['color'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
             </div>
         </div>
 
@@ -201,28 +206,38 @@
                 <input type="text" id="furnDim" name="dimensions" value="<?= htmlspecialchars($asset['dimensions'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg placeholder-gray-300" placeholder="Largo x Ancho x Alto"></div>
                 
                 <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Material / Acabado</label>
-                <input type="text" id="furnMat" name="furn_material" value="<?= htmlspecialchars($asset['material'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+                <input type="text" id="furnMat" name="material" value="<?= htmlspecialchars($asset['material'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
                 
                 <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Color</label>
-                <input type="text" id="furnColor" name="furn_color" value="<?= htmlspecialchars($asset['color'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+                <input type="text" id="furnColor" name="color" value="<?= htmlspecialchars($asset['color'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
             </div>
         </div>
 
         <!-- CÓMPUTO -->
         <div id="techSpecsSection" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 <?= in_array($asset['category'], ['Computadora', 'Celular']) ? '' : 'hidden' ?>">
-            <h3 class="text-lg font-bold text-purple-700 border-b border-gray-100 pb-3 mb-6 flex items-center"><i class="fas fa-microchip mr-2"></i> Especificaciones Técnicas</h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Procesador</label>
+            <h3 class="text-lg font-bold text-purple-700 border-b border-gray-100 pb-3 mb-6 flex items-center"><i class="fas fa-microchip mr-2"></i> Especificaciones Técnicas y Acceso</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                <div class="lg:col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Procesador</label>
                 <input type="text" id="assetProcessor" name="processor" value="<?= htmlspecialchars($asset['processor'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
                 
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">RAM</label>
+                <div class="lg:col-span-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">RAM</label>
                 <input type="text" id="assetRam" name="ram" value="<?= htmlspecialchars($asset['ram'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
                 
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Almacenamiento</label>
+                <div class="lg:col-span-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Almacenamiento</label>
                 <input type="text" id="assetStorage" name="storage" value="<?= htmlspecialchars($asset['storage'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
                 
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">SO / Versión</label>
+                <div class="lg:col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">SO / Versión</label>
                 <input type="text" id="assetOS" name="operating_system" value="<?= htmlspecialchars($asset['operating_system'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg"></div>
+
+                <div class="lg:col-span-3">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Usuario del Equipo</label>
+                    <input type="text" name="device_user" value="<?= htmlspecialchars($asset['device_user'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg" placeholder="Ej: admin, jperez">
+                </div>
+                
+                <div class="lg:col-span-3">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Contraseña del Equipo</label>
+                    <input type="text" name="device_password" value="<?= htmlspecialchars($asset['device_password'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg" placeholder="Contraseña de acceso local">
+                </div>
             </div>
         </div>
 
@@ -272,6 +287,42 @@
                     <div class="col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Notas Financieras</label>
                     <textarea id="assetDesc" name="description" rows="2" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm placeholder-gray-300" placeholder="Detalles de compra, garantía, vencimiento de contrato, etc."><?= htmlspecialchars($asset['description'] ?? '') ?></textarea>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: BAJA Y DEPRECIACIÓN -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="text-sm font-bold text-gray-800 uppercase mb-4 flex items-center text-red-600">
+                <i class="fas fa-trash-alt mr-2"></i> Baja y Depreciación
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Depreciación Acum. (Manual)</label>
+                    <input type="number" name="accumulated_depreciation_override" step="0.01" value="<?= htmlspecialchars($asset['accumulated_depreciation_override'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg text-right placeholder-gray-300" placeholder="0.00">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Fecha de Baja</label>
+                    <input type="date" name="disposal_date" value="<?= htmlspecialchars($asset['disposal_date'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Motivo de Baja</label>
+                    <select name="disposal_reason" class="w-full p-2.5 border border-gray-300 rounded-lg bg-white outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Seleccione un motivo</option>
+                        <option value="Venta" <?= ($asset['disposal_reason'] ?? '') == 'Venta' ? 'selected' : '' ?>>Venta</option>
+                        <option value="Robo" <?= ($asset['disposal_reason'] ?? '') == 'Robo' ? 'selected' : '' ?>>Robo</option>
+                        <option value="Obsolescencia" <?= ($asset['disposal_reason'] ?? '') == 'Obsolescencia' ? 'selected' : '' ?>>Obsolescencia</option>
+                        <option value="Donación" <?= ($asset['disposal_reason'] ?? '') == 'Donación' ? 'selected' : '' ?>>Donación</option>
+                        <option value="Chatarra" <?= ($asset['disposal_reason'] ?? '') == 'Chatarra' ? 'selected' : '' ?>>Chatarra</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Precio de Baja / Venta ($)</label>
+                    <input type="number" name="disposal_price" value="<?= htmlspecialchars($asset['disposal_price'] ?? '0.00') ?>" min="0" step="0.01" class="w-full p-2.5 border border-gray-300 rounded-lg text-right">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Valor en Libros (al dar de baja)</label>
+                    <input type="number" name="book_value_at_disposal" step="0.01" value="<?= htmlspecialchars($asset['book_value_at_disposal'] ?? '') ?>" class="w-full p-2.5 border border-gray-300 rounded-lg text-right placeholder-gray-300" placeholder="0.00">
                 </div>
             </div>
         </div>
@@ -352,38 +403,54 @@
         const hintText = document.getElementById('catHint');
 
         // 1. Mostrar campos específicos
-        ['vehicleFields', 'uniformFields', 'furnitureFields', 'techSpecsSection'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        const sections = ['vehicleFields', 'uniformFields', 'furnitureFields', 'techSpecsSection'];
+        sections.forEach(id => {
+            const el = document.getElementById(id);
+            el.classList.add('hidden');
+            el.querySelectorAll('input, select, textarea').forEach(input => {
+                input.disabled = true;
+            });
+        });
 
         document.getElementById('lblSerial').textContent = 'No. Serie / Identificador';
         document.getElementById('lblModel').textContent = 'Modelo';
         document.getElementById('furnTitle').innerHTML = '<i class="fas fa-chair mr-2"></i> Mobiliario y Herramientas';
 
+        let activeGroupId = null;
+
         if (cat === 'Vehículo') {
-            document.getElementById('vehicleFields').classList.remove('hidden');
+            activeGroupId = 'vehicleFields';
             document.getElementById('lblSerial').textContent = 'VIN (NIV)';
             document.getElementById('lblModel').textContent = 'Versión';
         }
         else if (cat === 'Uniforme') {
-            document.getElementById('uniformFields').classList.remove('hidden');
+            activeGroupId = 'uniformFields';
             document.getElementById('lblSerial').textContent = 'SKU / Código';
             document.getElementById('lblModel').textContent = 'Tipo';
         }
         else if (cat === 'Mobiliario') {
-            document.getElementById('furnitureFields').classList.remove('hidden');
+            activeGroupId = 'furnitureFields';
             document.getElementById('lblSerial').textContent = 'Cód. Inventario';
         }
         else if (cat === 'Herramienta') {
-            document.getElementById('furnitureFields').classList.remove('hidden');
+            activeGroupId = 'furnitureFields';
             document.getElementById('furnTitle').innerHTML = '<i class="fas fa-tools mr-2"></i> Detalles de Herramienta';
             document.getElementById('lblSerial').textContent = 'No. Serie / ID';
         }
         else if (cat === 'Computadora' || cat === 'Laptop' || cat === 'Celular') {
-            document.getElementById('techSpecsSection').classList.remove('hidden');
+            activeGroupId = 'techSpecsSection';
             if (cat === 'Celular') {
                 document.getElementById('lblSerial').textContent = 'IMEI / Serie';
             }
         }
 
+        if (activeGroupId) {
+            const activeGroup = document.getElementById(activeGroupId);
+            activeGroup.classList.remove('hidden');
+            activeGroup.querySelectorAll('input, select, textarea').forEach(input => {
+                input.disabled = false;
+            });
+        }
         // 2. Aplicar Reglas de Arrendamiento
         const rules = CATEGORY_RULES[cat] || { canLease: true, hint: '' };
 

@@ -126,12 +126,17 @@
                         placeholder="Ej: Ventas, TI, Administración...">
                 </div>
                 <!-- STOCK / CANTIDAD -->
-                <div class="md:col-span-3 grid grid-cols-2 gap-4 bg-yellow-50 p-4 rounded-lg border border-yellow-100 mt-2">
+                <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 bg-yellow-50 p-4 rounded-lg border border-yellow-100 mt-2">
                     <div>
                         <label class="block text-xs font-bold text-yellow-800 uppercase mb-1">Cantidad (Stock)</label>
                         <input type="number" id="assetQty" name="quantity" value="1" min="1"
                             class="w-full p-2 border border-yellow-300 rounded-lg font-bold text-center bg-white focus:ring-2 focus:ring-yellow-400 outline-none"
                             title="Para activos únicos dejar en 1">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-yellow-800 uppercase mb-1">Stock Mínimo</label>
+                        <input type="number" id="minStock" name="min_stock" value="0" min="0"
+                            class="w-full p-2 border border-yellow-300 rounded-lg font-bold text-center bg-white focus:ring-2 focus:ring-yellow-400 outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-yellow-800 uppercase mb-1">No. Lote / Batch</label>
@@ -299,6 +304,42 @@
                     <div class="col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Notas Financieras</label>
                     <textarea id="assetDesc" name="description" rows="2" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm placeholder-gray-300" placeholder="Detalles de compra, garantía, vencimiento de contrato, etc."></textarea>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: BAJA Y DEPRECIACIÓN -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="text-sm font-bold text-gray-800 uppercase mb-4 flex items-center text-red-600">
+                <i class="fas fa-trash-alt mr-2"></i> Baja y Depreciación
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Depreciación Acum. (Manual)</label>
+                    <input type="number" name="accumulated_depreciation_override" step="0.01" class="w-full p-2.5 border border-gray-300 rounded-lg text-right placeholder-gray-300" placeholder="0.00">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Fecha de Baja</label>
+                    <input type="date" name="disposal_date" class="w-full p-2.5 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Motivo de Baja</label>
+                    <select name="disposal_reason" class="w-full p-2.5 border border-gray-300 rounded-lg bg-white outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Seleccione un motivo</option>
+                        <option value="Venta">Venta</option>
+                        <option value="Robo">Robo</option>
+                        <option value="Obsolescencia">Obsolescencia</option>
+                        <option value="Donación">Donación</option>
+                        <option value="Chatarra">Chatarra</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Precio de Baja / Venta ($)</label>
+                    <input type="number" name="disposal_price" value="0.00" min="0" step="0.01" class="w-full p-2.5 border border-gray-300 rounded-lg text-right">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Valor en Libros (al dar de baja)</label>
+                    <input type="number" name="book_value_at_disposal" step="0.01" class="w-full p-2.5 border border-gray-300 rounded-lg text-right placeholder-gray-300" placeholder="0.00">
                 </div>
             </div>
         </div>

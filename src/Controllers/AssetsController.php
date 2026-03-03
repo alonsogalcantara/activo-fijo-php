@@ -90,10 +90,36 @@ class AssetsController {
                 'assigned_to' => !empty($_POST['assigned_to']) ? $_POST['assigned_to'] : null,
                 'quantity' => $_POST['quantity'] ?? 1,
                 'batch_number' => !empty($_POST['batch_number']) ? $_POST['batch_number'] : null,
+                'min_stock' => !empty($_POST['min_stock']) ? $_POST['min_stock'] : 0,
                 'serial_number' => !empty($_POST['serial_number']) ? $_POST['serial_number'] : null,
                 'acquisition_type' => $_POST['acquisition_type'],
                 'leasing_company' => $_POST['leasing_company'] ?? '',
                 'cost_center' => $_POST['cost_center'] ?? '',
+                
+                // Baja y depreciacion manual
+                'accumulated_depreciation_override' => !empty($_POST['accumulated_depreciation_override']) ? $_POST['accumulated_depreciation_override'] : null,
+                'disposal_date' => !empty($_POST['disposal_date']) ? $_POST['disposal_date'] : null,
+                'disposal_reason' => !empty($_POST['disposal_reason']) ? $_POST['disposal_reason'] : null,
+                'disposal_price' => !empty($_POST['disposal_price']) ? $_POST['disposal_price'] : 0.00,
+                'book_value_at_disposal' => !empty($_POST['book_value_at_disposal']) ? $_POST['book_value_at_disposal'] : null,
+                
+                // Specific fields
+                'processor' => $_POST['processor'] ?? null,
+                'ram' => $_POST['ram'] ?? null,
+                'storage' => $_POST['storage'] ?? null,
+                'operating_system' => $_POST['operating_system'] ?? null,
+                'device_user' => $_POST['device_user'] ?? null,
+                'device_password' => $_POST['device_password'] ?? null,
+                'color' => $_POST['color'] ?? null,
+                'material' => $_POST['material'] ?? null,
+                'size' => $_POST['size'] ?? null,
+                'gender_cut' => $_POST['gender_cut'] ?? null,
+                'license_plate' => $_POST['license_plate'] ?? null,
+                'vin' => $_POST['vin'] ?? null,
+                'vehicle_year' => !empty($_POST['vehicle_year']) ? $_POST['vehicle_year'] : null,
+                'mileage' => !empty($_POST['mileage']) ? $_POST['mileage'] : null,
+                'dimensions' => $_POST['dimensions'] ?? null,
+
                 'photo_filename' => $this->handlePhotoUpload()
              ];
 
@@ -142,10 +168,35 @@ class AssetsController {
                 'assigned_to' => !empty($_POST['assigned_to']) ? $_POST['assigned_to'] : null,
                 'quantity' => $_POST['quantity'],
                 'batch_number' => !empty($_POST['batch_number']) ? $_POST['batch_number'] : null,
+                'min_stock' => !empty($_POST['min_stock']) ? $_POST['min_stock'] : 0,
                 'serial_number' => !empty($_POST['serial_number']) ? $_POST['serial_number'] : null,
                 'acquisition_type' => $_POST['acquisition_type'],
                 'leasing_company' => $_POST['leasing_company'],
-                'cost_center' => $_POST['cost_center']
+                'cost_center' => $_POST['cost_center'],
+                
+                // Baja y depreciacion manual
+                'accumulated_depreciation_override' => !empty($_POST['accumulated_depreciation_override']) ? $_POST['accumulated_depreciation_override'] : null,
+                'disposal_date' => !empty($_POST['disposal_date']) ? $_POST['disposal_date'] : null,
+                'disposal_reason' => !empty($_POST['disposal_reason']) ? $_POST['disposal_reason'] : null,
+                'disposal_price' => !empty($_POST['disposal_price']) ? $_POST['disposal_price'] : 0.00,
+                'book_value_at_disposal' => !empty($_POST['book_value_at_disposal']) ? $_POST['book_value_at_disposal'] : null,
+                
+                // Specific fields
+                'processor' => $_POST['processor'] ?? null,
+                'ram' => $_POST['ram'] ?? null,
+                'storage' => $_POST['storage'] ?? null,
+                'operating_system' => $_POST['operating_system'] ?? null,
+                'device_user' => $_POST['device_user'] ?? null,
+                'device_password' => $_POST['device_password'] ?? null,
+                'color' => $_POST['color'] ?? null,
+                'material' => $_POST['material'] ?? null,
+                'size' => $_POST['size'] ?? null,
+                'gender_cut' => $_POST['gender_cut'] ?? null,
+                'license_plate' => $_POST['license_plate'] ?? null,
+                'vin' => $_POST['vin'] ?? null,
+                'vehicle_year' => !empty($_POST['vehicle_year']) ? $_POST['vehicle_year'] : null,
+                'mileage' => !empty($_POST['mileage']) ? $_POST['mileage'] : null,
+                'dimensions' => $_POST['dimensions'] ?? null
              ];
              
              $photo = $this->handlePhotoUpload();
