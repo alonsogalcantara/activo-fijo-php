@@ -1,6 +1,6 @@
 -- asset_manager.account_members definition
 
-CREATE TABLE IF NOT EXISTS `account_members` (
+CREATE TABLE `account_members` (
   `id` int NOT NULL AUTO_INCREMENT,
   `account_id` int NOT NULL,
   `name` varchar(255) DEFAULT NULL,
@@ -8,12 +8,12 @@ CREATE TABLE IF NOT EXISTS `account_members` (
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `account_id` (`account_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- asset_manager.accounts definition
 
-CREATE TABLE IF NOT EXISTS `accounts` (
+CREATE TABLE `accounts` (
   `id` int NOT NULL AUTO_INCREMENT,
   `service_name` varchar(150) NOT NULL,
   `username` varchar(150) DEFAULT NULL,
@@ -32,12 +32,12 @@ CREATE TABLE IF NOT EXISTS `accounts` (
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `assigned_to` (`assigned_to`)
-) ENGINE=MyISAM AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- asset_manager.admins definition
 
-CREATE TABLE IF NOT EXISTS `admins` (
+CREATE TABLE `admins` (
   `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(100) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
@@ -45,12 +45,12 @@ CREATE TABLE IF NOT EXISTS `admins` (
   `role` varchar(20) DEFAULT 'normal',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- asset_manager.asset_credentials definition
 
-CREATE TABLE IF NOT EXISTS `asset_credentials` (
+CREATE TABLE `asset_credentials` (
   `id` int NOT NULL AUTO_INCREMENT,
   `asset_id` int NOT NULL,
   `username` varchar(150) DEFAULT NULL,
@@ -61,12 +61,12 @@ CREATE TABLE IF NOT EXISTS `asset_credentials` (
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `asset_id` (`asset_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- asset_manager.asset_history definition
 
-CREATE TABLE IF NOT EXISTS `asset_history` (
+CREATE TABLE `asset_history` (
   `id` int NOT NULL AUTO_INCREMENT,
   `asset_id` int NOT NULL,
   `action` varchar(100) NOT NULL,
@@ -76,12 +76,12 @@ CREATE TABLE IF NOT EXISTS `asset_history` (
   PRIMARY KEY (`id`),
   KEY `asset_id` (`asset_id`),
   KEY `related_user_id` (`related_user_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=176 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=176 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- asset_manager.assets definition
 
-CREATE TABLE IF NOT EXISTS `assets` (
+CREATE TABLE `assets` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `category` varchar(100) NOT NULL,
@@ -125,12 +125,12 @@ CREATE TABLE IF NOT EXISTS `assets` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `serial_number` (`serial_number`),
   KEY `assigned_to` (`assigned_to`)
-) ENGINE=MyISAM AUTO_INCREMENT=91 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=94 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- asset_manager.audit_logs definition
 
-CREATE TABLE IF NOT EXISTS `audit_logs` (
+CREATE TABLE `audit_logs` (
   `id` int NOT NULL AUTO_INCREMENT,
   `actor_username` varchar(100) DEFAULT NULL,
   `action` varchar(50) DEFAULT NULL,
@@ -140,12 +140,12 @@ CREATE TABLE IF NOT EXISTS `audit_logs` (
   `new_value` text,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=126 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- asset_manager.documents definition
 
-CREATE TABLE IF NOT EXISTS `documents` (
+CREATE TABLE `documents` (
   `id` int NOT NULL AUTO_INCREMENT,
   `entity_id` int NOT NULL,
   `entity_type` enum('asset','account','user') NOT NULL,
@@ -157,12 +157,12 @@ CREATE TABLE IF NOT EXISTS `documents` (
   PRIMARY KEY (`id`),
   KEY `asset_id` (`entity_id`),
   KEY `idx_entity` (`entity_type`,`entity_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- asset_manager.incidents definition
 
-CREATE TABLE IF NOT EXISTS `incidents` (
+CREATE TABLE `incidents` (
   `id` int NOT NULL AUTO_INCREMENT,
   `asset_id` int NOT NULL,
   `incident_date` date DEFAULT NULL,
@@ -174,12 +174,12 @@ CREATE TABLE IF NOT EXISTS `incidents` (
   `is_capex` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `asset_id` (`asset_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- asset_manager.maintenance_logs definition
 
-CREATE TABLE IF NOT EXISTS `maintenance_logs` (
+CREATE TABLE `maintenance_logs` (
   `id` int NOT NULL AUTO_INCREMENT,
   `asset_id` int NOT NULL,
   `reason` varchar(255) NOT NULL,
@@ -190,12 +190,12 @@ CREATE TABLE IF NOT EXISTS `maintenance_logs` (
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `asset_id` (`asset_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- asset_manager.service_payments definition
 
-CREATE TABLE IF NOT EXISTS `service_payments` (
+CREATE TABLE `service_payments` (
   `id` int NOT NULL AUTO_INCREMENT,
   `account_id` int NOT NULL,
   `payment_date` date NOT NULL,
@@ -207,12 +207,12 @@ CREATE TABLE IF NOT EXISTS `service_payments` (
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `account_id` (`account_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- asset_manager.stock_movements definition
 
-CREATE TABLE IF NOT EXISTS `stock_movements` (
+CREATE TABLE `stock_movements` (
   `id` int NOT NULL AUTO_INCREMENT,
   `asset_id` int NOT NULL,
   `movement_type` varchar(20) DEFAULT NULL,
@@ -223,12 +223,12 @@ CREATE TABLE IF NOT EXISTS `stock_movements` (
   `created_by` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `asset_id` (`asset_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- asset_manager.users definition
 
-CREATE TABLE IF NOT EXISTS `users` (
+CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `first_name` varchar(100) DEFAULT NULL,
@@ -248,4 +248,4 @@ CREATE TABLE IF NOT EXISTS `users` (
   `system_role` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=MyISAM AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
