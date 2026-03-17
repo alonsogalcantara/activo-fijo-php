@@ -72,13 +72,7 @@ class DocumentsController {
             }
 
             // Generate unique filename
-            $base_dir = realpath(__DIR__ . '/../../public');
-            if (!$base_dir) {
-                $_SESSION['flash_message'] = "Error del sistema: No se pudo localizar el directorio public.";
-                header("Location: $redirect_url");
-                exit;
-            }
-            $upload_dir = $base_dir . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR;
+            $upload_dir = __DIR__ . '/../../public/uploads/';
             
             if (!file_exists($upload_dir)) {
                 mkdir($upload_dir, 0777, true);
@@ -104,8 +98,7 @@ class DocumentsController {
                 $documentModel->create($data);
                 $_SESSION['flash_message'] = "Documento subido correctamente.";
             } else {
-                $err = error_get_last();
-                $_SESSION['flash_message'] = "Error al mover el archivo al directorio de destino. " . ($err ? $err['message'] : 'Desconocido');
+                $_SESSION['flash_message'] = "Error al mover el archivo al directorio de destino.";
             }
 
             header("Location: $redirect_url");
