@@ -18,9 +18,9 @@ class DocumentsController {
             }
 
             $entity_type = $_POST['entity_type'] ?? '';
-            $entity_id = $_POST['entity_id'] ?? 0;
+            $entity_id   = (int)($_POST['entity_id'] ?? 0);
             $redirect_url = $_POST['redirect_url'] ?? '/dashboard';
-            
+
             // Validate entity type
             $allowed_types = ['asset', 'account', 'user'];
             if (!in_array($entity_type, $allowed_types)) {
@@ -30,76 +30,14 @@ class DocumentsController {
             }
 
             $file = $_FILES['document'];
-            
-            // Validate upload errors
-            if ($file['error'] !== UPLOAD_ERR_OK) {
-                $_SESSION['flash_message'] = "Error al subir el archivo. Código: " . $file['error'];
-                header("Location: $redirect_url");
-                exit;
-            }
 
-            // Validate file size (e.g., max 10MB)
-            $max_size = 10 * 1024 * 1024;
-            if ($file['size'] > $max_size) {
-                $_SESSION['flash_message'] = "El archivo excede el tamaño máximo permitido (10MB).";
-                header("Location: $redirect_url");
-                exit;
-            }
+            // Delegate upload + DB save to Model
+            $documentModel = new Document();
+            $result = $documentModel->uploadFile($file, $entity_type, $entity_id, $_SESSION['user_id']);
 
-            // Validate file type (allow common docs and images)
-            $allowed_mimes = [
-                'application/pdf', 
-                'application/msword', 
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.ms-excel',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'image/jpeg', 
-                'image/png', 
-                'text/plain',
-                'application/zip'
-            ];
-            
-            if (!in_array($file['type'], $allowed_mimes) && !in_array(mime_content_type($file['tmp_name']), $allowed_mimes)) {
-                // Determine extension as fallback check
-                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-                $allowed_exts = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'txt', 'zip', 'csv'];
-                
-                if (!in_array($ext, $allowed_exts)) {
-                    $_SESSION['flash_message'] = "Tipo de archivo no permitido.";
-                    header("Location: $redirect_url");
-                    exit;
-                }
-            }
-
-            // Generate unique filename
-            $upload_dir = __DIR__ . '/../../public/uploads/';
-            
-            if (!file_exists($upload_dir)) {
-                mkdir($upload_dir, 0777, true);
-            }
-
-            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $clean_name = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', pathinfo($file['name'], PATHINFO_FILENAME));
-            $final_filename = $clean_name . '_' . time() . '.' . $ext;
-            $destination = $upload_dir . $final_filename;
-
-            if (move_uploaded_file($file['tmp_name'], $destination)) {
-                // Save to DB
-                $documentModel = new Document();
-                $data = [
-                    'entity_id' => $entity_id,
-                    'entity_type' => $entity_type,
-                    'filename' => $final_filename, // Use final filename directly
-                    'file_type' => $ext,
-                    'file_size' => $file['size'],
-                    'uploaded_by' => $_SESSION['user_id']
-                ];
-                
-                $documentModel->create($data);
-                $_SESSION['flash_message'] = "Documento subido correctamente.";
-            } else {
-                $_SESSION['flash_message'] = "Error al mover el archivo al directorio de destino.";
-            }
+            $_SESSION['flash_message'] = $result['success']
+                ? "Documento subido correctamente."
+                : "Error al subir: " . $result['error'];
 
             header("Location: $redirect_url");
             exit;
