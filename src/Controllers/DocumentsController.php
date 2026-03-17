@@ -9,7 +9,9 @@ class DocumentsController {
     public function upload() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['document'])) {
             // Verify session
-            session_start();
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
             if (!isset($_SESSION['user_id'])) {
                 header('Location: /login');
                 exit;
@@ -76,8 +78,9 @@ class DocumentsController {
             }
 
             $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $filename = uniqid() . '_' . time() . '.' . $ext;
-            $destination = $upload_dir . $filename;
+            $clean_name = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', pathinfo($file['name'], PATHINFO_FILENAME));
+            $final_filename = $clean_name . '_' . time() . '.' . $ext;
+            $destination = $upload_dir . $final_filename;
 
             if (move_uploaded_file($file['tmp_name'], $destination)) {
                 // Save to DB
@@ -85,39 +88,14 @@ class DocumentsController {
                 $data = [
                     'entity_id' => $entity_id,
                     'entity_type' => $entity_type,
-                    'filename' => $file['name'], // Original name for display
+                    'filename' => $final_filename, // Use final filename directly
                     'file_type' => $ext,
                     'file_size' => $file['size'],
                     'uploaded_by' => $_SESSION['user_id']
                 ];
                 
-                // Store the physical filename in a separate field or reuse 'filename' if schema matches. 
-                // Based on schema, 'filename' is varchar(255). Let's store the generated name there
-                // BUT we also want to keep the original name. 
-                // The schema has 'filename'. Let's use 'filename' for the physical file 
-                // and maybe add 'original_name' later. For now, let's store "PhysicalName|OriginalName" 
-                // or just the physical name and lose the original name? 
-                // Better: Store generated name. Layout will show generated name.
-                // Wait, user wants to see "Contract.pdf" not "65d4...pdf".
-                // Let's modify schema to have original_name? 
-                // Constraint: User didn't ask for schema change for original_name.
-                // Compromise: Save as "OriginalName_Timestamp.ext" to preserve readability.
-                $clean_name = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', pathinfo($file['name'], PATHINFO_FILENAME));
-                $final_filename = $clean_name . '_' . time() . '.' . $ext;
-                $destination = $upload_dir . $final_filename;
-                
-                // Move file again (or just rename the var above)
-                // Let's redo the move logic
-                if (rename($upload_dir . $filename, $destination)) {
-                     $data['filename'] = $final_filename;
-                     $documentModel->create($data);
-                     $_SESSION['success'] = "Documento subido correctamente.";
-                } else {
-                     // Fallback if rename fails
-                     $data['filename'] = $filename;
-                     $documentModel->create($data);
-                     $_SESSION['success'] = "Documento subido correctamente.";
-                }
+                $documentModel->create($data);
+                $_SESSION['success'] = "Documento subido correctamente.";
             } else {
                 $_SESSION['error'] = "Error al mover el archivo al directorio de destino.";
             }
@@ -128,7 +106,9 @@ class DocumentsController {
     }
 
     public function delete($id) {
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         if (!isset($_SESSION['user_id'])) {
             header('Location: /login');
             exit;
