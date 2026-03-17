@@ -1,0 +1,11 @@
+# config.yml
+database:
+  host: localhost
+  port: 3306
+  username: manager_actfij
+  password: /!rkkN2R5jtT17ZJ
+  dbname: asset_manager
+
+app:
+  debug: True
+  environment: development
