@@ -123,17 +123,28 @@ class AssetsController {
                 'photo_filename' => $this->handlePhotoUpload()
              ];
 
-             $assetModel = new Asset();
-             $newId = $assetModel->create($data);
-             if ($newId) {
-                 $this->handleDocumentUpload('asset', $newId);
-                 // Log audit
-                 $audit = new \Models\AuditLog();
-                 $audit->log($_SESSION['user_name'] ?? 'System', 'CREATE', 'assets', $newId, null, "Created asset: {$data['name']}");
-                 
-                 header('Location: /assets/detail/' . $newId);
-             } else {
-                 $error = "Failed to create asset";
+             
+             try {
+                 $assetModel = new Asset();
+                 $newId = $assetModel->create($data);
+                 if ($newId) {
+                     $this->handleDocumentUpload('asset', $newId);
+                     // Log audit
+                     $audit = new \Models\AuditLog();
+                     $audit->log($_SESSION['user_name'] ?? 'System', 'CREATE', 'assets', $newId, null, "Created asset: {$data['name']}");
+                     
+                     header('Location: /assets/detail/' . $newId);
+                     exit();
+                 } else {
+                     $error = "No se pudo crear el activo. Verifica los datos ingresados.";
+                     $userModel = new User();
+                     $users = $userModel->getAll();
+                     require_once __DIR__ . '/../Views/assets/create.php';
+                 }
+             } catch (\Throwable $e) {
+                 $error = "Error del sistema: " . $e->getMessage();
+                 $userModel = new User();
+                 $users = $userModel->getAll();
                  require_once __DIR__ . '/../Views/assets/create.php';
              }
         }

@@ -14,6 +14,11 @@
     </div>
 
     <!-- MAIN FORM -->
+    <?php if (isset($error) && !empty($error)): ?>
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 shadow-sm rounded-lg" role="alert">
+            <p><i class="fas fa-exclamation-triangle mr-2"></i><?= htmlspecialchars((string)$error) ?></p>
+        </div>
+    <?php endif; ?>
     <form id="assetForm" action="/assets/store" method="POST" enctype="multipart/form-data" class="space-y-6">
         
         <!-- SECCIÓN 0: DEFINICIÓN INTELIGENTE -->
@@ -271,8 +276,8 @@
                     <select id="assetAssignedTo" name="assigned_to"
                         class="w-full p-2.5 border border-blue-200 rounded-lg bg-white outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
                         <option value="">-- En Inventario (Sin Asignar) --</option>
-                        <?php if(!empty($users)): foreach($users as $u): ?>
-                        <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['name']) ?></option>
+                        <?php if(isset($users) && is_array($users) && !empty($users)): foreach($users as $u): ?>
+                        <option value="<?= htmlspecialchars((string)($u['id'] ?? '')) ?>"><?= htmlspecialchars((string)($u['name'] ?? '')) ?></option>
                         <?php endforeach; endif; ?>
                     </select>
                     <p class="text-[10px] text-blue-600 mt-1 italic"><i class="fas fa-bolt mr-1"></i>Al asignar un usuario, el estado cambiará automáticamente.</p>
