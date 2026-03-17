@@ -415,7 +415,6 @@
         </div>
         <?php endif; ?>
     </div>
-    </div>
 </div>
 
 <!-- DOCUMENTS PARTIAL -->

@@ -24,7 +24,7 @@ class DocumentsController {
             // Validate entity type
             $allowed_types = ['asset', 'account', 'user'];
             if (!in_array($entity_type, $allowed_types)) {
-                $_SESSION['error'] = "Tipo de entidad inválido.";
+                $_SESSION['flash_message'] = "Tipo de entidad inválido.";
                 header("Location: $redirect_url");
                 exit;
             }
@@ -33,7 +33,7 @@ class DocumentsController {
             
             // Validate upload errors
             if ($file['error'] !== UPLOAD_ERR_OK) {
-                $_SESSION['error'] = "Error al subir el archivo. Código: " . $file['error'];
+                $_SESSION['flash_message'] = "Error al subir el archivo. Código: " . $file['error'];
                 header("Location: $redirect_url");
                 exit;
             }
@@ -41,7 +41,7 @@ class DocumentsController {
             // Validate file size (e.g., max 10MB)
             $max_size = 10 * 1024 * 1024;
             if ($file['size'] > $max_size) {
-                $_SESSION['error'] = "El archivo excede el tamaño máximo permitido (10MB).";
+                $_SESSION['flash_message'] = "El archivo excede el tamaño máximo permitido (10MB).";
                 header("Location: $redirect_url");
                 exit;
             }
@@ -65,7 +65,7 @@ class DocumentsController {
                 $allowed_exts = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'txt', 'zip', 'csv'];
                 
                 if (!in_array($ext, $allowed_exts)) {
-                    $_SESSION['error'] = "Tipo de archivo no permitido.";
+                    $_SESSION['flash_message'] = "Tipo de archivo no permitido.";
                     header("Location: $redirect_url");
                     exit;
                 }
@@ -95,9 +95,9 @@ class DocumentsController {
                 ];
                 
                 $documentModel->create($data);
-                $_SESSION['success'] = "Documento subido correctamente.";
+                $_SESSION['flash_message'] = "Documento subido correctamente.";
             } else {
-                $_SESSION['error'] = "Error al mover el archivo al directorio de destino.";
+                $_SESSION['flash_message'] = "Error al mover el archivo al directorio de destino.";
             }
 
             header("Location: $redirect_url");
@@ -126,7 +126,7 @@ class DocumentsController {
 
             // Delete DB record
             $documentModel->delete($id);
-            $_SESSION['success'] = "Documento eliminado correctamente.";
+            $_SESSION['flash_message'] = "Documento eliminado correctamente.";
             
             // Redirect back
             $redirect_base = match($doc['entity_type']) {
@@ -139,7 +139,7 @@ class DocumentsController {
             header("Location: " . $redirect_base . $doc['entity_id']);
             exit;
         } else {
-            $_SESSION['error'] = "Documento no encontrado.";
+            $_SESSION['flash_message'] = "Documento no encontrado.";
             header("Location: /dashboard");
             exit;
         }

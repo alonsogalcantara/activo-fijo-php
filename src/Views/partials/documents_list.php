@@ -35,9 +35,19 @@
                         </div>
                         
                         <div class="flex-1 overflow-hidden">
+                            <?php 
+                            $filePath = __DIR__ . '/../../../public/uploads/' . $doc['filename'];
+                            if (file_exists($filePath)): 
+                            ?>
                             <a href="/uploads/<?= htmlspecialchars($doc['filename']) ?>" target="_blank" class="font-medium text-gray-700 hover:text-blue-600 truncate block transition" title="<?= htmlspecialchars($doc['filename']) ?>">
                                 <?= htmlspecialchars($doc['filename']) ?>
                             </a>
+                            <?php else: ?>
+                            <span class="font-medium text-red-500 line-through truncate block" title="Archivo físico no encontrado: <?= htmlspecialchars($doc['filename']) ?>">
+                                <?= htmlspecialchars($doc['filename']) ?>
+                            </span>
+                            <span class="text-[10px] text-red-500 font-bold uppercase"><i class="fas fa-exclamation-triangle mr-1"></i>No encontrado</span>
+                            <?php endif; ?>
                             <div class="text-xs text-gray-400 mt-1 flex items-center gap-2">
                                 <span><?= date('d/m/Y H:i', strtotime($doc['uploaded_at'])) ?></span>
                                 <span>&bull;</span>
