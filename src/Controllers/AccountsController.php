@@ -3,6 +3,7 @@ namespace Controllers;
 
 require_once __DIR__ . '/../Models/Account.php';
 require_once __DIR__ . '/../Models/User.php';
+require_once __DIR__ . '/../../config/Config.php';
 
 use Models\Account;
 use Models\User;
@@ -180,7 +181,7 @@ class AccountsController {
             $clean_name = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', pathinfo($file['name'], PATHINFO_FILENAME));
             $final_filename = $clean_name . '_' . time() . '.' . $ext;
             
-            $upload_dir = __DIR__ . '/../../public/uploads/';
+            $upload_dir = \Config::uploadsPath();
             if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
 
             if (move_uploaded_file($file['tmp_name'], $upload_dir . $final_filename)) {

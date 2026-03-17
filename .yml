@@ -1,11 +1,31 @@
-# config.yml
-database:
-  host: localhost
-  port: 3306
-  username: manager_actfij
-  password: /!rkkN2R5jtT17ZJ
-  dbname: asset_manager
-
 app:
-  debug: True
-  environment: development
+  name: "Activo Fijo"
+  environment: "production"
+  debug: false
+  base_url: "192.168.1.120"
+  timezone: "America/Mexico_City"
+  locale: "es_MX"
+
+database:
+  host: "127.0.0.1"
+  port: 3306
+  name: "asset_manager"
+  user: "manager_actfij"
+  password: "/!rkkN2R5jtT17ZJ"
+  cursor_class: "DictCursor"
+  charset: "utf8mb4"
+
+filesystem:
+  default_driver: "local" 
+
+paths:
+  base_dir:
+    windows: "C://wamp64//www//activoFijo"
+    linux: "/var/www/html/activoFijo"
+  public_dir:
+    windows: "C://wamp64//www//activoFijo//public"
+    linux: "/var/www/html/activoFijo/public"
+  uploads:
+    public:
+    windows: "C://wamp64//www//activoFijo//public//uploads" 
+    linux: "/var/www/html/activoFijo/public/uploads"

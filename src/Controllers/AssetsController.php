@@ -3,6 +3,7 @@ namespace Controllers;
 
 require_once __DIR__ . '/../Models/Asset.php';
 require_once __DIR__ . '/../Models/User.php'; // For assigned_to dropdown
+require_once __DIR__ . '/../../config/Config.php';
 
 use Models\Asset;
 use Models\User;
@@ -380,7 +381,7 @@ class AssetsController {
             $allowed_exts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
             
             if (in_array($file['type'], $allowed_mimes) || in_array($ext, $allowed_exts)) {
-                $upload_dir = __DIR__ . '/../../public/uploads/';
+                $upload_dir = \Config::uploadsPath();
                 if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
                 
                 $filename = uniqid() . '_' . time() . '.' . $ext;
@@ -402,7 +403,7 @@ class AssetsController {
             $clean_name = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', pathinfo($file['name'], PATHINFO_FILENAME));
             $final_filename = $clean_name . '_' . time() . '.' . $ext;
             
-            $upload_dir = __DIR__ . '/../../public/uploads/';
+            $upload_dir = \Config::uploadsPath();
             if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
 
             if (move_uploaded_file($file['tmp_name'], $upload_dir . $final_filename)) {

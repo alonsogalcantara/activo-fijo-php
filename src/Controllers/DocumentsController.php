@@ -4,6 +4,8 @@ namespace Controllers;
 use Models\Document;
 use Models\User;
 
+require_once __DIR__ . '/../../config/Config.php';
+
 class DocumentsController {
     
     public function upload() {
@@ -58,7 +60,7 @@ class DocumentsController {
 
         if ($doc) {
             // Delete physical file
-            $file_path = __DIR__ . '/../../public/uploads/' . $doc['filename'];
+            $file_path = \Config::uploadsPath() . $doc['filename'];
             if (file_exists($file_path)) {
                 unlink($file_path);
             }

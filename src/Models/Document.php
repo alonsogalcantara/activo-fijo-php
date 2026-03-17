@@ -2,6 +2,7 @@
 namespace Models;
 
 require_once __DIR__ . '/../../config/db.php';
+require_once __DIR__ . '/../../config/Config.php';
 
 use Database;
 use PDO;
@@ -85,8 +86,8 @@ class Document {
             return ['success' => false, 'error' => 'Tipo de archivo no permitido: .' . $ext];
         }
 
-        // --- Resolve upload directory ---
-        $upload_dir = __DIR__ . '/../../public/uploads/';
+        // --- Resolve upload directory (from .yml paths.uploads) ---
+        $upload_dir = \Config::uploadsPath();
         
         // Create directory if missing
         if (!is_dir($upload_dir)) {
