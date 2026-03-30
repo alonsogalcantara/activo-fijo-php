@@ -10,7 +10,7 @@ database:
   host: "127.0.0.1"
   port: 3306
   name: "asset_manager"
-  user: "manager_actfij"
+  user: "manager_afijo"
   password: "/!rkkN2R5jtT17ZJ"
   cursor_class: "DictCursor"
   charset: "utf8mb4"
@@ -26,6 +26,5 @@ paths:
     windows: "C://wamp64//www//activoFijo//public"
     linux: "/var/www/html/activoFijo/public"
   uploads:
-    public:
-    windows: "C://wamp64//www//activoFijo//public//uploads" 
+    windows: "C://wamp64//www//activoFijo//public//uploads"
     linux: "/var/www/html/activoFijo/public/uploads"

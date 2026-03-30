@@ -4,6 +4,14 @@
  * Config — Singleton that reads the application's .yml configuration file
  * and exposes OS-aware path helpers derived from the [paths] section.
  *
+ * Secrets (passwords, API keys, etc.) should NOT be stored in .yml.
+ * Use ${VAR} placeholders in .yml and define the real values in .env:
+ *
+ *   .yml  →  password: "${DB_PASS}"
+ *   .env  →  DB_PASS='/!rkkN2R5jtT17ZJ'
+ *
+ * Config will automatically substitute ${VAR} tokens at parse time.
+ *
  * Usage:
  *   $uploadsDir = Config::uploadsPath();   // absolute path to /public/uploads/
  *   $publicDir  = Config::publicPath();    // absolute path to /public
@@ -14,8 +22,14 @@ class Config
     /** @var array<string,mixed>|null Parsed YAML data (cached after first load) */
     private static ?array $data = null;
 
+    /** @var array<string,string>|null Variables loaded from .env (cached) */
+    private static ?array $env = null;
+
     /** Absolute path to the .yml file — one level above /config */
     private static string $yamlPath = __DIR__ . '/../.yml';
+
+    /** Absolute path to the .env file — one level above /config */
+    private static string $envPath  = __DIR__ . '/../.env';
 
     // -------------------------------------------------------------------------
     // Public path helpers
@@ -186,13 +200,93 @@ class Config
         return $result;
     }
 
-    /** Strip quotes; cast numeric strings to int. */
+    /** Strip quotes; cast numeric strings to int; expand ${VAR} tokens from .env. */
     private static function castValue(string $raw): int|string
     {
         $value = trim($raw, '"\'');
+
+        // Expand environment placeholders like ${DB_PASS}
+        $value = self::expandEnv($value);
+
         if (is_numeric($value) && !preg_match('/["\']/', $raw)) {
             return (int)$value;
         }
         return $value;
+    }
+
+    // -------------------------------------------------------------------------
+    // .env loader & placeholder expander
+    // -------------------------------------------------------------------------
+
+    /**
+     * Replaces every ${VAR_NAME} token in $text with the corresponding value
+     * loaded from the .env file.  Unknown tokens are left as-is.
+     */
+    private static function expandEnv(string $text): string
+    {
+        if (strpos($text, '${') === false) {
+            return $text; // Fast path — nothing to expand
+        }
+
+        $env = self::loadEnv();
+
+        return preg_replace_callback(
+            '/\$\{([A-Z_][A-Z0-9_]*)\}/i',
+            static fn(array $m) => $env[$m[1]] ?? $m[0],
+            $text
+        );
+    }
+
+    /**
+     * Parses the .env file into a key → value map (cached after first call).
+     * Supports:
+     *   KEY=value
+     *   KEY='value with spaces'
+     *   KEY="value with spaces"
+     *   # comment lines (ignored)
+     */
+    private static function loadEnv(): array
+    {
+        if (self::$env !== null) {
+            return self::$env;
+        }
+
+        self::$env = [];
+
+        if (!file_exists(self::$envPath)) {
+            return self::$env;
+        }
+
+        $lines = file(self::$envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+
+            // Skip comments and empty lines
+            if ($line === '' || $line[0] === '#') {
+                continue;
+            }
+
+            // Must contain '='
+            if (!str_contains($line, '=')) {
+                continue;
+            }
+
+            [$key, $value] = explode('=', $line, 2);
+            $key   = trim($key);
+            $value = trim($value);
+
+            // Strip surrounding quotes (' or ")
+            if (strlen($value) >= 2
+                && (($value[0] === '\'' && $value[-1] === '\'') ||
+                    ($value[0] === '"'  && $value[-1] === '"'))
+            ) {
+                $value = substr($value, 1, -1);
+            }
+
+            self::$env[$key] = $value;
+        }
+
+        return self::$env;
     }
 }
