@@ -64,151 +64,122 @@
     </div>
 </div>
 
-<div class="bg-white rounded-xl shadow overflow-hidden w-full">
-    <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse" id="assetsTable">
-            <thead class="bg-gray-800 text-white">
-                <tr>
-                    <th class="p-4 text-sm font-semibold tracking-wide text-center cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('assetsTable', 0, 'date')">Fecha Registro</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Foto</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('assetsTable', 2)">Descripción</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('assetsTable', 3)">Adquisición</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('assetsTable', 4)">Identificador</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('assetsTable', 5)">Ubicación / Asignación</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide text-center cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('assetsTable', 6)">Estado</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100" id="assetsTableBody">
-                <?php if (!empty($assets)): ?>
-                <?php foreach ($assets as $a): ?>
-                <tr class="hover:bg-gray-50 transition group asset-row" data-category="<?= htmlspecialchars($a['category']) ?>"
-                    data-status="<?= htmlspecialchars($a['status']) ?>" data-acquisition="<?= htmlspecialchars($a['acquisition_type'] ?: 'Compra') ?>"
-                    data-search="<?= htmlspecialchars($a['name'] . ' ' . ($a['serial_number'] ?? '') . ' ' . ($a['assigned_to_name'] ?? '') . ' ' . ($a['leasing_company'] ?? '')) ?>">
-                    
-                    <td class="p-4" data-raw="<?= htmlspecialchars($a['created_at'] ?? '') ?>">
-                        <div class="text-sm text-gray-600">
-                            <?= htmlspecialchars(date('d/m/Y', strtotime($a['created_at'] ?? 'now'))) ?>
-                        </div>
-                    </td>
+<?php
+$headers = [
+    'date' => ['label' => 'Fecha Registro', 'sortType' => 'date', 'align' => 'center'],
+    'photo' => ['label' => 'Foto', 'align' => 'center'],
+    'desc' => 'Descripción',
+    'acq' => 'Adquisición',
+    'ident' => 'Identificador',
+    'assign' => 'Ubicación / Asignación',
+    'status' => ['label' => 'Estado', 'align' => 'center']
+];
 
-                    <td class="p-3 text-center">
-                        <div class="relative inline-block">
-                            <?php if (!empty($a['photo_filename'])): ?>
-                            <img src="/uploads/<?= htmlspecialchars($a['photo_filename']) ?>"
-                                class="w-12 h-12 object-cover rounded-lg border border-gray-200 bg-white shadow-sm">
-                            <?php else: ?>
-                            <!-- Icono Fallback según categoría -->
-                            <div
-                                class="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 text-xl">
-                                <?php if ($a['category'] == 'Vehículo'): ?><i class="fas fa-car"></i>
-                                <?php elseif ($a['category'] == 'Computadora' || $a['category'] == 'Laptop'): ?><i
-                                    class="fas fa-laptop"></i>
-                                <?php elseif ($a['category'] == 'Celular'): ?><i class="fas fa-mobile-alt"></i>
-                                <?php elseif ($a['category'] == 'Uniforme'): ?><i class="fas fa-tshirt"></i>
-                                <?php elseif ($a['category'] == 'Herramienta'): ?><i class="fas fa-tools"></i>
-                                <?php else: ?><i class="fas fa-box"></i><?php endif; ?>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                    </td>
+$tableData = [];
+if (!empty($assets)) {
+    foreach ($assets as $a) {
+        $photoHtml = '<div class="relative inline-block">';
+        if (!empty($a['photo_filename'])) {
+            $photoHtml .= '<img src="/uploads/' . htmlspecialchars($a['photo_filename']) . '" class="w-12 h-12 object-cover rounded-lg border border-gray-200 bg-white shadow-sm">';
+        } else {
+            $iconTag = '<i class="fas fa-box"></i>';
+            if ($a['category'] == 'Vehículo') $iconTag = '<i class="fas fa-car"></i>';
+            elseif ($a['category'] == 'Computadora' || $a['category'] == 'Laptop') $iconTag = '<i class="fas fa-laptop"></i>';
+            elseif ($a['category'] == 'Celular') $iconTag = '<i class="fas fa-mobile-alt"></i>';
+            elseif ($a['category'] == 'Uniforme') $iconTag = '<i class="fas fa-tshirt"></i>';
+            elseif ($a['category'] == 'Herramienta') $iconTag = '<i class="fas fa-tools"></i>';
+            
+            $photoHtml .= '<div class="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 text-xl">' . $iconTag . '</div>';
+        }
+        $photoHtml .= '</div>';
+        
+        $acqHtml = '';
+        if ($a['acquisition_type'] == 'Arrendamiento') {
+            $acqHtml = '<span class="inline-flex items-center text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded border border-purple-100"><i class="fas fa-file-contract mr-1"></i> Leasing</span>';
+            if (!empty($a['leasing_company'])) {
+                $acqHtml .= '<div class="text-[10px] text-gray-400 mt-1 truncate max-w-[100px]" title="' . htmlspecialchars($a['leasing_company']) . '">' . htmlspecialchars($a['leasing_company']) . '</div>';
+            }
+        } else {
+            $acqHtml = '<span class="inline-flex items-center text-xs font-bold text-gray-500 bg-gray-50 px-2 py-1 rounded border border-gray-100">Compra</span>';
+        }
+        
+        $assignHtml = '';
+        if (!empty($a['assigned_to_name'])) {
+            $assignHtml = '<div class="flex items-center"><div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold mr-2">' . strtoupper(substr($a['assigned_to_name'], 0, 1)) . '</div><span class="text-sm font-medium text-gray-700">' . htmlspecialchars($a['assigned_to_name']) . '</span></div>';
+        } else {
+            $assignHtml = '<span class="text-gray-400 italic text-sm flex items-center"><i class="fas fa-warehouse mr-1.5 text-gray-300"></i> En Stock</span>';
+        }
 
-                    <td class="p-4">
-                        <div>
-                            <a href="/assets/detail/<?= $a['id'] ?>" class="font-bold text-gray-800 text-base group-hover:text-blue-600 transition">
-                                <?= htmlspecialchars($a['name']) ?>
-                            </a>
-                        </div>
-                        <div class="text-xs text-gray-500 font-semibold bg-gray-100 px-2 py-0.5 rounded w-fit mt-1">
-                            <?= htmlspecialchars($a['category']) ?>
-                        </div>
-                    </td>
+        $status = $a['status'];
+        $st_class = 'bg-gray-100';
+        if ($status == 'Disponible') $st_class = 'bg-emerald-100 text-emerald-700 border-emerald-200';
+        elseif ($status == 'Asignado') $st_class = 'bg-blue-100 text-blue-700 border-blue-200';
+        elseif ($status == 'En Mantenimiento' || $status == 'En Reparación') $st_class = 'bg-amber-100 text-amber-700 border-amber-200';
+        elseif ($status == 'De Baja') $st_class = 'bg-red-100 text-red-700 border-red-200';
+        
+        $statusHtml = '<span class="px-3 py-1 rounded-full text-xs font-bold border ' . $st_class . ' shadow-sm">' . htmlspecialchars($status) . '</span>';
+        
+        $searchString = htmlspecialchars($a['name'] . ' ' . ($a['serial_number'] ?? '') . ' ' . ($a['assigned_to_name'] ?? '') . ' ' . ($a['leasing_company'] ?? ''));
 
-                    <!-- CELDA NUEVA ADQUISICIÓN -->
-                    <td class="p-4">
-                        <?php if ($a['acquisition_type'] == 'Arrendamiento'): ?>
-                        <span
-                            class="inline-flex items-center text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded border border-purple-100">
-                            <i class="fas fa-file-contract mr-1"></i> Leasing
-                        </span>
-                        <?php if (!empty($a['leasing_company'])): ?>
-                        <div class="text-[10px] text-gray-400 mt-1 truncate max-w-[100px]"
-                            title="<?= htmlspecialchars($a['leasing_company']) ?>">
-                            <?= htmlspecialchars($a['leasing_company']) ?>
-                        </div>
-                        <?php endif; ?>
-                        <?php else: ?>
-                        <span
-                            class="inline-flex items-center text-xs font-bold text-gray-500 bg-gray-50 px-2 py-1 rounded border border-gray-100">
-                            Compra
-                        </span>
-                        <?php endif; ?>
-                    </td>
+        $tableData[] = [
+            'id' => $a['id'],
+            '_rowClass' => 'asset-row',
+            '_rowAttrs' => 'data-category="' . htmlspecialchars($a['category']) . '" data-status="' . htmlspecialchars($a['status']) . '" data-acquisition="' . htmlspecialchars($a['acquisition_type'] ?: 'Compra') . '" data-search="' . $searchString . '"',
+            
+            '_tdAttrs_date' => 'data-raw="' . htmlspecialchars($a['created_at'] ?? '') . '"',
+            'date' => '<div class="text-sm text-gray-600">' . htmlspecialchars(date('d/m/Y', strtotime($a['created_at'] ?? 'now'))) . '</div>',
+            
+            '_tdClass_photo' => 'p-3 text-center',
+            'photo' => $photoHtml,
+            
+            'desc' => '<div><a href="/assets/detail/' . htmlspecialchars($a['id']) . '" class="font-bold text-gray-800 text-base group-hover:text-blue-600 transition">' . htmlspecialchars($a['name']) . '</a></div><div class="text-xs text-gray-500 font-semibold bg-gray-100 px-2 py-0.5 rounded w-fit mt-1">' . htmlspecialchars($a['category']) . '</div>',
+            
+            'acq' => $acqHtml,
+            
+            'ident' => '<div class="text-sm font-mono text-gray-600">' . htmlspecialchars($a['serial_number'] ?: '-') . '</div><div class="text-xs text-gray-400">' . htmlspecialchars($a['brand'] ?? '') . ' ' . htmlspecialchars($a['model'] ?? '') . '</div>',
+            
+            'assign' => $assignHtml,
+            
+            'status' => $statusHtml
+        ];
+    }
+}
 
-                    <td class="p-4">
-                        <div class="text-sm font-mono text-gray-600"><?= htmlspecialchars($a['serial_number'] ?: '-') ?></div>
-                        <div class="text-xs text-gray-400"><?= htmlspecialchars($a['brand'] ?? '') ?> <?= htmlspecialchars($a['model'] ?? '') ?></div>
-                    </td>
+$actions = [
+    [
+        'url' => '/assets/detail/{id}',
+        'icon' => 'fas fa-eye',
+        'colorClass' => 'text-blue-600',
+        'bgHover' => 'hover:bg-blue-50',
+        'border' => 'border-blue-200',
+        'title' => 'Ver Detalle'
+    ],
+    [
+        'url' => '/assets/edit/{id}',
+        'icon' => 'fas fa-pen',
+        'colorClass' => 'text-yellow-600',
+        'bgHover' => 'hover:bg-yellow-50',
+        'border' => 'border-yellow-200',
+        'title' => 'Editar'
+    ],
+    [
+        'url' => '/assets/delete/{id}',
+        'icon' => 'fas fa-trash-alt',
+        'colorClass' => 'text-red-600',
+        'bgHover' => 'hover:bg-red-50',
+        'border' => 'border-red-200',
+        'title' => 'Eliminar',
+        'confirm' => '¿Estás seguro?'
+    ]
+];
 
-                    <td class="p-4">
-                        <?php if (!empty($a['assigned_to_name'])): ?>
-                        <div class="flex items-center">
-                            <div
-                                class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold mr-2">
-                                <?= strtoupper(substr($a['assigned_to_name'], 0, 1)) ?>
-                            </div>
-                            <span class="text-sm font-medium text-gray-700"><?= htmlspecialchars($a['assigned_to_name']) ?></span>
-                        </div>
-                        <?php else: ?>
-                        <span class="text-gray-400 italic text-sm flex items-center"><i
-                                class="fas fa-warehouse mr-1.5 text-gray-300"></i> En Stock</span>
-                        <?php endif; ?>
-                    </td>
-
-                    <td class="p-4 text-center">
-                        <?php 
-                        $status = $a['status'];
-                        $st_class = 'bg-gray-100';
-                        if ($status == 'Disponible') $st_class = 'bg-emerald-100 text-emerald-700 border-emerald-200';
-                        elseif ($status == 'Asignado') $st_class = 'bg-blue-100 text-blue-700 border-blue-200';
-                        elseif ($status == 'En Mantenimiento' || $status == 'En Reparación') $st_class = 'bg-amber-100 text-amber-700 border-amber-200';
-                        elseif ($status == 'De Baja') $st_class = 'bg-red-100 text-red-700 border-red-200';
-                        ?>
-                        <span class="px-3 py-1 rounded-full text-xs font-bold border <?= $st_class ?> shadow-sm">
-                            <?= htmlspecialchars($status) ?>
-                        </span>
-                    </td>
-
-                    <td class="p-4 text-center">
-                        <div class="flex justify-center gap-2">
-                            <a href="/assets/detail/<?= $a['id'] ?>" class="text-blue-600 hover:bg-blue-50 border border-blue-200 p-2 rounded transition" title="Ver Detalle">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="/assets/edit/<?= $a['id'] ?>" class="text-yellow-600 hover:bg-yellow-50 border border-yellow-200 p-2 rounded transition" title="Editar">
-                                <i class="fas fa-pen"></i>
-                            </a>
-                            <a href="/assets/delete/<?= $a['id'] ?>" onclick="return confirm('¿Estás seguro?')" class="text-red-600 hover:bg-red-50 border border-red-200 p-2 rounded transition" title="Eliminar">
-                                <i class="fas fa-trash-alt"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-                <?php else: ?>
-                <tr>
-                    <td colspan="7" class="p-12 text-center text-gray-400 italic">No hay activos registrados. Comienza
-                        agregando uno.</td>
-                </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-        <div id="noResults" class="hidden p-12 text-center text-gray-400 italic bg-white">
-            No se encontraron activos con los filtros seleccionados.
-        </div>
-    </div>
+echo Utils::generateTable($headers, $tableData, "No hay activos registrados. Comienza agregando uno.", $actions, 'assetsTable');
+?>
+<div id="noResults" class="hidden mt-4 p-12 text-center text-gray-400 italic bg-white rounded-xl shadow border border-gray-200">
+    No se encontraron activos con los filtros seleccionados.
 </div>
 
-<script src="/js/table-sort.js"></script>
+<script src="/assets/js/table-sort.js"></script>
 <script>
     // --- LÓGICA DE FILTRADO ---
     function filterAssets() {

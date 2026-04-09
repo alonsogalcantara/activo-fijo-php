@@ -33,93 +33,90 @@
     </div>
 </div>
 
-<div class="bg-white rounded-xl shadow overflow-hidden w-full">
-    <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse" id="accountsTable">
-            <thead class="bg-gray-800 text-white">
-                <tr>
-                    <th class="p-4 text-sm font-semibold tracking-wide text-center cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('accountsTable', 0, 'date')">Fecha Registro</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('accountsTable', 1)">Servicio</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('accountsTable', 2)">Proveedor / Contrato</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('accountsTable', 3)">Asignado A</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide text-center cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('accountsTable', 4)">Tipo</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide text-center cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('accountsTable', 5, 'number')">Costo</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide text-center cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('accountsTable', 6, 'date')">Renovación</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                <?php if (!empty($accounts)): ?>
-                <?php foreach ($accounts as $acc): ?>
-                <tr class="hover:bg-gray-50 transition duration-150 account-row" data-type="<?= htmlspecialchars($acc['account_type']) ?>">
-                    <td class="p-4 text-center text-sm text-gray-600" data-raw="<?= htmlspecialchars($acc['created_at'] ?? '') ?>">
-                         <?= htmlspecialchars(date('d/m/Y', strtotime($acc['created_at'] ?? 'now'))) ?>
-                    </td>
-                    <td class="p-4">
-                        <div class="font-bold text-gray-800">
-                            <a href="/accounts/detail/<?= $acc['id'] ?>" class="hover:text-blue-600 transition">
-                                <?= htmlspecialchars($acc['service_name']) ?>
-                            </a>
-                        </div>
-                        <div class="text-xs text-gray-500"><?= htmlspecialchars($acc['username'] ?: 'Sin usuario') ?></div>
-                    </td>
-                    <td class="p-4">
-                        <div class="text-sm text-gray-700"><?= htmlspecialchars($acc['provider'] ?: '-') ?></div>
-                        <div class="text-xs text-gray-400 font-mono"><?= htmlspecialchars($acc['contract_ref'] ?: '') ?></div>
-                    </td>
-                    <td class="p-4">
-                        <?php if (!empty($acc['assigned_user_name'])): ?>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                <i class="fas fa-user mr-1"></i> <?= htmlspecialchars($acc['assigned_user_name']) ?>
-                            </span>
-                        <?php else: ?>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                <i class="fas fa-warehouse mr-1"></i> Stock / Admin
-                            </span>
-                        <?php endif; ?>
-                    </td>
-                    <td class="p-4 text-center">
-                        <?php if ($acc['account_type'] == 'Individual'): ?>
-                            <span class="text-xs font-bold text-gray-600 bg-gray-200 px-2 py-1 rounded"><i class="fas fa-user"></i> Indiv.</span>
-                        <?php else: ?>
-                            <span class="text-xs font-bold text-purple-600 bg-purple-100 px-2 py-1 rounded" title="Licencias">
-                                <i class="fas fa-users"></i> <?= $acc['max_licenses'] ?> (Max)
-                            </span>
-                        <?php endif; ?>
-                    </td>
-                    <td class="p-4 text-center">
-                        <div class="font-bold text-gray-700">$<?= number_format($acc['cost'], 2) ?> <?= htmlspecialchars($acc['currency'] ?? 'MXN') ?></div>
-                        <div class="text-[10px] uppercase text-gray-400"><?= htmlspecialchars($acc['frequency'] ?? '') ?></div>
-                    </td>
-                    <td class="p-4 text-center text-sm text-gray-600" data-raw="<?= htmlspecialchars($acc['renewal_date'] ?? '') ?>">
-                        <?= htmlspecialchars($acc['renewal_date'] ?? '') ?>
-                    </td>
-                    <td class="p-4 text-center">
-                        <div class="flex justify-center gap-2">
-                            <a href="/accounts/detail/<?= $acc['id'] ?>" class="text-blue-600 hover:bg-blue-50 border border-blue-200 p-2 rounded transition" title="Ver Detalle">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="/accounts/edit/<?= $acc['id'] ?>" class="text-blue-600 hover:bg-blue-50 border border-blue-200 p-2 rounded transition" title="Editar">
-                                <i class="fas fa-pen"></i>
-                            </a>
-                            <a href="/accounts/delete/<?= $acc['id'] ?>" onclick="return confirm('¿Estás seguro?')" class="text-red-600 hover:bg-red-50 border border-red-200 p-2 rounded transition" title="Eliminar">
-                                <i class="fas fa-trash-alt"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-                <?php else: ?>
-                <tr>
-                    <td colspan="7" class="p-8 text-center text-gray-500 italic bg-gray-50 rounded-b-xl">
-                        No hay servicios registrados. ¡Agrega el primero!
-                    </td>
-                </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
-</div>
+<?php
+$headers = [
+    'date' => ['label' => 'Fecha Registro', 'sortType' => 'date', 'align' => 'center'],
+    'service' => 'Servicio',
+    'provider' => 'Proveedor / Contrato',
+    'assigned' => 'Asignado A',
+    'type' => ['label' => 'Tipo', 'align' => 'center'],
+    'cost' => ['label' => 'Costo', 'sortType' => 'number', 'align' => 'center'],
+    'renewal' => ['label' => 'Renovación', 'sortType' => 'date', 'align' => 'center']
+];
+
+$tableData = [];
+if (!empty($accounts)) {
+    foreach ($accounts as $acc) {
+        $assignedHtml = '';
+        if (!empty($acc['assigned_user_name'])) {
+            $assignedHtml = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"><i class="fas fa-user mr-1"></i> ' . htmlspecialchars($acc['assigned_user_name']) . '</span>';
+        } else {
+            $assignedHtml = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"><i class="fas fa-warehouse mr-1"></i> Stock / Admin</span>';
+        }
+
+        $typeHtml = '';
+        if ($acc['account_type'] == 'Individual') {
+            $typeHtml = '<span class="text-xs font-bold text-gray-600 bg-gray-200 px-2 py-1 rounded"><i class="fas fa-user"></i> Indiv.</span>';
+        } else {
+            $typeHtml = '<span class="text-xs font-bold text-purple-600 bg-purple-100 px-2 py-1 rounded" title="Licencias"><i class="fas fa-users"></i> ' . htmlspecialchars($acc['max_licenses']) . ' (Max)</span>';
+        }
+
+        $tableData[] = [
+            'id' => $acc['id'],
+            '_rowClass' => 'account-row',
+            '_rowAttrs' => 'data-type="' . htmlspecialchars($acc['account_type']) . '"',
+            
+            '_tdClass_date' => 'text-sm text-gray-600',
+            '_tdAttrs_date' => 'data-raw="' . htmlspecialchars($acc['created_at'] ?? '') . '"',
+            'date' => htmlspecialchars(date('d/m/Y', strtotime($acc['created_at'] ?? 'now'))),
+            
+            'service' => '<div class="font-bold text-gray-800"><a href="/accounts/detail/' . htmlspecialchars($acc['id']) . '" class="hover:text-blue-600 transition">' . htmlspecialchars($acc['service_name']) . '</a></div><div class="text-xs text-gray-500">' . htmlspecialchars($acc['username'] ?: 'Sin usuario') . '</div>',
+            
+            'provider' => '<div class="text-sm text-gray-700">' . htmlspecialchars($acc['provider'] ?: '-') . '</div><div class="text-xs text-gray-400 font-mono">' . htmlspecialchars($acc['contract_ref'] ?: '') . '</div>',
+            
+            'assigned' => $assignedHtml,
+            
+            'type' => $typeHtml,
+            
+            'cost' => '<div class="font-bold text-gray-700">$' . number_format($acc['cost'], 2) . ' ' . htmlspecialchars($acc['currency'] ?? 'MXN') . '</div><div class="text-[10px] uppercase text-gray-400">' . htmlspecialchars($acc['frequency'] ?? '') . '</div>',
+            
+            '_tdClass_renewal' => 'text-sm text-gray-600',
+            '_tdAttrs_renewal' => 'data-raw="' . htmlspecialchars($acc['renewal_date'] ?? '') . '"',
+            'renewal' => htmlspecialchars($acc['renewal_date'] ?? '')
+        ];
+    }
+}
+
+$actions = [
+    [
+        'url' => '/accounts/detail/{id}',
+        'icon' => 'fas fa-eye',
+        'colorClass' => 'text-blue-600',
+        'bgHover' => 'hover:bg-blue-50',
+        'border' => 'border-blue-200',
+        'title' => 'Ver Detalle'
+    ],
+    [
+        'url' => '/accounts/edit/{id}',
+        'icon' => 'fas fa-pen',
+        'colorClass' => 'text-blue-600',
+        'bgHover' => 'hover:bg-blue-50',
+        'border' => 'border-blue-200',
+        'title' => 'Editar'
+    ],
+    [
+        'url' => '/accounts/delete/{id}',
+        'icon' => 'fas fa-trash-alt',
+        'colorClass' => 'text-red-600',
+        'bgHover' => 'hover:bg-red-50',
+        'border' => 'border-red-200',
+        'title' => 'Eliminar',
+        'confirm' => '¿Estás seguro?'
+    ]
+];
+
+echo Utils::generateTable($headers, $tableData, "No hay servicios registrados. ¡Agrega el primero!", $actions, 'accountsTable');
+?>
 
 <script>
     // --- LÓGICA DE FILTRADO ---
@@ -150,7 +147,7 @@
         });
     }
 </script>
-<script src="/js/table-sort.js"></script>
+<script src="/assets/js/table-sort.js"></script>
 
 <?php $content = ob_get_clean(); ?>
 <?php include __DIR__ . '/../layouts/main.php'; ?>

@@ -33,89 +33,89 @@
     </div>
 </div>
 
-<div class="bg-white rounded-xl shadow overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse" id="usersTable">
-            <thead class="bg-gray-800 text-white">
-                <tr>
-                    <th class="p-4 text-sm font-semibold tracking-wide text-center cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('usersTable', 0, 'date')">Fecha Registro</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('usersTable', 1)">Nombre / Contacto</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('usersTable', 2)">Organización</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('usersTable', 3)">Rol</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition" onclick="sortTable('usersTable', 4)">Estado</th>
-                    <th class="p-4 text-sm font-semibold tracking-wide text-center">Acciones</th>
-                </tr>
-            </thead>
-        <tbody class="divide-y divide-gray-100">
-            <?php if (!empty($users)): ?>
-            <?php foreach ($users as $u): ?>
-            <tr class="hover:bg-gray-50 transition user-row" data-status="<?= htmlspecialchars($u['status']) ?>">
-                
-                <td class="p-4" data-raw="<?= htmlspecialchars($u['created_at'] ?? '') ?>">
-                   <div class="text-xs text-gray-500">
-                       <?= htmlspecialchars(date('d/m/Y', strtotime($u['created_at'] ?? 'now'))) ?>
-                   </div>
-                </td>
+<?php
+$headers = [
+    'date' => ['label' => 'Fecha Registro', 'sortType' => 'date', 'align' => 'center'],
+    'name' => 'Nombre / Contacto',
+    'org' => 'Organización',
+    'role' => 'Rol',
+    'status' => 'Estado'
+];
 
-                <td class="p-4">
-                    <!-- NOMBRE FORMATEADO: Primer Nombre + Apellido Paterno -->
-                    <div class="font-bold text-gray-800 capitalize">
-                        <a href="/users/detail/<?= $u['id'] ?>" class="hover:text-blue-600 transition">
-                            <?php if (!empty($u['first_name']) && !empty($u['last_name'])): ?>
-                                <?= htmlspecialchars($u['first_name'] . ' ' . $u['last_name']) ?>
-                            <?php else: ?>
-                                <?= htmlspecialchars($u['name']) ?> <!-- Fallback para legacy -->
-                            <?php endif; ?>
-                        </a>
-                    </div>
-                    <div class="text-xs text-gray-500"><?= htmlspecialchars($u['email']) ?></div>
-                    <?php if (!empty($u['phone'])): ?>
-                    <div class="text-xs text-gray-400 mt-0.5"><i class="fas fa-phone mr-1"></i><?= htmlspecialchars($u['phone']) ?></div>
-                    <?php endif; ?>
-                </td>
+$tableData = [];
+if (!empty($users)) {
+    foreach ($users as $u) {
+        $nameHtml = '<div class="font-bold text-gray-800 capitalize"><a href="/users/detail/' . htmlspecialchars($u['id']) . '" class="hover:text-blue-600 transition">';
+        if (!empty($u['first_name']) && !empty($u['last_name'])) {
+            $nameHtml .= htmlspecialchars($u['first_name'] . ' ' . $u['last_name']);
+        } else {
+            $nameHtml .= htmlspecialchars($u['name'] ?? '');
+        }
+        $nameHtml .= '</a></div><div class="text-xs text-gray-500">' . htmlspecialchars($u['email'] ?? '') . '</div>';
+        if (!empty($u['phone'])) {
+            $nameHtml .= '<div class="text-xs text-gray-400 mt-0.5"><i class="fas fa-phone mr-1"></i>' . htmlspecialchars($u['phone']) . '</div>';
+        }
+        
+        $orgHtml = '<div class="text-sm font-medium text-gray-700">' . htmlspecialchars($u['company'] ?: '-') . '</div><div class="text-xs text-gray-500">' . htmlspecialchars($u['department'] ?: '-') . '</div>';
+        
+        $roleHtml = '<span class="px-2 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">' . htmlspecialchars($u['system_role'] ?: 'N/A') . '</span>';
+        
+        $status = $u['status'];
+        $st_class = 'bg-gray-100';
+        if ($status == 'Activo') $st_class = 'bg-green-100 text-green-700';
+        elseif ($status == 'Inactivo') $st_class = 'bg-red-100 text-red-700';
+        elseif ($status == 'Vacaciones') $st_class = 'bg-yellow-100 text-yellow-700';
+        
+        $statusHtml = '<span class="px-3 py-1 rounded-full text-xs font-bold inline-flex items-center ' . $st_class . '">' . htmlspecialchars($status) . '</span>';
 
-                <td class="p-4">
-                    <div class="text-sm font-medium text-gray-700"><?= htmlspecialchars($u['company'] ?: '-') ?></div>
-                    <div class="text-xs text-gray-500"><?= htmlspecialchars($u['department'] ?: '-') ?></div>
-                </td>
+        $tableData[] = [
+            'id' => $u['id'],
+            '_rowClass' => 'user-row',
+            '_rowAttrs' => 'data-status="' . htmlspecialchars($u['status']) . '"',
+            
+            '_tdAttrs_date' => 'data-raw="' . htmlspecialchars($u['created_at'] ?? '') . '"',
+            'date' => '<div class="text-xs text-gray-500">' . htmlspecialchars(date('d/m/Y', strtotime($u['created_at'] ?? 'now'))) . '</div>',
+            
+            'name' => $nameHtml,
+            'org' => $orgHtml,
+            'role' => $roleHtml,
+            'status' => $statusHtml
+        ];
+    }
+}
 
-                <td class="p-4">
-                    <span class="px-2 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">
-                        <?= htmlspecialchars($u['system_role'] ?: 'N/A') ?>
-                    </span>
-                </td>
+$actions = [
+    [
+        'url' => '/users/detail/{id}',
+        'icon' => 'fas fa-eye',
+        'colorClass' => 'text-blue-600',
+        'bgHover' => 'hover:bg-blue-50',
+        'border' => 'border-blue-200',
+        'title' => 'Ver Detalle'
+    ],
+    [
+        'url' => '/users/edit/{id}',
+        'icon' => 'fas fa-pen',
+        'colorClass' => 'text-yellow-600',
+        'bgHover' => 'hover:bg-yellow-50',
+        'border' => 'border-yellow-200',
+        'title' => 'Editar'
+    ],
+    [
+        'url' => '/users/delete/{id}',
+        'icon' => 'fas fa-trash-alt',
+        'colorClass' => 'text-red-600',
+        'bgHover' => 'hover:bg-red-50',
+        'border' => 'border-red-200',
+        'title' => 'Eliminar',
+        'confirm' => '¿Estás seguro?'
+    ]
+];
 
-                <td class="p-4">
-                    <?php
-                    $status = $u['status'];
-                    $st_class = 'bg-gray-100';
-                    if ($status == 'Activo') $st_class = 'bg-green-100 text-green-700';
-                    elseif ($status == 'Inactivo') $st_class = 'bg-red-100 text-red-700';
-                    elseif ($status == 'Vacaciones') $st_class = 'bg-yellow-100 text-yellow-700';
-                    ?>
-                    <span class="px-3 py-1 rounded-full text-xs font-bold inline-flex items-center <?= $st_class ?>">
-                        <?= htmlspecialchars($status) ?>
-                    </span>
-                </td>
+echo Utils::generateTable($headers, $tableData, "No se encontraron usuarios.", $actions, 'usersTable');
+?>
 
-                <td class="p-4 text-center">
-                    <div class="flex justify-center gap-2">
-                        <a href="/users/detail/<?= $u['id'] ?>" class="text-blue-600 hover:bg-blue-50 border border-blue-200 p-2 rounded transition" title="Ver Detalle"><i class="fas fa-eye"></i></a>
-                        <a href="/users/edit/<?= $u['id'] ?>" class="text-yellow-600 hover:bg-yellow-50 border border-yellow-200 p-2 rounded transition" title="Editar"><i class="fas fa-pen"></i></a>
-                        <a href="/users/delete/<?= $u['id'] ?>" onclick="return confirm('¿Estás seguro?')" class="text-red-600 hover:bg-red-50 border border-red-200 p-2 rounded transition" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
-                    </div>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-            <?php else: ?>
-            <tr><td colspan="5" class="p-6 text-center text-gray-500 italic">No se encontraron usuarios.</td></tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
-    </div>
-</div>
-
-<script src="/js/table-sort.js"></script>
+<script src="/assets/js/table-sort.js"></script>
 <script>
     // --- LÓGICA DE FILTRADO ---
     function filterUsers() {

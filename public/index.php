@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+// Require utility helpers
+require_once __DIR__ . '/../src/Lib/utils.php';
+
 // Autoloader (Simple implementation for Vanilla PHP)
 spl_autoload_register(function ($class_name) {
     if (strpos($class_name, 'Models\\') === 0) {

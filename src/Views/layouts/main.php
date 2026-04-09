@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Activos</title>
-    <link rel="stylesheet" href="/css/style.css?v=<?= time() ?>">
-    <link rel="stylesheet" href="/css/tailwind.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="/assets/css/style.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="/assets/css/tailwind.css?v=<?= time() ?>">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -49,7 +49,7 @@
         <?= $content ?? '' ?>
     </main>
 
-    <script src="/js/main.js"></script>
+    <script src="/assets/js/main.js"></script>
     <script>
         // Global helper for delete
         async function deleteResource(endpoint, id) {
