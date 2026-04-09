@@ -42,49 +42,7 @@ class Utils {
         return date($format, $timestamp);
     }
     
-    /**
-     * Returns an array with standard item types for the system.
-     *
-     * @return array
-     */
-    public static function getItemTypes(): array {
-        return [
-            'consumible' => 'Consumible',
-            'herramienta' => 'Herramienta',
-            'equipo' => 'Equipo',
-            'papeleria' => 'Papelería General'
-        ];
-    }
-    
-    /**
-     * Calculates the Reorder Point (Punto de Reorden).
-     * A simple implementation that can be expanded based on specific business logic.
-     * 
-     * @param int $avgDailyUsage Average daily usage.
-     * @param int $leadTime Lead time in days (tiempo de entrega del proveedor).
-     * @param int $safetyStock Safety stock (stock de seguridad).
-     * @return int The calculated reorder point.
-     */
-    public static function calculateReorderPoint(int $avgDailyUsage, int $leadTime, int $safetyStock): int {
-        return ($avgDailyUsage * $leadTime) + $safetyStock;
-    }
-    
-    /**
-     * Checks stock level and returns a status badge class and text.
-     * 
-     * @param int $currentStock
-     * @param int $reorderPoint
-     * @return array ['text' => 'Normal', 'class' => 'badge-success']
-     */
-    public static function getStockStatus(int $currentStock, int $reorderPoint): array {
-        if ($currentStock <= 0) {
-            return ['text' => 'Sin Stock', 'class' => 'badge-danger'];
-        }
-        if ($currentStock <= $reorderPoint) {
-            return ['text' => 'Bajo (Reordenar)', 'class' => 'badge-warning'];
-        }
-        return ['text' => 'Normal', 'class' => 'badge-success'];
-    }
+
 
     /**
      * Generates a reusable HTML table for the system.
@@ -105,10 +63,9 @@ class Utils {
         $colIndex = 0;
         foreach ($headers as $key => $headerConfig) {
             $label = is_array($headerConfig) ? ($headerConfig['label'] ?? '') : $headerConfig;
-            $sortType = is_array($headerConfig) ? ($headerConfig['sortType'] ?? '') : '';
-            $sortAttr = $tableId !== '' ? ' onclick="sortTable(\'' . htmlspecialchars($tableId) . '\', ' . $colIndex . ($sortType ? ', \'' . $sortType . '\'' : '') . ')"' : '';
             $alignClass = is_array($headerConfig) && isset($headerConfig['align']) ? ' text-' . $headerConfig['align'] : '';
-            $html .= '<th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition' . $alignClass . '"' . $sortAttr . '>' . htmlspecialchars($label) . '</th>';
+            // TableManager (search_bar.php) securely binds cursors and clicks natively via DOM. No inline onclick needed.
+            $html .= '<th class="p-4 text-sm font-semibold tracking-wide cursor-pointer hover:bg-gray-700 transition' . $alignClass . '">' . htmlspecialchars($label) . '</th>';
             $colIndex++;
         }
         if (!empty($actions)) {
