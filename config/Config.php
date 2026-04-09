@@ -99,13 +99,14 @@ class Config
         $paths = self::section('paths');
 
         if (!isset($paths[$key])) {
-            // Fallback: derive from __DIR__ so the app still works without YAML paths
+            // Fallback: derive dynamically so the app still works universally without YAML paths
+            $base = dirname(__DIR__);
             $fallbacks = [
-                'base_dir'   => realpath(__DIR__ . '/..'),
-                'public_dir' => realpath(__DIR__ . '/../public'),
-                'uploads'    => realpath(__DIR__ . '/../public/uploads'),
+                'base_dir'   => $base,
+                'public_dir' => $base . DIRECTORY_SEPARATOR . 'public',
+                'uploads'    => $base . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'uploads',
             ];
-            return $fallbacks[$key] ?? __DIR__;
+            return $fallbacks[$key] ?? $base;
         }
 
         $entry = $paths[$key];
