@@ -102,6 +102,47 @@ $installDirAccessible = is_dir(__DIR__ . '/../../public/install') &&
         </div>
     </div>
 </div>
+<!-- 360 FINANCIAL CARDS -->
+<div class="mb-4 flex items-center">
+    <h2 class="text-xl font-bold text-gray-800"><i class="fas fa-search-dollar text-emerald-500 mr-2"></i> Vista 360 de Activos Fijos</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-gray-800 text-white p-6 rounded-2xl shadow-sm border border-gray-700 hover:shadow-md transition">
+        <p class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Inversión Bruta (Total)</p>
+        <p class="text-3xl font-bold text-white mb-2">$<?= number_format($data['total_acquisition_cost'] ?? 0, 2) ?></p>
+        <p class="text-xs text-gray-500 flex items-center"><i class="fas fa-info-circle mr-1"></i> Suma de CAPEX e Inventario.</p>
+    </div>
+    
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+        <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Depreciación Acumulada</p>
+        <p class="text-3xl font-bold text-red-500 mb-2">-$<?= number_format($data['total_accumulated_depreciation'] ?? 0, 2) ?></p>
+        <p class="text-xs text-gray-400 flex items-center"><i class="fas fa-chart-line mr-1 text-red-400"></i> Amortización consumida.</p>
+    </div>
+    
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+        <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Valor Neto en Libros</p>
+        <p class="text-3xl font-bold text-gray-800 mb-2">$<?= number_format($data['total_current_value'] ?? 0, 2) ?></p>
+        <p class="text-xs text-gray-400 flex items-center"><i class="fas fa-check-circle mr-1"></i> Valor actual real fiscal.</p>
+    </div>
+
+    <!-- Progreso / Salud -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center hover:shadow-md transition">
+        <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Desgaste Global</p>
+        <?php 
+            $totCost = $data['total_acquisition_cost'] ?? 0; 
+            $totDepr = $data['total_accumulated_depreciation'] ?? 0;
+            $global_wear = $totCost > 0 ? ($totDepr / $totCost) * 100 : 0;
+            $health_color = $global_wear > 80 ? 'bg-red-500' : ($global_wear > 50 ? 'bg-yellow-500' : 'bg-emerald-500');
+            $health_text_color = $global_wear > 80 ? 'text-red-500' : ($global_wear > 50 ? 'text-yellow-500' : 'text-emerald-500');
+        ?>
+        <div class="flex items-end mb-2">
+            <div class="text-3xl font-bold <?= $health_text_color ?>"><?= number_format($global_wear, 1) ?>%</div>
+        </div>
+        <div class="w-full bg-gray-100 rounded-full h-2">
+            <div class="<?= $health_color ?> h-2 rounded-full" style="width: <?= $global_wear ?>%"></div>
+        </div>
+    </div>
+</div>
 
 <!-- MAIN GRID -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -125,6 +166,36 @@ $installDirAccessible = is_dir(__DIR__ . '/../../public/install') &&
             <div class="flex justify-between text-sm">
                 <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-amber-500 mr-2"></span> Mantenimiento</span>
                 <span class="font-bold text-gray-700"><?= $stats['En Mantenimiento'] ?? 0 ?></span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="flex items-center"><span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span> Baja</span>
+                <span class="font-bold text-gray-700"><?= $stats['De Baja'] ?? 0 ?></span>
+            </div>
+        </div>
+
+        <!-- Categorías Breakdown -->
+        <div class="mt-8 pt-6 border-t border-gray-100">
+            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4"><i class="fas fa-layer-group mr-1"></i> Por Categoría</h4>
+            <div class="space-y-4">
+                <?php if(!empty($data['category_stats'])): ?>
+                    <?php 
+                    $totalCats = array_sum($data['category_stats']);
+                    foreach($data['category_stats'] as $cat => $count): 
+                        $pctUrl = $totalCats > 0 ? ($count / $totalCats) * 100 : 0;
+                    ?>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="font-bold text-gray-700"><?= htmlspecialchars($cat) ?></span>
+                                <span class="text-gray-500"><?= $count ?> act. (<?= number_format($pctUrl,1) ?>%)</span>
+                            </div>
+                            <div class="w-full bg-gray-100 rounded-full h-1.5">
+                                <div class="bg-blue-500 h-1.5 rounded-full" style="width: <?= $pctUrl ?>%"></div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="text-xs text-gray-400 italic">No hay datos por categoría.</p>
+                <?php endif; ?>
             </div>
         </div>
     </div>

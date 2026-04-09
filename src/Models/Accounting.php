@@ -155,6 +155,12 @@ class Accounting {
         $stmt->execute();
         $assetStats = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // ['Disponible' => 5, 'Asignado' => 3]
 
+        // Assets by Category
+        $queryCat = "SELECT category, COUNT(*) as count FROM assets GROUP BY category";
+        $stmt = $this->conn->prepare($queryCat);
+        $stmt->execute();
+        $categoryStats = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+
         // Total Users
         $queryUsers = "SELECT COUNT(*) FROM users WHERE status = 'Activo'";
         $stmt = $this->conn->query($queryUsers);
@@ -170,7 +176,11 @@ class Accounting {
             'total_accounts' => $services['account_count'],
             'monthly_spend_mxn' => $services['monthly_recurring'], 
             'monthly_spend_usd' => 0, 
-            'asset_stats' => $assetStats
+            'asset_stats' => $assetStats,
+            'category_stats' => $categoryStats,
+            'total_acquisition_cost' => $financials['total_acquisition_cost'],
+            'total_current_value' => $financials['total_current_value'],
+            'total_accumulated_depreciation' => $financials['total_depreciation']
         ];
     }
 
