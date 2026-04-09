@@ -7,31 +7,13 @@
     </a>
 </div>
 
-<!-- BARRA DE HERRAMIENTAS DE BÚSQUEDA Y FILTRO -->
-<div class="bg-white p-4 rounded-xl shadow mb-6 border border-gray-200 flex flex-col md:flex-row gap-4">
-    <!-- Buscador de Texto -->
-    <div class="relative flex-1">
-        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-        <input type="text" id="accountSearchInput" placeholder="Buscar por servicio, proveedor, contrato..." 
-               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-               onkeyup="filterAccounts()">
-    </div>
-    
-    <!-- Filtro por Tipo -->
-    <div class="w-full md:w-64">
-        <div class="relative">
-            <i class="fas fa-filter absolute left-3 top-3 text-gray-400"></i>
-            <select id="accountTypeFilter" onchange="filterAccounts()" 
-                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none">
-                <option value="">Todos los Tipos</option>
-                <option value="Individual">Individual</option>
-                <option value="Familiar">Familiar / Grupal</option>
-                <option value="Empresarial">Empresarial</option>
-            </select>
-            <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400 pointer-events-none"></i>
-        </div>
-    </div>
-</div>
+<!-- BARRA DE BÚSQUEDA Y ORDENAMIENTO -->
+<?php 
+renderSearchBar([
+    'table_id' => 'accountsTable', 
+    'placeholder' => 'Buscar por servicio, proveedor, contrato...'
+]); 
+?>
 
 <?php
 $headers = [
@@ -118,36 +100,7 @@ $actions = [
 echo Utils::generateTable($headers, $tableData, "No hay servicios registrados. ¡Agrega el primero!", $actions, 'accountsTable');
 ?>
 
-<script>
-    // --- LÓGICA DE FILTRADO ---
-    function filterAccounts() {
-        const textInput = document.getElementById('accountSearchInput');
-        const typeSelect = document.getElementById('accountTypeFilter');
-        const rows = document.querySelectorAll('.account-row');
 
-        const textFilter = textInput.value.toUpperCase();
-        const typeFilter = typeSelect.value;
-
-        rows.forEach(row => {
-            const rowType = row.getAttribute('data-type');
-            let textMatch = false;
-            
-            // Simple text match on whole row content
-            if (row.innerText.toUpperCase().indexOf(textFilter) > -1) {
-                textMatch = true;
-            }
-
-            let typeMatch = (typeFilter === "" || rowType === typeFilter);
-
-            if (textMatch && typeMatch) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        });
-    }
-</script>
-<script src="/assets/js/table-sort.js"></script>
 
 <?php $content = ob_get_clean(); ?>
 <?php include __DIR__ . '/../layouts/main.php'; ?>

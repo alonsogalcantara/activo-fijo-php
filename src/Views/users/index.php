@@ -7,31 +7,13 @@
     </a>
 </div>
 
-<!-- BARRA DE HERRAMIENTAS -->
-<div class="bg-white p-4 rounded-xl shadow mb-6 border border-gray-200 flex flex-col md:flex-row gap-4">
-    <!-- Buscador -->
-    <div class="relative flex-1">
-        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-        <input type="text" id="userSearchInput" placeholder="Buscar por nombre, correo, empresa..." 
-               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-               onkeyup="filterUsers()">
-    </div>
-
-    <!-- Filtro Estado -->
-    <div class="w-full md:w-64">
-        <div class="relative">
-            <i class="fas fa-filter absolute left-3 top-3 text-gray-400"></i>
-            <select id="userStatusFilter" onchange="filterUsers()" class="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700 appearance-none">
-                <option value="">Todos los Estados</option>
-                <option value="Activo">Activo</option>
-                <option value="Inactivo">Inactivo / Baja</option>
-                <option value="Vacaciones">Vacaciones</option>
-                <option value="Incapacidad">Incapacidad</option>
-            </select>
-            <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400 pointer-events-none"></i>
-        </div>
-    </div>
-</div>
+<!-- BARRA DE BÚSQUEDA Y ORDENAMIENTO -->
+<?php 
+renderSearchBar([
+    'table_id' => 'usersTable', 
+    'placeholder' => 'Buscar por nombre, correo, empresa...'
+]); 
+?>
 
 <?php
 $headers = [
@@ -115,22 +97,7 @@ $actions = [
 echo Utils::generateTable($headers, $tableData, "No se encontraron usuarios.", $actions, 'usersTable');
 ?>
 
-<script src="/assets/js/table-sort.js"></script>
-<script>
-    // --- LÓGICA DE FILTRADO ---
-    function filterUsers() {
-        const textFilter = document.getElementById('userSearchInput').value.toUpperCase();
-        const statusFilter = document.getElementById('userStatusFilter').value;
-        const rows = document.querySelectorAll('.user-row');
 
-        rows.forEach(row => {
-            const status = row.getAttribute('data-status');
-            let textMatch = row.innerText.toUpperCase().includes(textFilter);
-            let statusMatch = (statusFilter === "" || status === statusFilter);
-            row.style.display = (textMatch && statusMatch) ? "" : "none";
-        });
-    }
-</script>
 
 <?php $content = ob_get_clean(); ?>
 <?php include __DIR__ . '/../layouts/main.php'; ?>

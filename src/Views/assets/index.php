@@ -7,62 +7,13 @@
     </a>
 </div>
 
-<!-- BARRA DE BÚSQUEDA Y FILTROS MEJORADA -->
-<div class="bg-white p-4 rounded-xl shadow mb-6 border border-gray-200 flex flex-col md:flex-row gap-4">
-    <div class="relative flex-1">
-        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-        <input type="text" id="assetSearchInput" placeholder="Buscar por nombre, serie, usuario, placa..."
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onkeyup="filterAssets()">
-    </div>
-
-    <div class="w-full md:w-40">
-        <div class="relative">
-            <i class="fas fa-filter absolute left-3 top-3 text-gray-400"></i>
-            <select id="filterCategory" onchange="filterAssets()"
-                class="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-gray-700 appearance-none">
-                <option value="">Categorías</option>
-                <option value="Computadora">Computadora</option>
-                <option value="Celular">Celular / Tablet</option>
-                <option value="Vehículo">Vehículo</option>
-                <option value="Uniforme">Uniforme</option>
-                <option value="Mobiliario">Mobiliario</option>
-                <option value="Herramienta">Herramienta</option>
-                <option value="Otro">Otro</option>
-            </select>
-            <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400 pointer-events-none"></i>
-        </div>
-    </div>
-
-    <!-- NUEVO FILTRO TIPO DE ADQUISICIÓN -->
-    <div class="w-full md:w-40">
-        <div class="relative">
-            <i class="fas fa-filter absolute left-3 top-3 text-gray-400"></i>
-            <select id="filterAcquisition" onchange="filterAssets()"
-                class="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-gray-700 appearance-none">
-                <option value="">Adquisición</option>
-                <option value="Compra">Compras</option>
-                <option value="Arrendamiento">Leasing / Renta</option>
-            </select>
-            <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400 pointer-events-none"></i>
-        </div>
-    </div>
-
-    <div class="w-full md:w-40">
-        <div class="relative">
-            <i class="fas fa-filter absolute left-3 top-3 text-gray-400"></i>
-            <select id="filterStatus" onchange="filterAssets()"
-                class="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-gray-700 appearance-none">
-                <option value="">Estados</option>
-                <option value="Disponible">Disponible</option>
-                <option value="Asignado">Asignado</option>
-                <option value="En Mantenimiento">En Mantenimiento</option>
-                <option value="De Baja">De Baja</option>
-            </select>
-            <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400 pointer-events-none"></i>
-        </div>
-    </div>
-</div>
+<!-- BARRA DE BÚSQUEDA Y ORDENAMIENTO (Renderizada por utils) -->
+<?php 
+renderSearchBar([
+    'table_id' => 'assetsTable', 
+    'placeholder' => 'Buscar por nombre, serie, placa, usuario...'
+]); 
+?>
 
 <?php
 $headers = [
@@ -175,46 +126,7 @@ $actions = [
 
 echo Utils::generateTable($headers, $tableData, "No hay activos registrados. Comienza agregando uno.", $actions, 'assetsTable');
 ?>
-<div id="noResults" class="hidden mt-4 p-12 text-center text-gray-400 italic bg-white rounded-xl shadow border border-gray-200">
-    No se encontraron activos con los filtros seleccionados.
-</div>
 
-<script src="/assets/js/table-sort.js"></script>
-<script>
-    // --- LÓGICA DE FILTRADO ---
-    function filterAssets() {
-        const search = document.getElementById('assetSearchInput').value.toLowerCase();
-        const cat = document.getElementById('filterCategory').value;
-        const stat = document.getElementById('filterStatus').value;
-        const acq = document.getElementById('filterAcquisition').value;
-
-        const rows = document.querySelectorAll('.asset-row');
-        let visibleCount = 0;
-
-        rows.forEach(row => {
-            const rowCat = row.getAttribute('data-category');
-            const rowStat = row.getAttribute('data-status');
-            const rowAcq = row.getAttribute('data-acquisition');
-            const rowText = row.getAttribute('data-search').toLowerCase();
-
-            const matchSearch = rowText.includes(search);
-            const matchCat = cat === "" || rowCat === cat;
-            const matchStat = stat === "" || rowStat === stat;
-            const matchAcq = acq === "" || rowAcq === acq;
-
-            if (matchSearch && matchCat && matchStat && matchAcq) {
-                row.style.display = "";
-                visibleCount++;
-            } else {
-                row.style.display = "none";
-            }
-        });
-
-        const noRes = document.getElementById('noResults');
-        if (visibleCount === 0) noRes.classList.remove('hidden');
-        else noRes.classList.add('hidden');
-    }
-</script>
 
 <?php $content = ob_get_clean(); ?>
 <?php include __DIR__ . '/../layouts/main.php'; ?>

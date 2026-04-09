@@ -15,9 +15,19 @@
     </div>
 <?php endif; ?>
 
+<!-- BARRA DE BÚSQUEDA Y ORDENAMIENTO -->
+<div class="bg-white p-4 rounded-xl shadow mb-6 border border-gray-200">
+<?php 
+renderSearchBar([
+    'table_id' => 'auditTable', 
+    'placeholder' => 'Buscar acción, usuario, fecha, tabla...'
+]); 
+?>
+</div>
+
 <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden mb-8">
     <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm border-collapse">
+        <table class="w-full text-left text-sm border-collapse" id="auditTable">
             <thead class="bg-gray-800 text-white uppercase text-[10px] font-bold tracking-wider">
                 <tr>
                     <th class="p-3 border-b border-gray-700">Fecha</th>

@@ -141,14 +141,14 @@ $current_order = $_GET['order'] ?? 'desc';
 <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6 mt-8">
     <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
         
-        <!-- Search -->
+        <!-- Search (Powered by search_bar.php) -->
         <div class="relative w-full md:w-96 flex-shrink-0">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i class="fas fa-search text-gray-400"></i>
-            </div>
-            <input type="text" id="accountingSearch" placeholder="Buscar en esta página..."
-                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 focus:bg-white transition text-sm"
-                onkeyup="filterVisualRows()">
+            <?php renderSearchBar([
+                'table_id' => 'accountingTable', 
+                'placeholder' => 'Buscar en esta página...',
+                'paginate' => false,
+                'sortable' => false
+            ]); ?>
         </div>
         
         <!-- Filter Dropdown -->
@@ -172,7 +172,7 @@ $current_order = $_GET['order'] ?? 'desc';
 
 <div class="bg-white rounded-xl shadow-md overflow-hidden w-full border border-gray-200 flex flex-col mb-20">
     <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
+        <table class="w-full text-left border-collapse" id="accountingTable">
             <thead
                 class="bg-gray-800 text-white uppercase text-[10px] font-bold tracking-wider">
                 <tr>
@@ -482,12 +482,7 @@ $current_order = $_GET['order'] ?? 'desc';
         window.location.href = `${window.location.pathname}?${params.toString()}`;
     }
 
-    function filterVisualRows() {
-        const search = document.getElementById('accountingSearch').value.toLowerCase();
-        const rows = document.querySelectorAll('.acc-row');
-        rows.forEach(row => { row.style.display = row.getAttribute('data-search').toLowerCase().includes(search) ? "" : "none"; });
-        // calcKPIs(); // Not implemented locally for visual filter to speed up, using PHP totals
-    }
+
 
     function makeEditable(td, type, assetId) {
         if (td.querySelector('input')) return;
