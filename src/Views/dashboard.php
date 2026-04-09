@@ -87,13 +87,15 @@ $installDirAccessible = is_dir(__DIR__ . '/../../public/install') &&
         <div class="relative z-10">
             <p class="text-gray-500 text-xs font-bold uppercase tracking-wider">Gasto Mensual Est.</p>
             
-            <p class="text-2xl font-bold text-emerald-600 mt-1" id="monthlySpendMXN">
-                $<?= number_format($data['monthly_spend_mxn'] ?? 0, 2) ?> <span class="text-xs text-gray-400">MXN</span>
+            <?php $mxn = $data['monthly_spend_mxn'] ?? 0; ?>
+            <p class="text-2xl font-bold <?= $mxn >= 0 ? 'text-emerald-600' : 'text-red-500' ?> mt-1" id="monthlySpendMXN">
+                <?= $mxn < 0 ? '-' : '' ?>$<?= number_format(abs($mxn), 2) ?> <span class="text-xs text-gray-400">MXN</span>
             </p>
             
-            <?php if (($data['monthly_spend_usd'] ?? 0) > 0): ?>
-            <p class="text-sm font-bold text-emerald-500" id="monthlySpendUSD">
-                $<?= number_format($data['monthly_spend_usd'], 2) ?> <span class="text-xs text-gray-400">USD</span>
+            <?php $usd = $data['monthly_spend_usd'] ?? 0; ?>
+            <?php if ($usd != 0): ?>
+            <p class="text-sm font-bold <?= $usd >= 0 ? 'text-emerald-500' : 'text-red-500' ?>" id="monthlySpendUSD">
+                <?= $usd < 0 ? '-' : '' ?>$<?= number_format(abs($usd), 2) ?> <span class="text-xs text-gray-400">USD</span>
             </p>
             <?php endif; ?>
         </div>
@@ -109,19 +111,28 @@ $installDirAccessible = is_dir(__DIR__ . '/../../public/install') &&
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
     <div class="bg-gray-800 text-white p-6 rounded-2xl shadow-sm border border-gray-700 hover:shadow-md transition">
         <p class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Inversión Bruta (Total)</p>
-        <p class="text-3xl font-bold text-white mb-2">$<?= number_format($data['total_acquisition_cost'] ?? 0, 2) ?></p>
+        <?php $acq = $data['total_acquisition_cost'] ?? 0; ?>
+        <p class="text-3xl font-bold <?= $acq >= 0 ? 'text-emerald-500' : 'text-red-500' ?> mb-2">
+            <?= $acq < 0 ? '-' : '' ?>$<?= number_format(abs($acq), 2) ?>
+        </p>
         <p class="text-xs text-gray-500 flex items-center"><i class="fas fa-info-circle mr-1"></i> Suma de CAPEX e Inventario.</p>
     </div>
     
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
         <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Depreciación Acumulada</p>
-        <p class="text-3xl font-bold text-red-500 mb-2">-$<?= number_format($data['total_accumulated_depreciation'] ?? 0, 2) ?></p>
+        <?php $dep = -abs($data['total_accumulated_depreciation'] ?? 0); ?>
+        <p class="text-3xl font-bold <?= $dep >= 0 ? 'text-emerald-500' : 'text-red-500' ?> mb-2">
+            <?= $dep < 0 ? '-' : '' ?>$<?= number_format(abs($dep), 2) ?>
+        </p>
         <p class="text-xs text-gray-400 flex items-center"><i class="fas fa-chart-line mr-1 text-red-400"></i> Amortización consumida.</p>
     </div>
     
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
         <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Valor Neto en Libros</p>
-        <p class="text-3xl font-bold text-gray-800 mb-2">$<?= number_format($data['total_current_value'] ?? 0, 2) ?></p>
+        <?php $neto = $data['total_current_value'] ?? 0; ?>
+        <p class="text-3xl font-bold <?= $neto >= 0 ? 'text-emerald-500' : 'text-red-500' ?> mb-2">
+            <?= $neto < 0 ? '-' : '' ?>$<?= number_format(abs($neto), 2) ?>
+        </p>
         <p class="text-xs text-gray-400 flex items-center"><i class="fas fa-check-circle mr-1"></i> Valor actual real fiscal.</p>
     </div>
 

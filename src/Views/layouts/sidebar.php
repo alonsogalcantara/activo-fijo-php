@@ -26,7 +26,7 @@
         </a>
 
         <!-- SECCIÓN ADMIN -->
-        <?php if (($_SESSION['system_role'] ?? '') == 'admin'): ?>
+        <!-- SECCIÓN ADMIN -->
         <div class="pt-4 mt-4 border-t border-slate-800">
             <p class="px-4 text-xs font-bold text-slate-500 uppercase mb-2">
                 Administración
@@ -38,7 +38,6 @@
                 <i class="fas fa-shield-alt w-6"></i> Auditoría
             </a>
         </div>
-        <?php endif; ?>
 
         <!-- SECCIÓN LOGOUT -->
         <div class="pt-4 mt-4 border-t border-slate-800">
